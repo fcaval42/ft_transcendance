@@ -67,4 +67,16 @@ Point de départ qui lance l'appli React dans le navigateur.
 -> importe ReactDOM qui permet de lier React au DOM (structure HTML de la page).
 
 3. import App from './App';
--> importe le composant principal de l'appli. 
+-> importe le composant principal de l'appli.
+
+4. const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+-> crée un point d'accroche (root) dans le DOM, en ciblant l'élément HTML avec l'id="root"
+-> as HTMLElement est une assertion TypeScript pour dire "je suis sûr que cet élément existe et est un HTMLElement".
+
+5.root.render(...)
+-> affiche l'application React dans le DOM, à l'endroit où se trouve la <div id="root>.
+-> <React.StrictMode> est un outil de dvlpt qui détecte pb potentiels (ex: effets de bord, API dépréciées) et optimise le code.
+-> <App /> est le composant principal: tout ce qu'il rendra sera affiché dans la page. 
+
+POUR LANCER : npm install (si pas encore fait)
+npm start
