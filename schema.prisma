@@ -14,6 +14,7 @@ model User {
   email       String    @unique
   password    String    // Stocké hashé (bcrypt)
   username    String    @unique
+  organizedTournaments Tournament[] @relation("OrganizerTournaments")
   avatarUrl   String?
   isOnline    Boolean   @default(false)
   wins        Int       @default(0)
@@ -32,7 +33,7 @@ model User {
   gamesWon        Game[]          @relation("GameWinner")
   tournamentParticipants TournamentParticipant[]
   notifications   Notification[]
-  games           GameMove[]
+  moves           GameMove[]      @relation("GameMovePlayer")
 }
 
 model Friendship {
@@ -77,7 +78,7 @@ model GameMove {
 
   // Relations
   game   Game @relation(fields: [gameId], references: [id])
-  player User @relation(fields: [playerId], references: [id])
+  player User @relation(fields: [playerId], references: [id], name: "GameMovePlayer")
 }
 
 model Tournament {
@@ -92,7 +93,7 @@ model Tournament {
   endedAt      DateTime?
 
   // Relations
-  organizer   User                 @relation(fields: [organizerId], references: [id])
+  organizer   User    @relation("OrganizerTournaments", fields: [organizerId], references: [id])
   participants TournamentParticipant[]
   games       Game[]
 }
