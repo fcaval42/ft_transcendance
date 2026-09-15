@@ -3,4 +3,4 @@
 .PHONY: server
 
 server:
-	cd pfc-backend && npm run dev
+	cd backend && npm run dev
