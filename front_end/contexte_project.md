@@ -27,7 +27,7 @@ Use a framework (Majeur) | IV.1
 Use a orm database (Mineur) | IV.1 p12
 real-time features (Majeur) | IV.1 p12
 
-Nous utilisons les concepts suivants: node.js / JavaScript / TypeScript / React / Express / Socket.io / Prisma / PostgreSQL / 
+Nous utilisons les concepts suivants: node.js / JavaScript / TypeScript / React / Express / Socket.io / Prisma / PostgreSQL / React-router-dom
 
 ---
 ## 🎯 **Instructions à toujours respecter **
