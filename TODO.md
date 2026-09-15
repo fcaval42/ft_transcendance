@@ -65,3 +65,41 @@ Phase 1 est déjà faite et mergée. Je pars directement sur la **Phase 4**
   couvre Standard user management (majeur, 2pts)
 - **Temps réel (Socket.io)** — géré par le collègue DB —
   couvre Real-time features (majeur, 2pts)
+
+
+
+
+Bases générales
+
+Node.js : qu'est-ce qu'un runtime JS côté serveur, npm, package.json
+HTTP / API REST : méthodes (GET, POST, PUT, DELETE), codes de statut (200, 401, 404...), requête/réponse
+Express.js : routes, middlewares (fonctions qui s'exécutent avant d'arriver à ta route, ex: vérifier qu'on est connecté)
+Base de données
+
+SQL de base : une table, une ligne, une requête SELECT/INSERT toute simple (pas besoin d'être expert)
+ORM (Prisma) : le concept d'un ORM (écrire du code au lieu du SQL brut), le fichier schema.prisma, les migrations
+Authentification
+
+Hash + salt : pourquoi on ne stocke jamais un mot de passe en clair, la librairie bcrypt
+Sessions vs JWT : comment le serveur "se souvient" qu'un utilisateur est connecté
+OAuth : le principe (se connecter via Google/42 au lieu d'un mot de passe), le flow "redirection + callback"
+Temps réel (ton cœur de sujet)
+
+WebSocket : différence avec une requête HTTP classique (connexion ouverte en continu, dans les deux sens)
+Socket.io : emit/on (envoyer/écouter un événement), les rooms (regrouper des joueurs dans une même partie)
+Sécurité / bonnes pratiques
+
+.env : variables d'environnement, pourquoi ne jamais commit un secret
+Validation des inputs : vérifier que ce qu'envoie le client est correct avant de le traiter (ex: librairie zod)
+HTTPS : le principe (chiffrement), pas besoin de creuser l'implémentation, c'est souvent géré par ton collègue infra/Docker
+Logique métier (spécifique à ton jeu)
+
+State machine : comment représenter l'état d'une partie (en attente / en cours / terminée, score des manches)
+Matchmaking : mettre en relation deux joueurs qui cherchent une partie
+Bracket de tournoi : structure d'arbre pour organiser des matchs éliminatoires
+Si tu veux, je peux te proposer un ordre d'implémentation concret (par exemple : auth d'abord, puis Socket.io basique, puis logique de jeu) une fois que tu as regardé les vidéos — dis-moi.
+
+Sources :
+
+Tutoriel Node.JS - Créer un chat en temps réel avec Socket.io et Express.js
+Créer un jeu multijoueur avec Node.JS, Socket.IO et Bootstrap 5
