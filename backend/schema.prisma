@@ -22,6 +22,7 @@ model User {
   isBot        Boolean  @default(false) // Pour distinguer l'IA si créée en DB
   oauthProvider String? // ex: "42", "google"
   oauthId      String?  // ID distant du provider
+  @@unique([oauthProvider, oauthId]) // Évite les doublons d'un même compte externe
   
   // Statistiques de jeu
   wins         Int      @default(0)
