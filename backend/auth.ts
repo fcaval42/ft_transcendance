@@ -5,6 +5,27 @@ import * as bcrypt from 'bcrypt';
 // On ne l'initialise qu'une fois, en general au demarrage
 export const prisma = new PrismaClient()
 
+interface LoginInput {
+  email: string;
+  password: string;
+}
+
+export async function authenticateUser(input: LoginInput): Promise<CreateUserResult> {
+  const user = await prisma.user.findUnique({ where: { email: input.email } });
+  if (!user) throw new Error('Invalid credentials');
+
+  const match = await bcrypt.compare(input.password, user.password);
+  if (!match) throw new Error('Invalid credentials');
+
+  return {
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    avatarUrl: user.avatarUrl ?? null,
+    createdAt: user.createdAt,
+  };
+}
+
 interface CreateUserInput {
   email: string;
   password: string;
