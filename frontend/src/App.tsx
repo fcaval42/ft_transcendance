@@ -83,85 +83,23 @@
 //export default App; 
 
 
-// J'AI PAS DE BACK-END DONC JE TESTE COMME ÇA 
-
-import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Login } from "./pages/Login";
+import { Game } from "./pages/Game";
+import { Home } from "./pages/Home";
 
 function App() {
-  const [userChoice, setUserChoice] = useState<string | null>(null);
-  const [aiChoice, setAiChoice] = useState<string | null>(null);
-  const [result, setResult] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const choices = ["rock", "paper", "scissors"];
-  const emojis: Record<string, string> = {
-    rock: "🪨",
-    paper: "📄",
-    scissors: "✂️",
-  };
-
-  // Fonction locale pour simuler le backend
-  const simulateBackend = (userChoice: string) => {
-    const aiChoice = choices[Math.floor(Math.random() * 3)];
-
-    let result;
-    if (userChoice === aiChoice) {
-      result = "Égalité !";
-    } else if (
-      (userChoice === "rock" && aiChoice === "scissors") ||
-      (userChoice === "paper" && aiChoice === "rock") ||
-      (userChoice === "scissors" && aiChoice === "paper")
-    ) {
-      result = "Tu as gagné ! 🎉";
-    } else {
-      result = "Tu as perdu... 😢";
-    }
-
-    return { aiChoice, result };
-  };
-
-  const handlePlay = (choice: string) => {
-    setUserChoice(choice);
-    setLoading(true);
-
-    // Appel à la fonction locale (simulation du backend)
-    setTimeout(() => {
-      const { aiChoice, result } = simulateBackend(choice);
-      setAiChoice(aiChoice);
-      setResult(result);
-      setLoading(false);
-    }, 1000); // Délai de 1 seconde pour simuler un temps de réponse
-  };
-
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-8">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800">Pierre-Feuille-Ciseaux</h1>
-      <div className="flex gap-4 mb-8">
-        {choices.map((choice) => (
-          <button
-            key={choice}
-            onClick={() => handlePlay(choice)}
-            className="bg-blue-500 hover:bg-blue-600 text-white text-2xl font-bold py-4 px-6 rounded-lg shadow-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={loading}
-          >
-            {emojis[choice]}
-          </button>
-        ))}
-      </div>
-      {loading ? (
-        <p className="text-xl text-gray-600">Chargement en cours...</p>
-      ) : userChoice && aiChoice ? (
-        <div className="bg-white p-6 rounded-lg shadow-md text-center">
-          <p className="text-xl mb-2">
-            <span className="font-semibold">Ton choix :</span> {emojis[userChoice]}
-          </p>
-          <p className="text-xl mb-4">
-            <span className="font-semibold">Choix de l'IA :</span> {emojis[aiChoice]}
-          </p>
-          <p className="text-2xl font-bold text-green-600">{result}</p>
-        </div>
-      ) : null}
-    </div>
+    <Router>
+      <Routes>
+        { /* Route par défaut (page d'accueil) */}
+        <Route path="/" element={<Home />} />
+        { /* Route pour la page de connexion */}
+        <Route path="/login" element={<Login />} />
+        { /* Route pour le jeu */}
+        <Route path="/game" element={<Game />} />
+      </Routes>
+    </Router>
   );
 }
 
