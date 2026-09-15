@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { createUser, authenticateUser } from './auth';
+import { createUser, authenticateUser, logoutUser } from './auth';
 
 const app = express();
 app.use(cors());
@@ -22,6 +22,15 @@ app.post('/api/login', async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
+
+app.post('/api/logout', async (req, res) => {
+  try {
+    await logoutUser(req.body.userId);
+    res.status(200).json({ message: 'Déconnexion réussie' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
   }
 });
 

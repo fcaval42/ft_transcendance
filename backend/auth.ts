@@ -17,13 +17,27 @@ export async function authenticateUser(input: LoginInput): Promise<CreateUserRes
   const match = await bcrypt.compare(input.password, user.password);
   if (!match) throw new Error('Invalid credentials');
 
-  return {
-    id: user.id,
-    email: user.email,
-    username: user.username,
-    avatarUrl: user.avatarUrl ?? null,
-    createdAt: user.createdAt,
-  };
+  const updatedUser = await prisma.user.update({
+    where: { id: user.id },
+    data: { isOnline: true },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      avatarUrl: true,
+      isOnline: true,
+      createdAt: true,
+    },
+  });
+
+  return updatedUser;
+}
+
+export async function logoutUser(userId: string): Promise<void> {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { isOnline: false },
+  });
 }
 
 interface CreateUserInput {
@@ -38,6 +52,7 @@ interface CreateUserResult {
   email: string;
   username: string;
   avatarUrl: string | null;
+  isOnline: boolean;
   createdAt: Date;
 }
 
@@ -57,6 +72,7 @@ export async function createUser(input: CreateUserInput): Promise<CreateUserResu
       email: true,
       username: true,
       avatarUrl: true,
+      isOnline: true,
       createdAt: true,
     },
   });
