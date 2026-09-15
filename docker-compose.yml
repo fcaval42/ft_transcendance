@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: ft_transcendence_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ft_transcendence
+    ports:
+      - "5432:5432" # port pour se connecter depuis le backend
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # sauvegarde les données même si
+      # le conteneur s'arrête
+
+  frontend:
+    image: node:24-alpine
+    container_name: ft_transcendence_frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command: sh -c "npm install && npm start"
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
+
+# pour lancer : docker compose up -d
+
+# tu n'as pas besoin d'installer PostgreSQL sur ta machine (vive Docker). + tout
+# le monde aura la même version de PostgreSQL.
+
+# Quelques commandes de base utiles :
+#| `docker-compose up -d` | Lance la base de données en arrière-plan. |
+#| `docker ps` | Vérifie que le conteneur PostgreSQL est bien lancé. |
+#| `docker-compose down` | Arrête la base de données (les données sont sauvegardées). |
+
+# Pour les volumes : Docker crée automatiquement un dossier caché sur la machien pour
+# stocker les données du volume. (ex : /var/lib/docker/volumes/... sur Linux/Mac).
+
+# Plus tard quand il faudra se connecter depuis le backend (pas ta partie mais je le met
+# quand même):
+#const { Pool } = require('pg');
+#const pool = new Pool({
+#  user: 'postgres',
+#  host: 'localhost',  // ou '127.0.0.1'
+#  database: 'ft_transcendence',
+#  password: 'postgres',
+#  port: 5432,
+#});
+
+# POINTS À RETENIR
+# 1. pas besoin de Dockerfile pour la base de données (mais bon cela t'importe peu)
+# 2. Les données sont sauvegardées : grâce au volume postgres_data, rien n'est perdu
+# quand on arrêtes le conteneur.
+# 3. Port 5432: le port par défaut de PostgreSQL. Si tu as déjà PGRSQL installé en local,
+# tu devras arrêter le Post local ou changer le port dans le docker-compose. (ex: 5433:5432)
+
+# Commandes en plus:
+# docker exec -it ft_transcendence_db psql -U postgres -d ft_transcendence :
+#     Accéder à la base de données en ligne de commande
+# docker-compose down -v  # Supprime le volume (ATTENTION : les données seront perdues !)
+# docker-compose up -d    # Relance un conteneur propre

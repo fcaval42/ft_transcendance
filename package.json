@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "prisma": "^5.7.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.0",
+    "@types/bcrypt": "^6.0.0",
+    "bcrypt": "^6.0.0"
+  }
+}
