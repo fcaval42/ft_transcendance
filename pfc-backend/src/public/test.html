@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>TEST TEMPORAIRE - Pierre-Feuille-Ciseaux</title>
+<style>
+  body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 16px; }
+  .banner {
+    background: #ffcc00; color: #000; padding: 12px; text-align: center;
+    font-weight: bold; border: 2px solid #cc0000; margin-bottom: 20px;
+  }
+  .player { border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 8px; }
+  button { margin: 4px; padding: 8px 16px; cursor: pointer; }
+  pre { background: #f4f4f4; padding: 10px; overflow-x: auto; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <div class="banner">
+    ⚠️ PAGE DE TEST TEMPORAIRE — pas la vraie interface, à supprimer plus tard ⚠️
+  </div>
+
+  <h1>Test manuel : Pierre-Feuille-Ciseaux</h1>
+
+  <button id="createBtn">Créer une session (alice vs bob)</button>
+  <p>Session ID : <code id="sessionId">(aucune)</code></p>
+  <h2>⏱️ Temps restant : <span id="timer">-</span>s</h2>
+
+  <div class="player">
+    <h3>Alice</h3>
+    <button onclick="play('alice','rock')">🪨 Pierre</button>
+    <button onclick="play('alice','paper')">📄 Feuille</button>
+    <button onclick="play('alice','scissors')">✂️ Ciseaux</button>
+  </div>
+
+  <div class="player">
+    <h3>Bob</h3>
+    <button onclick="play('bob','rock')">🪨 Pierre</button>
+    <button onclick="play('bob','paper')">📄 Feuille</button>
+    <button onclick="play('bob','scissors')">✂️ Ciseaux</button>
+  </div>
+
+  <h3>État du match :</h3>
+  <pre id="state">-</pre>
+
+<script>
+let sessionId = null;
+let roundTimeLimitMs = null;
+let roundDeadline = null; // timestamp (ms) auquel le round en cours se termine
+let lastRoundsCount = 0;
+
+document.getElementById('createBtn').onclick = async () => {
+  const res = await fetch('/api/game/session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ player1Id: 'alice', player2Id: 'bob' })
+  });
+  const data = await res.json();
+  sessionId = data.id;
+  roundTimeLimitMs = data.roundTimeLimitMs;
+  lastRoundsCount = 0;
+  document.getElementById('sessionId').textContent = sessionId;
+  startNewRoundTimer();
+  render(data);
+};
+
+async function play(playerId, move) {
+  if (!sessionId) { alert("Crée une session d'abord"); return; }
+  const res = await fetch(`/api/game/session/${sessionId}/move`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ playerId, move })
+  });
+  const data = await res.json();
+  const match = data.match ?? data;
+  checkNewRound(match);
+  render(match);
+}
+
+// Le chrono ne repart que quand on détecte qu'un nouveau round a commencé
+// (le nombre de rounds joués a augmenté, qu'on l'ait déclenché nous-même
+// en jouant, ou que ce soit le serveur qui ait résolu un timeout tout seul).
+function checkNewRound(match) {
+  if (match?.rounds && match.rounds.length !== lastRoundsCount) {
+    lastRoundsCount = match.rounds.length;
+    startNewRoundTimer();
+  }
+}
+
+function startNewRoundTimer() {
+  roundDeadline = Date.now() + roundTimeLimitMs;
+}
+
+function render(data) {
+  document.getElementById('state').textContent = JSON.stringify(data, null, 2);
+}
+
+// Rafraîchit l'état toutes les secondes, pour voir le timeout se déclencher
+// tout seul côté serveur même si personne ne clique sur un bouton.
+setInterval(async () => {
+  if (!sessionId) return;
+  const res = await fetch(`/api/game/session/${sessionId}`);
+  if (res.ok) {
+    const data = await res.json();
+    checkNewRound(data.match);
+    render(data);
+  }
+}, 1000);
+
+// Affichage du chrono lui-même, rafraîchi plus souvent pour rester fluide.
+// Approximatif (basé sur l'horloge du navigateur), suffisant pour du test manuel.
+setInterval(() => {
+  const timerEl = document.getElementById('timer');
+  if (!roundDeadline) { timerEl.textContent = '-'; return; }
+  const remainingMs = Math.max(0, roundDeadline - Date.now());
+  timerEl.textContent = (remainingMs / 1000).toFixed(1);
+}, 100);
+</script>
+</body>
+</html>
