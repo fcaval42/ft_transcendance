@@ -134,19 +134,14 @@ function App() {
   };
 
   return (
-    <div style={{ textAlign: "center", padding: "2rem" }}>
-      <h1>Pierre-Feuille-Ciseaux</h1>
-      <div style={{ margin: "2rem" }}>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-8">
+      <h1 className="text-4xl font-bold mb-8 text-gray-800">Pierre-Feuille-Ciseaux</h1>
+      <div className="flex gap-4 mb-8">
         {choices.map((choice) => (
           <button
             key={choice}
             onClick={() => handlePlay(choice)}
-            style={{
-              margin: "0.5rem",
-              padding: "1rem",
-              fontSize: "1.5rem",
-              cursor: "pointer",
-            }}
+            className="bg-blue-500 hover:bg-blue-600 text-white text-2xl font-bold py-4 px-6 rounded-lg shadow-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
             {emojis[choice]}
@@ -154,12 +149,16 @@ function App() {
         ))}
       </div>
       {loading ? (
-        <p>Chargement en cours...</p>
+        <p className="text-xl text-gray-600">Chargement en cours...</p>
       ) : userChoice && aiChoice ? (
-        <div>
-          <p>Tu as choisi : {emojis[userChoice]}</p>
-          <p>L'IA a choisi : {emojis[aiChoice]}</p>
-          <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{result}</p>
+        <div className="bg-white p-6 rounded-lg shadow-md text-center">
+          <p className="text-xl mb-2">
+            <span className="font-semibold">Ton choix :</span> {emojis[userChoice]}
+          </p>
+          <p className="text-xl mb-4">
+            <span className="font-semibold">Choix de l'IA :</span> {emojis[aiChoice]}
+          </p>
+          <p className="text-2xl font-bold text-green-600">{result}</p>
         </div>
       ) : null}
     </div>
