@@ -1,0 +1,110 @@
+/* AuthButtons.css */
+
+/* Conteneur principal */
+.auth-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Menu utilisateur (connecté) */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Menu invité (déconnecté) */
+.guest-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Style de base pour tous les boutons */
+.auth-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+  color: #333;
+}
+
+/* Effet de survol */
+.auth-button:hover {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+
+/* Bouton Connexion */
+.auth-button.login {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+}
+
+.auth-button.login:hover {
+  background-color: #3367d6;
+}
+
+/* Bouton Inscription */
+.auth-button.register {
+  background-color: #34a853;
+  color: white;
+  border: none;
+}
+
+.auth-button.register:hover {
+  background-color: #2d8e47;
+}
+
+/* Bouton Google */
+.auth-button.google {
+  background-color: white;
+  color: #757575;
+  border: 1px solid #ddd;
+}
+
+.auth-button.google:hover {
+  background-color: #f9f9f9;
+}
+
+/* Bouton GitHub */
+.auth-button.github {
+  background-color: #24292e;
+  color: white;
+  border: none;
+}
+
+.auth-button.github:hover {
+  background-color: #1a1f24;
+}
+
+/* Bouton Se déconnecter */
+.auth-button.logout {
+  background-color: #ea4335;
+  color: white;
+  border: none;
+}
+
+.auth-button.logout:hover {
+  background-color: #d33426;
+}
