@@ -24,8 +24,8 @@ Phase 1 est déjà faite et mergée. Je pars directement sur la **Phase 4**
 - [x] Rechargement à chaud en dev (`ts-node-dev`)
 
 ## Phase 4 — Jeu Pierre-Feuille-Ciseaux (base) — 👉 Point de départ actuel
-- [ ] Moteur de règles pur (rounds, condition de victoire), indépendant du transport
-- [ ] Gestion d'un match / session 1v1
+- [x] Moteur de règles pur (rounds, condition de victoire), indépendant du transport (`rules.ts`, `match.ts`)
+- [x] Gestion d'un match / session 1v1 (`session.ts`) — best of 5, timeout = défaite automatique
 - [ ] Intégration temps réel via Socket.io
 - Couvre : **Complete web-based game** (majeur, 2pts)
 - ⚠️ Prérequis pour toutes les phases suivantes (5 à 8)
