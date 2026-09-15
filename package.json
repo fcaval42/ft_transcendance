@@ -1,17 +1,8 @@
 {
-  "devDependencies": {
-    "@types/node": "^26.5.1",
-    "autoprefixer": "^10.6.0",
-    "postcss": "^8.5.28",
-    "prisma": "^5.7.0",
-    "tailwindcss": "^4.3.3",
-    "ts-node": "^10.9.2",
-    "typescript": "^7.0.2"
-  },
   "dependencies": {
-    "@prisma/client": "^5.7.0",
-    "@types/bcrypt": "^6.0.0",
-    "bcrypt": "^6.0.0",
-    "react-router-dom": "^7.18.3"
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
   }
 }
