@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { createUser, authenticateUser, logoutUser } from './auth';
+import { createUser, authenticateUser, logoutUser, prisma } from './auth';
+import { AuthenticatedRequest, authenticateToken } from './middleware/authmiddleware';
 
 const app = express();
 app.use(cors());
@@ -25,10 +26,38 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-app.post('/api/logout', async (req, res) => {
+// Déconnexion
+app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res) => {
   try {
-    await logoutUser(req.body.userId);
+    if (req.user) {
+      await logoutUser(req.user.userId);
+    }
     res.status(200).json({ message: 'Déconnexion réussie' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// Récupérer son propre profil (Exemple de route protégée)
+app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user?.userId },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        avatarUrl: true,
+        isOnline: true,
+        wins: true,
+        losses: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+
+    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ error: 'Erreur serveur' });
   }

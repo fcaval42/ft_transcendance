@@ -15,7 +15,7 @@ model User {
   email        String   @unique
   username     String   @unique
   password     String?  // Nullable car OAuth (42, Google) n'a pas de mot de passe local
-  avatarUrl    String?
+  avatarUrl    String @default("https://i.imgur.com/pOm90d7.jpeg")
   
   // Statut & OAuth
   isOnline     Boolean  @default(false)
