@@ -12,6 +12,8 @@
   .player { border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 8px; }
   button { margin: 4px; padding: 8px 16px; cursor: pointer; }
   pre { background: #f4f4f4; padding: 10px; overflow-x: auto; white-space: pre-wrap; }
+  .last-round { border: 1px solid #999; background: #f9f9f9; padding: 12px; border-radius: 8px; line-height: 1.6; }
+  .last-round .draw-banner { color: #cc0000; }
 </style>
 </head>
 <body>
@@ -22,6 +24,7 @@
   <h1>Test manuel : Pierre-Feuille-Ciseaux</h1>
 
   <button id="createBtn">Créer une session (alice vs bob)</button>
+  <button id="createBotBtn">Créer une session (alice vs 🤖 Bot)</button>
   <p>Session ID : <code id="sessionId">(aucune)</code></p>
   <h2>⏱️ Temps restant : <span id="timer">-</span>s</h2>
 
@@ -32,12 +35,15 @@
     <button onclick="play('alice','scissors')">✂️ Ciseaux</button>
   </div>
 
-  <div class="player">
-    <h3>Bob</h3>
+  <div class="player" id="player2Block">
+    <h3 id="player2Name">Bob</h3>
     <button onclick="play('bob','rock')">🪨 Pierre</button>
     <button onclick="play('bob','paper')">📄 Feuille</button>
     <button onclick="play('bob','scissors')">✂️ Ciseaux</button>
   </div>
+
+  <h3>🎮 Dernier coup joué :</h3>
+  <div id="lastRound" class="last-round">-</div>
 
   <h3>État du match :</h3>
   <pre id="state">-</pre>
@@ -48,20 +54,25 @@ let roundTimeLimitMs = null;
 let roundDeadline = null; // timestamp (ms) auquel le round en cours se termine
 let lastRoundsCount = 0;
 
-document.getElementById('createBtn').onclick = async () => {
+document.getElementById('createBtn').onclick = () => startSession({ player1Id: 'alice', player2Id: 'bob' }, false);
+document.getElementById('createBotBtn').onclick = () => startSession({ player1Id: 'alice', vsBot: true }, true);
+
+async function startSession(body, isVsBot) {
   const res = await fetch('/api/game/session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ player1Id: 'alice', player2Id: 'bob' })
+    body: JSON.stringify(body)
   });
   const data = await res.json();
   sessionId = data.id;
   roundTimeLimitMs = data.roundTimeLimitMs;
   lastRoundsCount = 0;
   document.getElementById('sessionId').textContent = sessionId;
+  document.getElementById('player2Name').textContent = isVsBot ? '🤖 Bot' : 'Bob';
+  document.getElementById('player2Block').style.display = isVsBot ? 'none' : 'block';
   startNewRoundTimer();
   render(data);
-};
+}
 
 async function play(playerId, move) {
   if (!sessionId) { alert("Crée une session d'abord"); return; }
@@ -90,8 +101,46 @@ function startNewRoundTimer() {
   roundDeadline = Date.now() + roundTimeLimitMs;
 }
 
+const MOVE_LABELS = { rock: '🪨 Pierre', paper: '📄 Feuille', scissors: '✂️ Ciseaux' };
+
+function formatMove(move) {
+  return move ? MOVE_LABELS[move] : '🚫 AFK (pas de coup joué)';
+}
+
+function describeResult(result, player2Name) {
+  switch (result) {
+    case 'player1': return 'Alice gagne le round';
+    case 'player2': return `${player2Name} gagne le round`;
+    case 'draw': return 'Égalité';
+    case 'afk': return 'Personne n\'a joué (AFK des deux côtés)';
+    default: return result;
+  }
+}
+
+function renderLastRound(match) {
+  const el = document.getElementById('lastRound');
+  if (!match?.rounds?.length) {
+    el.textContent = '-';
+    return;
+  }
+  const last = match.rounds[match.rounds.length - 1];
+  const player2Name = document.getElementById('player2Name').textContent;
+
+  let html = `<strong>Round ${last.roundNumber}</strong><br>`;
+  html += `Alice a joué : ${formatMove(last.move1)}<br>`;
+  html += `${player2Name} a joué : ${formatMove(last.move2)}<br>`;
+  html += `Résultat : ${describeResult(last.result, player2Name)}`;
+
+  if (match.status === 'finished' && match.winner === null) {
+    html += `<br><span class="draw-banner"><strong>⚠️ Match nul — trop de rounds AFK d'affilée, match terminé.</strong></span>`;
+  }
+
+  el.innerHTML = html;
+}
+
 function render(data) {
   document.getElementById('state').textContent = JSON.stringify(data, null, 2);
+  renderLastRound(data?.match ?? data);
 }
 
 // Rafraîchit l'état toutes les secondes, pour voir le timeout se déclencher

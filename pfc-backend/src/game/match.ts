@@ -59,9 +59,17 @@ export function playMatchRound(
   } else if (match.score2 >= match.winsNeeded) {
     match.status = "finished";
     match.winner = "player2";
+  } else if (hasThreeConsecutiveAfkRounds(match.rounds)) {
+    match.status = "finished";
+    match.winner = null;
   }
 
   return match;
+}
+
+function hasThreeConsecutiveAfkRounds(rounds: RoundOutcome[]): boolean {
+  if (rounds.length < 3) return false;
+  return rounds.slice(-3).every((round) => round.result === "afk");
 }
 
 function resolveRound(move1: Move | null, move2: Move | null): RoundResult {

@@ -6,6 +6,7 @@ export interface GameSession {
   id: string;
   player1Id: string;
   player2Id: string;
+  isVsBot: boolean;
   match: Match;
   pendingMove1: Move | null;
   pendingMove2: Move | null;
@@ -37,12 +38,14 @@ function armRoundTimer(sessionId: string): void {
 export function createSession(
   player1Id: string,
   player2Id: string,
-  winsNeeded?: number
+  winsNeeded?: number,
+  isVsBot = false
 ): GameSession {
   const session: GameSession = {
     id: randomUUID(),
     player1Id,
     player2Id,
+    isVsBot,
     match: createMatch(winsNeeded),
     pendingMove1: null,
     pendingMove2: null,

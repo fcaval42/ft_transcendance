@@ -2,17 +2,23 @@ import { Router } from "express";
 import { createSession, submitMove, getSession } from "./session";
 import { Move } from "./rules";
 import { ROUND_TIME_LIMIT_MS } from "./match";
+import { BOT_PLAYER_ID, getRandomMove } from "./bot";
 
 export const gameRouter = Router();
 
 gameRouter.post("/session", (req, res) => {
-  const { player1Id, player2Id } = req.body ?? {};
-  if (!player1Id || !player2Id) {
+  const { player1Id, player2Id, vsBot } = req.body ?? {};
+  if (!player1Id || (!player2Id && !vsBot)) {
     return res
       .status(400)
-      .json({ error: "player1Id et player2Id sont requis" });
+      .json({ error: "player1Id et (player2Id ou vsBot) sont requis" });
   }
-  const session = createSession(player1Id, player2Id);
+  const session = createSession(
+    player1Id,
+    vsBot ? BOT_PLAYER_ID : player2Id,
+    undefined,
+    Boolean(vsBot)
+  );
   res.json({ ...session, roundTimeLimitMs: ROUND_TIME_LIMIT_MS });
 });
 
@@ -33,7 +39,13 @@ gameRouter.post("/session/:id/move", (req, res) => {
     return res.status(400).json({ error: "playerId et move sont requis" });
   }
   try {
-    const result = submitMove(req.params.id, playerId, move);
+    let result = submitMove(req.params.id, playerId, move);
+
+    const session = getSession(req.params.id);
+    if (result.status === "waiting" && session?.isVsBot) {
+      result = submitMove(req.params.id, BOT_PLAYER_ID, getRandomMove());
+    }
+
     res.json(result);
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
