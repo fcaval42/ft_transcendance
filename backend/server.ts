@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { createUser, authenticateUser, logoutUser, prisma, findOrCreateOAuthUser } from './auth';
+import { createUser, authenticateUser, setUserOffline, prisma, findOrCreateOAuthUser } from './auth';
 import { AuthenticatedRequest, authenticateToken } from './middleware/authmiddleware';
 
 const app = express();
@@ -26,7 +26,7 @@ app.post('/api/login', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60000
+      maxAge: 3600*10000
     });
     res.status(200).json({ user, message: 'Connexion réussie' });
   } catch (error) {
@@ -37,7 +37,7 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res) => {
   try {
     if (req.user) {
-      await logoutUser(req.user.userId);
+      await setUserOffline(req.user.userId);
     }
     res.clearCookie('token', {
       httpOnly: true,
@@ -128,7 +128,7 @@ app.get('/api/auth/42/callback', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60000
+      maxAge: 3600*10000
     });
     res.redirect('https://localhost:8443/');
   } catch (error: any) {
@@ -192,7 +192,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60000
+      maxAge: 3600*10000
     });
     res.redirect('https://localhost:8443/');
   } catch (error: any) {
