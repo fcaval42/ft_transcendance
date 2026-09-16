@@ -26,7 +26,7 @@ app.post('/api/login', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 3600*10000
+      maxAge: 3600 * 10000
     });
     res.status(200).json({ user, message: 'Connexion réussie' });
   } catch (error) {
@@ -128,7 +128,7 @@ app.get('/api/auth/42/callback', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 3600*10000
+      maxAge: 3600 * 10000
     });
     res.redirect('https://localhost:8443/');
   } catch (error: any) {
@@ -192,12 +192,35 @@ app.get('/api/auth/google/callback', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 3600*10000
+      maxAge: 3600 * 10000
     });
     res.redirect('https://localhost:8443/');
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Échec de l authentification Google' });
   }
 });
+
+setInterval(async () => {
+  try {
+    const oneHourAgo = new Date(Date.now() - 3600000);
+
+    const result = await prisma.user.updateMany({
+      where: {
+        isOnline: true,
+        lastSeenAt: { lt: oneHourAgo }
+      },
+      data: {
+        isOnline: false,
+        lastSeenAt: new Date()
+      }
+    });
+
+    if (result.count > 0) {
+      console.log(`[Cleanup] ${result.count} utilisateur(s) marqué(s) comme hors ligne (inactifs > 1h)`);
+    }
+  } catch (error) {
+    console.error('[Cleanup] Erreur:', error);
+  }
+}, 900000);
 
 app.listen(3001, () => console.log("Serveur démarré sur http://localhost:3001"));

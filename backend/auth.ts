@@ -49,7 +49,7 @@ export function generateToken(userId: string, email: string): string {
   return jwt.sign(
     { userId, email } as JwtPayload,
     JWT_SECRET,
-    { expiresIn: '1m' }
+    { expiresIn: '1h' }
   );
 }
 
@@ -87,7 +87,9 @@ export async function authenticateUser(input: LoginInput): Promise<AuthResponse>
 
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
-    data: { isOnline: true },
+    data: { isOnline: true,
+            lastSeenAt: new Date()
+        },
     select: {
       id: true,
       email: true,
@@ -142,13 +144,16 @@ export async function findOrCreateOAuthUser(input: OAuthUserInput): Promise<Auth
         oauthProvider: input.provider,
         oauthId: input.providerId,
         isOnline: true,
+        lastSeenAt: new Date(),
       },
     });
   } else {
     // Mettre à jour le statut en ligne
     user = await prisma.user.update({
       where: { id: user.id },
-      data: { isOnline: true },
+      data: { isOnline: true,
+              lastSeenAt: new Date(),
+       },
     });
   }
 

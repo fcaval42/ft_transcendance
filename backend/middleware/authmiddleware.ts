@@ -18,6 +18,10 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
     req.user = decoded; // Injecte les infos décodées (userId, email)
+    await prisma.user.update({
+        where: { id: decoded.userId },
+        data: { lastSeenAt: new Date() }
+      });
     next();
   } catch (error) {
     // Si le token est expiré
