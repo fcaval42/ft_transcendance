@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "./utils/protectedRoute";
 import { Login } from "./pages/Login";
 import { Game } from "./pages/Game";
 import { Home } from "./pages/Home";
@@ -11,8 +12,10 @@ function App() {
         <Route path="/" element={<Home />} />
         { /* Route pour la page de connexion */}
         <Route path="/login" element={<Login />} />
-        { /* Route pour le jeu */}
-        <Route path="/game" element={<Game />} />
+        { /* Route disponibles si connecté */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/game" element={<Game />} />
+        </Route>
       </Routes>
     </Router>
   );
