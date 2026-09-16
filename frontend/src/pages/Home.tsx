@@ -1,4 +1,3 @@
-// Link = créer un lien cliquable sans recharger la page
 // src/pages/Home.tsx
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,12 +6,21 @@ export const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    
-    // Si un token est présent, on redirige automatiquement vers le profil ou le jeu
-    if (token) {
-      navigate("/game");
-    }
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/me", {
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          navigate("/game");
+        }
+      } catch {
+        // Pas de session valide, on reste sur la page d'accueil.
+      }
+    };
+
+    checkAuth();
   }, [navigate]);
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-4">

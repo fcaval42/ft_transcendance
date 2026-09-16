@@ -19,9 +19,10 @@ export const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3001/api/login", {
+      const response = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
@@ -30,9 +31,6 @@ export const Login = () => {
       if (!response.ok) {
         throw new Error(data.error || "Identifiants invalides.");
       }
-
-      // Stockage du Token JWT
-      localStorage.setItem("token", data.token);
 
       // Redirection vers l'espace de jeu
       navigate("/game");

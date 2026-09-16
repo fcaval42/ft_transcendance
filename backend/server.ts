@@ -1,12 +1,13 @@
-import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { createUser, authenticateUser, logoutUser, prisma, findOrCreateOAuthUser } from './auth';
 import { AuthenticatedRequest, authenticateToken } from './middleware/authmiddleware';
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 app.post('/api/users', async (req, res) => {
   try {
@@ -19,8 +20,15 @@ app.post('/api/users', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
   try {
-    const user = await authenticateUser(req.body);
-    res.status(200).json(user);
+    const { user, token } = await authenticateUser(req.body);
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 3600000
+    });
+    res.status(200).json({ user, message: 'Connexion réussie' });
   } catch (error) {
     res.status(401).json({ error: 'Invalid credentials' });
   }
@@ -31,6 +39,12 @@ app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res
     if (req.user) {
       await logoutUser(req.user.userId);
     }
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/'
+    });
     res.status(200).json({ message: 'Déconnexion réussie' });
   } catch (error) {
     res.status(500).json({ error: 'Erreur serveur' });
@@ -78,20 +92,20 @@ app.get('/api/auth/42/callback', async (req, res) => {
 
   try {
     const params = new URLSearchParams({
-    grant_type: 'authorization_code',
-    client_id: process.env.FORTYTWO_CLIENT_ID || '',
-    client_secret: process.env.FORTYTWO_CLIENT_SECRET || '',
-    code: code as string,
-    redirect_uri: process.env.FORTYTWO_REDIRECT_URI || '',
-  });
+      grant_type: 'authorization_code',
+      client_id: process.env.FORTYTWO_CLIENT_ID || '',
+      client_secret: process.env.FORTYTWO_CLIENT_SECRET || '',
+      code: code as string,
+      redirect_uri: process.env.FORTYTWO_REDIRECT_URI || '',
+    });
   
-  const tokenResponse = await fetch('https://api.intra.42.fr/oauth/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: params.toString(),
-  });;
+    const tokenResponse = await fetch('https://api.intra.42.fr/oauth/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
+    });
 
     const tokenData = await tokenResponse.json();
     if (!tokenResponse.ok) throw new Error(tokenData.error_description || 'Erreur Token 42');
@@ -109,7 +123,14 @@ app.get('/api/auth/42/callback', async (req, res) => {
       providerId: String(userData.id),
     });
 
-    res.redirect(`http://localhost:3000/auth-success?token=${authResult.token}`);
+    res.cookie('token', authResult.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 3600000
+    });
+    res.redirect('https://localhost:8443/');
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Échec de l authentification OAuth' });
   }
@@ -166,7 +187,14 @@ app.get('/api/auth/google/callback', async (req, res) => {
       providerId: userData.id,
     });
 
-    res.redirect(`http://localhost:3000/auth-success?token=${authResult.token}`);
+    res.cookie('token', authResult.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 3600000
+    });
+    res.redirect('https://localhost:8443/');
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Échec de l authentification Google' });
   }

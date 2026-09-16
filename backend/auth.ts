@@ -49,7 +49,7 @@ export function generateToken(userId: string, email: string): string {
   return jwt.sign(
     { userId, email } as JwtPayload,
     JWT_SECRET,
-    { expiresIn: '24h' } // Le token expire au bout de 24h
+    { expiresIn: '1h' } // Le token expire au bout de 1h
   );
 }
 
