@@ -6,18 +6,39 @@ export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // Pour la redirection
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       setError("Veuillez remplir tous les champs.");
       return;
     }
-    // Simulation de connexion
-    console.log("Connexion avec :", { email, password });
     setError("");
-    navigate("/game"); // Redirige vers le jeu après connexion
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Identifiants invalides.");
+      }
+
+      // Redirection vers l'espace de jeu
+      navigate("/game");
+    } catch (err: any) {
+      setError(err.message || "Erreur lors de la connexion au serveur.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

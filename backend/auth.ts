@@ -49,7 +49,7 @@ export function generateToken(userId: string, email: string): string {
   return jwt.sign(
     { userId, email } as JwtPayload,
     JWT_SECRET,
-    { expiresIn: '24h' } // Le token expire au bout de 24h
+    { expiresIn: '1h' }
   );
 }
 
@@ -87,7 +87,9 @@ export async function authenticateUser(input: LoginInput): Promise<AuthResponse>
 
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
-    data: { isOnline: true },
+    data: { isOnline: true,
+            lastSeenAt: new Date()
+        },
     select: {
       id: true,
       email: true,
@@ -103,10 +105,13 @@ export async function authenticateUser(input: LoginInput): Promise<AuthResponse>
   return { user: updatedUser, token };
 }
 
-export async function logoutUser(userId: string): Promise<void> {
+export async function setUserOffline(userId: string): Promise<void> {
   await prisma.user.update({
     where: { id: userId },
-    data: { isOnline: false },
+    data: { 
+      isOnline: false,
+      lastSeenAt: new Date(),
+    },
   });
 }
 
@@ -139,17 +144,19 @@ export async function findOrCreateOAuthUser(input: OAuthUserInput): Promise<Auth
         oauthProvider: input.provider,
         oauthId: input.providerId,
         isOnline: true,
+        lastSeenAt: new Date(),
       },
     });
   } else {
     // Mettre à jour le statut en ligne
     user = await prisma.user.update({
       where: { id: user.id },
-      data: { isOnline: true },
+      data: { isOnline: true,
+              lastSeenAt: new Date(),
+       },
     });
   }
 
-  // 3. Générer le JWT propre au serveur
   const token = generateToken(user.id, user.email);
 
   return {
