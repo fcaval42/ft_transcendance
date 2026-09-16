@@ -26,7 +26,7 @@ app.post('/api/login', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 3600000
+      maxAge: 60000
     });
     res.status(200).json({ user, message: 'Connexion réussie' });
   } catch (error) {
@@ -128,7 +128,7 @@ app.get('/api/auth/42/callback', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 3600000
+      maxAge: 60000
     });
     res.redirect('https://localhost:8443/');
   } catch (error: any) {
@@ -192,7 +192,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 3600000
+      maxAge: 60000
     });
     res.redirect('https://localhost:8443/');
   } catch (error: any) {
