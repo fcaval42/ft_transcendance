@@ -1,0 +1,19 @@
+https://localhost {
+    # Certificat TLS auto-signé / CA interne
+    tls internal
+
+    # Redirection de l'API vers Express
+    handle /api/* {
+        reverse_proxy backend:3001
+    }
+
+    # Redirection du WebSocket (Socket.io)
+    handle /socket.io/* {
+        reverse_proxy backend:3001
+    }
+
+    # Redirection par défaut vers le Frontend React
+    handle {
+        reverse_proxy frontend:3000
+    }
+}
