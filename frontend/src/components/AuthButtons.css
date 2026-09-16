@@ -3,13 +3,13 @@
 /* Conteneur principal */
 .auth-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end; /* aligne les éléments à droite */
   align-items: center;
   gap: 12px;
   padding: 10px 20px;
   background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px; /* coins arrondis */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* ombre légère pour un card "card */
 }
 
 /* Menu utilisateur (connecté) */
@@ -36,14 +36,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 8px; /* espacement icône et texte */
+  padding: 8px 16px; /* espacement interne */
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  cursor: pointer; /* curseur en forme de main en survol */
+  transition: all 0.2s ease; /* animation fluide */
   background-color: white;
   color: #333;
 }
