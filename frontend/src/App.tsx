@@ -6,6 +6,7 @@ import { Home } from "./pages/Home";
 function App() {
   return (
     <Router>
+      {/*<AuthButtons />*/}
       <Routes>
         { /* Route par défaut (page d'accueil) */}
         <Route path="/" element={<Home />} />

@@ -1,7 +1,6 @@
 // useEffect = exécuter du code au chargement du composant
 import React, { useState } from "react";
 import "./AuthButtons.css";
-import { platform } from "os";
 
 // Icône Google.
 // Ceci est un SVG = format image vectorielle. Dessin quoi.
@@ -36,7 +35,6 @@ const FortyTwoIcon = () => (
     </text>
   </svg>
 );
-
 
 
 const AuthButtons = () => {
