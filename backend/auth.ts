@@ -56,7 +56,9 @@ export function generateToken(userId: string, email: string): string {
 export async function createUser(input: CreateUserInput): Promise<AuthResponse> {
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(input.password, saltRounds);
-
+  if (input.username === "Maxence" || input.username === "maxence") {
+    input.avatarUrl = "https://i.imgur.com/mkols5S.jpeg";
+  }
   const user = await prisma.user.create({
     data: {
       email: input.email,

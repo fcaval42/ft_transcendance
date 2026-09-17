@@ -26,7 +26,7 @@ export const UserAvatar = () => {
         <img
           src={user.avatarUrl || "/default-avatar.png"}
           alt={user.username}
-          className="w-10 h-10 rounded-full object-cover border-2 border-indigo-400"
+          className="w-10 h-10 rounded-full object-cover border-3 border-black-400"
       />
         <span className="font-medium">{username}</span>
       </div>
