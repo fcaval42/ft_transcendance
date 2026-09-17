@@ -1,6 +1,7 @@
 // src/pages/Register.tsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Toast } from "../components/Toast";
 
 export const Register = () => {
   const [username, setUsername] = useState("");
@@ -8,6 +9,13 @@ export const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" |
+    "error" }>
+    ({
+      show: false,
+      message: "",
+      type: "success",
+    });
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,6 +39,8 @@ export const Register = () => {
       if (!response.ok) {
         throw new Error(data.error || 'Erreur lors de l\'inscription');
       }
+      setToast({ show: true, message: "Inscription réussie ! Bienvenue", type: "success"});
+      setTimeout(() => navigate("/menu"), 1000)
     } catch (error) {
       console.error("Erreur lors de l'inscription :", error);
       setError("Erreur lors de l'inscription.");
@@ -41,6 +51,14 @@ export const Register = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({...toast, show: false})}
+          />
+      )}
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Inscription</h1>
 

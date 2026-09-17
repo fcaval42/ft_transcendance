@@ -2,11 +2,20 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthButtons from "../components/AuthButtons";
+import { Toast } from "../components/Toast";
+
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" |
+    "error" }>
+    ({
+      show: false,
+      message: "",
+      type: "success",
+    });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // Pour la redirection
 
@@ -33,8 +42,10 @@ export const Login = () => {
         throw new Error(data.error || "Identifiants invalides.");
       }
 
-      // Redirection vers l'espace de jeu
-      navigate("/Menu");
+      // affiche le toast (popup) puis on redirige
+      setToast({ show: true, message: "Connexion réussie ! Bienvenue", type: "success"});
+      setTimeout(() => navigate("/menu"), 1000)
+
     } catch (err: any) {
       setError(err.message || "Erreur lors de la connexion au serveur.");
     } finally {
@@ -44,6 +55,14 @@ export const Login = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({...toast, show: false})}
+          />
+      )}
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Connexion</h1>
 
