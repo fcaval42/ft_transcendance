@@ -76,7 +76,7 @@ export const Game = () => {
   // -------------------------------------------------------------------------
   // Fonction pour retourner à l'accueil
   const handleGoHome = () => {
-	navigate("/Menu"); // redirige vers la page d'accueil
+	navigate("/menu"); // redirige vers la page d'accueil
   };
 
   // -------------------------------------------------------------------------
