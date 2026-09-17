@@ -3,16 +3,17 @@ import { ProtectedRoute, UnlogRoute } from "./utils/checkRoute";
 import { Login } from "./pages/Login";
 import { Game } from "./pages/Game";
 import { Home } from "./pages/Home";
+import { Register } from "./pages/Register";
 
 function App() {
   return (
     <Router>
-      {/*<AuthButtons />*/}
       <Routes>
         { /* Route par défaut (page d'accueil) */}
         <Route path="/" element={<Home />} />
         { /* Route pour la page de connexion */}
         <Route element={<UnlogRoute />}>
+          <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Route>
         { /* Route disponibles si connecté */}
@@ -23,5 +24,4 @@ function App() {
     </Router>
   );
 }
-
 export default App;

@@ -31,6 +31,12 @@ export const Home = () => {
       >
         Se connecter
       </Link>
+      <Link
+        to="/register"
+        className="bg-pink-500 text-white px-6 py-3 rounded-lg hover:bg-pink-600 transition-colors"
+      >
+        S'inscrire
+      </Link>
     </div>
   );
 };
