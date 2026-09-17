@@ -13,7 +13,7 @@ export const Home = () => {
         });
 
         if (response.ok) {
-          navigate("/game");
+          navigate("/Menu");
         }
       } catch {
         // Pas de session valide, on reste sur la page d'accueil.

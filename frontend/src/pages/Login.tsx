@@ -34,7 +34,7 @@ export const Login = () => {
       }
 
       // Redirection vers l'espace de jeu
-      navigate("/game");
+      navigate("/Menu");
     } catch (err: any) {
       setError(err.message || "Erreur lors de la connexion au serveur.");
     } finally {
