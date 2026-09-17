@@ -32,8 +32,6 @@ export const Login = () => {
       if (!response.ok) {
         throw new Error(data.error || "Identifiants invalides.");
       }
-
-      // Redirection vers l'espace de jeu
       navigate("/menu");
     } catch (err: any) {
       setError(err.message || "Erreur lors de la connexion au serveur.");

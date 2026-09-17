@@ -48,7 +48,7 @@ export const UnlogRoute = () => {
 
   // Si une session valide existe, rediriger vers la page principale
   if (isAuthenticated) {
-    return <Navigate to="/game" replace />;
+    return <Navigate to="/menu" replace />;
   }
 
   return <Outlet />;
