@@ -29,6 +29,12 @@ export const Menu = () => {
       >
         <span>🏆</span> Tournoi
       </Link>
+      <Link
+        to="/profile"
+        className="bg-emerald-300 text-white px-8 py-4 rounded-lg hover:bg-emerald-400 transition-colors text-xl w-64 text-center flex items-center justify-center gap-2"
+      >
+        <span>👤</span> Profil
+      </Link>
     </div>
   );
 };
