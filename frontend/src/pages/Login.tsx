@@ -1,34 +1,70 @@
 // src/pages/Login.tsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import AuthButtons from "../components/AuthButtons";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // Pour la redirection
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       setError("Veuillez remplir tous les champs.");
       return;
     }
-    // Simulation de connexion
-    console.log("Connexion avec :", { email, password });
     setError("");
-    navigate("/game"); // Redirige vers le jeu après connexion
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Identifiants invalides.");
+      }
+
+      // Redirection vers l'espace de jeu
+      navigate("/game");
+    } catch (err: any) {
+      setError(err.message || "Erreur lors de la connexion au serveur.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Connexion</h1>
+
+        {/* BOUTONS 42 + GOOGLE*/}
+        <AuthButtons />
+
+        {/* Séparateur "ou" */}
+        <div className="my-4 flex items-center">
+          <div className="flex-1 border-t border-gray-300"></div>
+          <span className="mx-2 text-gray-500">ou</span>
+          <div className="flex-1 border-t border-gray-300"></div>
+        </div>
+
+        {/* ERREURS */}
         {error && (
           <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
             {error}
           </div>
         )}
+
+        {/* FORMULAIRE CLASSIQUE */}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 mb-2">

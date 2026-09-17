@@ -1,0 +1,55 @@
+// src/utils/checkRoute.tsx
+import { useEffect, useState } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+
+const useAuthStatus = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/me", {
+          credentials: "include",
+        });
+
+        setIsAuthenticated(response.ok);
+      } catch {
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  return isAuthenticated;
+};
+
+export const ProtectedRoute = () => {
+  const isAuthenticated = useAuthStatus();
+
+  if (isAuthenticated === null) {
+    return null;
+  }
+
+  // Si pas de session valide, redirection automatique vers /login
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+};
+
+export const UnlogRoute = () => {
+  const isAuthenticated = useAuthStatus();
+
+  if (isAuthenticated === null) {
+    return null;
+  }
+
+  // Si une session valide existe, rediriger vers la page principale
+  if (isAuthenticated) {
+    return <Navigate to="/game" replace />;
+  }
+
+  return <Outlet />;
+};
