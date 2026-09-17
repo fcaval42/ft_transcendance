@@ -24,7 +24,7 @@ export const UserAvatar = () => {
     <Link to={`/profile`}>
       <div className="flex items-center gap-2">
         <img
-          src={user.avatarUrl}
+          src={user.avatarUrl || "/default-avatar.png"}
           alt={user.username}
           className="w-10 h-10 rounded-full object-cover border-2 border-indigo-400"
       />

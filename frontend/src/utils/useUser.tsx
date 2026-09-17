@@ -8,6 +8,7 @@ interface User {
   avatarUrl?: string;
   wins: number;
   elo: number;
+  createdAt: string;
   losses: number;
 }
 
