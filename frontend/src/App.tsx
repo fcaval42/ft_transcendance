@@ -5,6 +5,7 @@ import { Game } from "./pages/Game";
 import { Menu } from "./pages/Menu"
 import { Home } from "./pages/Home";
 import { Register } from "./pages/Register";
+import { Profile } from "./pages/Profile";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         { /* Route disponibles si connecté */}
         <Route element={<ProtectedRoute />}>
           <Route path="/menu" element={<Menu />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/game" element={<Game />} />
         </Route>
       </Routes>

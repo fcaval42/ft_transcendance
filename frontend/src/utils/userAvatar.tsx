@@ -21,10 +21,10 @@ export const UserAvatar = () => {
   }
 
   return (
-    <Link to={`/user/${user.id}`}>
+    <Link to={`/profile`}>
       <div className="flex items-center gap-2">
         <img
-          src={user.avatarUrl || "/default-avatar.png"}
+          src={user.avatarUrl}
           alt={user.username}
           className="w-10 h-10 rounded-full object-cover border-2 border-indigo-400"
       />

@@ -4,7 +4,11 @@ import { useState, useEffect } from 'react';
 interface User {
   id: string;
   username: string;
+  email: string;
   avatarUrl?: string;
+  wins: number;
+  elo: number;
+  losses: number;
 }
 
 export const useUser = (): { user: User | null; isLoading: boolean } => {
