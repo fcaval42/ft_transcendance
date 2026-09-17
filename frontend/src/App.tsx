@@ -19,7 +19,7 @@ function App() {
         </Route>
         { /* Route disponibles si connecté */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/Menu" element={<Menu />} />
+          <Route path="/menu" element={<Menu />} />
           <Route path="/game" element={<Game />} />
         </Route>
       </Routes>
