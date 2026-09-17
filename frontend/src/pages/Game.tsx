@@ -75,12 +75,19 @@ export const Game = () => {
   // -------------------------------------------------------------------------
   // Fonction pour retourner à l'accueil
   const handleGoHome = () => {
-	navigate("/"); // redirige vers la page d'accueil
+	navigate("/Menu"); // redirige vers la page d'accueil
   };
 
   // -------------------------------------------------------------------------
   return (
 	    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+
+      {/* Bouton déconnexion en haut à droite */}
+      <button className="absolute top-4 right-4 bg-yellow-400 text-white px-4 py-2 rounded-lg
+      hover:bg-yellow-500 transition-colors">
+        Se déconnecter
+      </button>
+
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
           Pierre-Feuille-Ciseaux
@@ -92,7 +99,7 @@ export const Game = () => {
               key={choice}
               onClick={() => handlePlay(choice)}
               disabled={loading}
-              className="w-20 h-20 text-4xl bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 flex items-center justify-center"
+              className="w-20 h-20 text-4xl bg-orange-300 text-white rounded-lg hover:bg-orange-400 transition-colors disabled:opacity-50 flex items-center justify-center"
             >
               {emojis[choice]}
             </button>
@@ -109,15 +116,15 @@ export const Game = () => {
             <p className="text-xl">
               L'IA a choisi : <span className="text-2xl">{emojis[aiChoice]}</span>
             </p>
-            <p className="text-2xl font-bold text-blue-600 mt-2">{result}</p>
+            <p className="text-2xl font-bold text-orange-800 mt-2">{result}</p>
           </div>
         ) : null}
 
         <button
           onClick={handleGoHome}
-          className="mt-6 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
+          className="mt-6 bg-emerald-400 text-white px-4 py-2 rounded hover:bg-emerald-500 transition-colors"
         >
-          Retour à l'accueil
+          Retour au menu
         </button>
       </div>
     </div>

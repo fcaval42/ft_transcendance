@@ -65,11 +65,11 @@ export const Register = () => {
 
         {/* BOUTONS 42 + GOOGLE (version "S'inscrire") */}
         <div className="flex gap-4 mb-6">
-          <button className="auth-button login-42">
-            <FortyTwoIcon /> S'inscrire avec 42
+          <button className="auth-button login-42" onClick={() => window.location.href = 'api/auth/42'}>
+            <FortyTwoIcon /> Se connecter avec 42
           </button>
-          <button className="auth-button google">
-            <GoogleIcon /> S'inscrire avec Google
+          <button className="auth-button google" onClick={() => window.location.href = 'api/auth/google'}>
+            <GoogleIcon /> Se connecter avec Google
           </button>
         </div>
 

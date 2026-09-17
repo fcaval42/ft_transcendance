@@ -78,7 +78,7 @@ app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => 
 app.get('/api/auth/42', (req, res) => {
   const redirectUri = encodeURIComponent(process.env.FORTYTwo_REDIRECT_URI!);
   const clientId = process.env.FORTYTwo_CLIENT_ID;
-  const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-30acd738b29aef30cd1ad79a2199d52ee801d85b62f353d861bf73891f95aa76&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fapi%2Fauth%2F42%2Fcallback&response_type=code`;
+  const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-f91e53fba85e441db218d0c6590325543e0c6275941e910086258c28c6b9d1cf&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2F42%2Fcallback&response_type=code`;
   
   res.redirect(authUrl);
 });
