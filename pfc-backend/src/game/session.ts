@@ -1,12 +1,14 @@
 import { randomUUID } from "crypto";
 import { Match, createMatch, playMatchRound, ROUND_TIME_LIMIT_MS } from "./match";
 import { Move } from "./rules";
+import { BotDifficulty } from "./bot";
 
 export interface GameSession {
   id: string;
   player1Id: string;
   player2Id: string;
   isVsBot: boolean;
+  botDifficulty: BotDifficulty;
   match: Match;
   pendingMove1: Move | null;
   pendingMove2: Move | null;
@@ -39,13 +41,15 @@ export function createSession(
   player1Id: string,
   player2Id: string,
   winsNeeded?: number,
-  isVsBot = false
+  isVsBot = false,
+  botDifficulty: BotDifficulty = "medium"
 ): GameSession {
   const session: GameSession = {
     id: randomUUID(),
     player1Id,
     player2Id,
     isVsBot,
+    botDifficulty,
     match: createMatch(winsNeeded),
     pendingMove1: null,
     pendingMove2: null,

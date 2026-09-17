@@ -24,7 +24,9 @@
   <h1>Test manuel : Pierre-Feuille-Ciseaux</h1>
 
   <button id="createBtn">Créer une session (alice vs bob)</button>
-  <button id="createBotBtn">Créer une session (alice vs 🤖 Bot)</button>
+  <button class="createBotBtn" data-difficulty="easy">Créer une session (alice vs 🤖 Bot easy)</button>
+  <button class="createBotBtn" data-difficulty="medium">Créer une session (alice vs 🤖 Bot medium)</button>
+  <button class="createBotBtn" data-difficulty="hard">Créer une session (alice vs 🤖 Bot hard)</button>
   <p>Session ID : <code id="sessionId">(aucune)</code></p>
   <h2>⏱️ Temps restant : <span id="timer">-</span>s</h2>
 
@@ -55,7 +57,9 @@ let roundDeadline = null; // timestamp (ms) auquel le round en cours se termine
 let lastRoundsCount = 0;
 
 document.getElementById('createBtn').onclick = () => startSession({ player1Id: 'alice', player2Id: 'bob' }, false);
-document.getElementById('createBotBtn').onclick = () => startSession({ player1Id: 'alice', vsBot: true }, true);
+document.querySelectorAll('.createBotBtn').forEach((btn) => {
+  btn.onclick = () => startSession({ player1Id: 'alice', vsBot: true, botDifficulty: btn.dataset.difficulty }, true);
+});
 
 async function startSession(body, isVsBot) {
   const res = await fetch('/api/game/session', {
@@ -68,7 +72,7 @@ async function startSession(body, isVsBot) {
   roundTimeLimitMs = data.roundTimeLimitMs;
   lastRoundsCount = 0;
   document.getElementById('sessionId').textContent = sessionId;
-  document.getElementById('player2Name').textContent = isVsBot ? '🤖 Bot' : 'Bob';
+  document.getElementById('player2Name').textContent = isVsBot ? `🤖 Bot (${data.botDifficulty})` : 'Bob';
   document.getElementById('player2Block').style.display = isVsBot ? 'none' : 'block';
   startNewRoundTimer();
   render(data);
