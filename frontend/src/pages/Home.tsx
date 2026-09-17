@@ -27,15 +27,9 @@ export const Home = () => {
       <h1 className="text-4xl font-bold">Bienvenue sur Transcendance</h1>
       <Link
         to="/login"
-        className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+        className="bg-indigo-400 text-white px-6 py-3 rounded-lg hover:bg-indigo-500 transition-colors"
       >
         Se connecter
-      </Link>
-      <Link
-        to="/register"
-        className="bg-pink-500 text-white px-6 py-3 rounded-lg hover:bg-pink-600 transition-colors"
-      >
-        S'inscrire
       </Link>
     </div>
   );

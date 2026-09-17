@@ -151,15 +151,20 @@ export const Register = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
+            className="w-full bg-pink-400 text-white p-2 rounded hover:bg-blue-500 transition-colors"
           >
             S'inscrire
           </button>
         </form>
 
         <div className="mt-4 text-center">
-          <Link to="/login" className="text-blue-500 hover:underline">
+          <Link to="/login" className="text-blue-400 hover:underline">
             Déjà un compte ? Se connecter
+          </Link>
+        </div>
+        <div className="mt-4 text-center">
+          <Link to="/" className="text-blue-500 hover:underline">
+            Retour à l'accueil
           </Link>
         </div>
       </div>

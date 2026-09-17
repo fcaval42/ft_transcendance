@@ -96,11 +96,26 @@ export const Login = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors"
+            className="w-full bg-indigo-400 text-white p-2 rounded hover:bg-indigo-500 transition-colors"
           >
             Se connecter
           </button>
+
+          {/* Séparateur "s'inscrire" */}
+          <div className="my-4 flex items-center">
+            <div className="flex-1 border-t border-gray-300"></div>
+            <span className="mx-2 text-gray-500">Pas encore inscrit ?</span>
+            <div className="flex-1 border-t border-gray-300"></div>
+          </div>
+
+          <Link
+            to="/register"
+            className="block w-full bg-pink-400 text-white p-2 rounded hover:bg-pink-500 transition-colors text-center"
+          >
+            S'inscrire
+          </Link>
         </form>
+
         <div className="mt-4 text-center">
           <Link to="/" className="text-blue-500 hover:underline">
             Retour à l'accueil
