@@ -1,14 +1,11 @@
 import { Link } from "react-router-dom";
+import { LogoutButton } from "../components/LougoutButton";
 
 export const Menu = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-6 relative">
       
-      {/* Bouton déconnexion en haut à droite */}
-      <button className="absolute top-4 right-4 bg-yellow-400 text-white px-4 py-2 rounded-lg
-      hover:bg-yellow-500 transition-colors">
-        Se déconnecter
-      </button>
+      <LogoutButton />
 
       <h1 className="text-4xl font-bold mb-8">Menu Principal</h1>
 

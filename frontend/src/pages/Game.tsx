@@ -8,6 +8,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // pour naviguer vers d'autres pages
+import { LogoutButton } from '../components/LougoutButton';
 
 export const Game = () => {
 
@@ -127,18 +128,14 @@ export const Game = () => {
   // -------------------------------------------------------------------------
   // Fonction pour retourner à l'accueil
   const handleGoHome = () => {
-	navigate("/Menu"); // redirige vers la page d'accueil
+	navigate("/menu"); // redirige vers la page d'accueil
   };
 
   // -------------------------------------------------------------------------
   return (
 	    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
 
-      {/* Bouton déconnexion en haut à droite */}
-      <button className="absolute top-4 right-4 bg-yellow-400 text-white px-4 py-2 rounded-lg
-      hover:bg-yellow-500 transition-colors">
-        Se déconnecter
-      </button>
+      <LogoutButton />
 
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
