@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 // Icône Google.
 // Ceci est un SVG = format image vectorielle. Dessin quoi.
 const GoogleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+  <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24">
     <path
       fill="#4285F4"
       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -29,7 +29,7 @@ const GoogleIcon = () => (
 
 // Icône 42
 const FortyTwoIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+  <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 24 24">
     <rect width="24" height="24" fill="#000000" rx="4" />
     <text x="12" y="15" fontFamily="Arial, sans-serif" fontSize="11" fill="#FFFFFF" textAnchor="middle" fontWeight="bold">
       42
