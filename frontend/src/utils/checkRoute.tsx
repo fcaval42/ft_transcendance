@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-const useAuthStatus = () => {
+export const useAuthStatus = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export const UnlogRoute = () => {
 
   // Si une session valide existe, rediriger vers la page principale
   if (isAuthenticated) {
-    return <Navigate to="/game" replace />;
+    return <Navigate to="/menu" replace />;
   }
 
   return <Outlet />;
