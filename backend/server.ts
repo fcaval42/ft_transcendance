@@ -9,7 +9,7 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-app.post('/api/users', async (req, res) => {
+app.post('/api/signin', async (req, res) => {
   try {
     const user = await createUser(req.body);
     res.status(201).json(user);

@@ -29,7 +29,7 @@ export const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !email || !password || !confirmPassword) {
       setError("Veuillez remplir tous les champs.");
@@ -39,7 +39,21 @@ export const Register = () => {
       setError("Les mots de passe ne correspondent pas.");
       return;
     }
-    // Simulation (pas de backend)
+    try {
+      const response = await fetch("/api/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+        body: JSON.stringify({ username,  email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de l\'inscription');
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'inscription :", error);
+      setError("Erreur lors de l'inscription.");
+    }
     console.log("Inscription avec :", { username, email, password });
     navigate("/login"); // Redirige vers la connexion après inscription
   };
