@@ -1,14 +1,19 @@
 import { randomUUID } from "crypto";
+import { EventEmitter } from "events";
 import { Match, createMatch, playMatchRound, ROUND_TIME_LIMIT_MS } from "./match";
 import { Move } from "./rules";
-import { BotDifficulty } from "./bot";
+
+// Emet "roundResolved" ({ sessionId, match }) chaque fois qu'une manche se
+// termine (coup joué normalement OU timeout AFK). Sert de pont vers la couche
+// temps réel (Socket.io, voir realtime.ts) sans que ce fichier ait besoin de
+// connaître Socket.io.
+export const sessionEvents = new EventEmitter();
 
 export interface GameSession {
   id: string;
   player1Id: string;
   player2Id: string;
   isVsBot: boolean;
-  botDifficulty: BotDifficulty;
   match: Match;
   pendingMove1: Move | null;
   pendingMove2: Move | null;
@@ -42,14 +47,12 @@ export function createSession(
   player2Id: string,
   winsNeeded?: number,
   isVsBot = false,
-  botDifficulty: BotDifficulty = "medium"
 ): GameSession {
   const session: GameSession = {
     id: randomUUID(),
     player1Id,
     player2Id,
     isVsBot,
-    botDifficulty,
     match: createMatch(winsNeeded),
     pendingMove1: null,
     pendingMove2: null,
@@ -108,12 +111,19 @@ function resolvePendingRound(session: GameSession): {
   session.pendingMove1 = null;
   session.pendingMove2 = null;
 
-  clearRoundTimer(session.id);
-  if (session.match.status === "playing") {
-    armRoundTimer(session.id);
+  const match = session.match;
+
+  if (match.status === "finished") {
+    // Le match est terminé : on libère la session (elle ne servira plus,
+    // et le résultat final est renvoyé directement dans la réponse ci-dessous).
+    endSession(session.id);
+  } else {
+    armRoundTimer(session.id); // arme un nouveau timer (annule l'ancien au passage)
   }
 
-  return { status: "round_played", match: session.match };
+  sessionEvents.emit("roundResolved", { sessionId: session.id, match });
+
+  return { status: "round_played", match };
 }
 
 function getSessionOrThrow(sessionId: string): GameSession {

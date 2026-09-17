@@ -1,13 +1,19 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { createServer } from 'http';
+import { Server as SocketIOServer } from 'socket.io';
 import { createUser, authenticateUser, setUserOffline, prisma, findOrCreateOAuthUser } from './auth';
 import { AuthenticatedRequest, authenticateToken } from './middleware/authmiddleware';
+import { gameRouter } from './game/routes';
+import { registerMatchmaking } from './game/matchmaking';
+import { registerRealtime } from './game/realtime';
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.use('/api/game', gameRouter);
 
 app.post('/api/signin', async (req, res) => {
   try {
@@ -223,4 +229,11 @@ setInterval(async () => {
   }
 }, 900000);
 
-app.listen(3001, () => console.log("Serveur démarré sur http://localhost:3001"));
+const httpServer = createServer(app);
+const io = new SocketIOServer(httpServer, {
+  cors: { origin: true, credentials: true },
+});
+registerMatchmaking(io);
+registerRealtime(io);
+
+httpServer.listen(3001, () => console.log("Serveur démarré sur http://localhost:3001"));

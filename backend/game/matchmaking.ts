@@ -16,11 +16,25 @@ export function registerMatchmaking(io: Server): void {
         return;
       }
 
+      if (waitingPlayer && waitingPlayer.playerId === playerId) {
+        // Même joueur déjà en attente (double clic, ou 2 onglets du même
+        // compte) : on ne le fait pas s'affronter lui-même, la partie ne
+        // pourrait jamais se terminer (le 2e coup écraserait toujours le 1er).
+        socket.emit("queueError", "Tu es déjà en attente d'une partie");
+        return;
+      }
+
       if (waitingPlayer) {
         const player1 = waitingPlayer;
         waitingPlayer = null;
 
         const session = createSession(player1.playerId, playerId);
+
+        // Les 2 joueurs rejoignent une room nommée par le sessionId, pour
+        // pouvoir leur diffuser le résultat de chaque manche en même temps
+        // (voir realtime.ts).
+        player1.socket.join(session.id);
+        socket.join(session.id);
 
         player1.socket.emit("matched", {
           sessionId: session.id,

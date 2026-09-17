@@ -14,8 +14,6 @@ export function getRandomMove(): Move {
   return MOVES[index];
 }
 
-export type BotDifficulty = "easy" | "medium" | "hard";
-
 const winsAgainst: Record<Move, Move> = {
   rock: "paper",
   paper: "scissors",
@@ -27,26 +25,6 @@ const losesTo: Record<Move, Move> = {
   paper: "rock",
   scissors: "paper",
 };
-
-function humanMoves(rounds: RoundOutcome[]): Move[] {
-  return rounds
-    .map((round) => round.move1)
-    .filter((move): move is Move => move !== null);
-}
-
-function mostFrequentMove(moves: Move[]): Move {
-  const counts: Record<Move, number> = { rock: 0, paper: 0, scissors: 0 };
-  for (const move of moves) counts[move]++;
-  return MOVES.reduce((best, move) => (counts[move] > counts[best] ? move : best));
-}
-
-function getMediumMove(rounds: RoundOutcome[]): Move {
-  const moves = humanMoves(rounds);
-  if (moves.length === 0 || Math.random() >= 0.65) {
-    return getRandomMove();
-  }
-  return winsAgainst[mostFrequentMove(moves)];
-}
 
 function predictHumanMove(rounds: RoundOutcome[]): Move | null {
   if (rounds.length === 0) return null;
@@ -60,24 +38,17 @@ function predictHumanMove(rounds: RoundOutcome[]): Move | null {
   if (lastRound.result === "player2") {
     return losesTo[lastHumanMove];
   }
-  return null; // égalité ou AFK : pas de biais fiable
+  return null;
 }
 
 function getHardMove(rounds: RoundOutcome[]): Move {
   const predicted = predictHumanMove(rounds);
-  if (predicted === null || Math.random() >= 0.8) {
+  if (predicted === null) {
     return getRandomMove();
   }
   return winsAgainst[predicted];
 }
 
-export function getBotMove(difficulty: BotDifficulty, rounds: RoundOutcome[]): Move {
-  switch (difficulty) {
-    case "medium":
-      return getMediumMove(rounds);
-    case "hard":
-      return getHardMove(rounds);
-    default:
-      return getRandomMove();
-  }
+export function getBotMove(rounds: RoundOutcome[]): Move {
+    return getHardMove(rounds);
 }
