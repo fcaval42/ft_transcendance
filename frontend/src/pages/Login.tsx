@@ -43,11 +43,12 @@ export const Login = () => {
       }
 
       // affiche le toast (popup) puis on redirige
-      setToast({ show: true, message: "Connexion réussie ! Bienvenue", type: "success"});
+      setToast({ show: true, message: "Connexion réussie ! Bienvenue 👋", type: "success"});
       setTimeout(() => navigate("/menu"), 1000)
 
-    } catch (err: any) {
-      setError(err.message || "Erreur lors de la connexion au serveur.");
+    } catch (error: any) {
+      setToast({ show: true, message: error.message || "Erreur lors de la connexion au serveur", type: "error" });
+      setError(error.message || "Erreur lors de la connexion au serveur.");
     } finally {
       setLoading(false);
     }
