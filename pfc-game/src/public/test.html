@@ -50,6 +50,33 @@
   <h3>État du match :</h3>
   <pre id="state">-</pre>
 
+  <hr>
+  <h2>🌐 Player vs Player (temps réel, 2 onglets/navigateurs différents)</h2>
+
+  <div id="pvpModeSelect">
+    <button id="pvpBtn">Jouer contre un autre joueur</button>
+  </div>
+
+  <div id="pvpWaiting" style="display:none;">
+    <p>⏳ En attente d'un adversaire...</p>
+    <button id="pvpCancelBtn">Annuler</button>
+  </div>
+
+  <div id="pvpGame" style="display:none;">
+    <p>Tu es : <strong id="pvpMyName">-</strong> — Adversaire : <strong id="pvpOpponentName">-</strong></p>
+    <p>Session ID : <code id="pvpSessionId">-</code></p>
+    <div class="player">
+      <button onclick="playPvp('rock')">🪨 Pierre</button>
+      <button onclick="playPvp('paper')">📄 Feuille</button>
+      <button onclick="playPvp('scissors')">✂️ Ciseaux</button>
+    </div>
+    <h3>🎮 Dernier coup joué :</h3>
+    <div id="pvpLastRound" class="last-round">-</div>
+    <h3>État du match :</h3>
+    <pre id="pvpState">-</pre>
+  </div>
+
+<script src="/socket.io/socket.io.js"></script>
 <script>
 let sessionId = null;
 let roundTimeLimitMs = null;
@@ -167,6 +194,87 @@ setInterval(() => {
   const remainingMs = Math.max(0, roundDeadline - Date.now());
   timerEl.textContent = (remainingMs / 1000).toFixed(1);
 }, 100);
+
+// --- Player vs Player (file d'attente en temps réel via Socket.io) ---
+let pvpSocket = null;
+let pvpSessionId = null;
+let pvpMyId = null;
+let pvpOpponentId = null;
+let pvpMyRole = null;
+let pvpPollInterval = null;
+
+document.getElementById('pvpBtn').onclick = () => {
+  const playerId = prompt('Ton pseudo :', 'joueur' + Math.floor(Math.random() * 1000));
+  if (!playerId) return;
+  startPvpQueue(playerId);
+};
+
+document.getElementById('pvpCancelBtn').onclick = () => {
+  if (pvpSocket) pvpSocket.emit('leaveQueue');
+  showPvpSection('select');
+};
+
+function startPvpQueue(playerId) {
+  if (!pvpSocket) {
+    pvpSocket = io();
+    pvpSocket.on('waiting', () => showPvpSection('waiting'));
+    pvpSocket.on('matched', (data) => {
+      pvpSessionId = data.sessionId;
+      pvpMyId = data.selfId;
+      pvpOpponentId = data.opponentId;
+      pvpMyRole = data.role;
+      document.getElementById('pvpMyName').textContent = pvpMyId;
+      document.getElementById('pvpOpponentName').textContent = pvpOpponentId;
+      document.getElementById('pvpSessionId').textContent = pvpSessionId;
+      showPvpSection('game');
+      startPvpPolling();
+    });
+    pvpSocket.on('queueError', (msg) => alert(msg));
+  }
+  pvpSocket.emit('joinQueue', playerId);
+  showPvpSection('waiting');
+}
+
+function showPvpSection(section) {
+  document.getElementById('pvpModeSelect').style.display = section === 'select' ? 'block' : 'none';
+  document.getElementById('pvpWaiting').style.display = section === 'waiting' ? 'block' : 'none';
+  document.getElementById('pvpGame').style.display = section === 'game' ? 'block' : 'none';
+}
+
+async function playPvp(move) {
+  const res = await fetch(`/api/game/session/${pvpSessionId}/move`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ playerId: pvpMyId, move })
+  });
+  const data = await res.json();
+  renderPvp(data.match ?? data);
+}
+
+function startPvpPolling() {
+  if (pvpPollInterval) clearInterval(pvpPollInterval);
+  pvpPollInterval = setInterval(async () => {
+    const res = await fetch(`/api/game/session/${pvpSessionId}`);
+    if (res.ok) {
+      const data = await res.json();
+      renderPvp(data.match);
+    }
+  }, 1000);
+}
+
+function renderPvp(match) {
+  if (!match) return;
+  document.getElementById('pvpState').textContent = JSON.stringify(match, null, 2);
+  const el = document.getElementById('pvpLastRound');
+  if (!match.rounds?.length) { el.textContent = '-'; return; }
+  const last = match.rounds[match.rounds.length - 1];
+  const myMove = pvpMyRole === 'player1' ? last.move1 : last.move2;
+  const opponentMove = pvpMyRole === 'player1' ? last.move2 : last.move1;
+  el.innerHTML = `<strong>Round ${last.roundNumber}</strong><br>` +
+    `Toi : ${formatMove(myMove)}<br>` +
+    `${pvpOpponentId} : ${formatMove(opponentMove)}<br>` +
+    `Résultat : ${last.result}`;
+}
 </script>
 </body>
 </html>
