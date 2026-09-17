@@ -8,7 +8,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // pour naviguer vers d'autres pages
-import { LogoutButton } from '../components/LougoutButton';
+import { Header } from '../components/Header';
 
 export const Game = () => {
 
@@ -83,7 +83,7 @@ export const Game = () => {
   return (
 	    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
 
-      <LogoutButton />
+      <Header />
 
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
