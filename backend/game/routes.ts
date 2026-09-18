@@ -2,7 +2,7 @@ import { Router } from "express";
 import { createSession, submitMove, getSession } from "./session";
 import { Move } from "./rules";
 import { ROUND_TIME_LIMIT_MS } from "./match";
-import { BOT_PLAYER_ID, getBotMove } from "./bot";
+import { getRandomBotName, getBotMove } from "./bot";
 
 export const gameRouter = Router();
 
@@ -15,7 +15,7 @@ gameRouter.post("/session", async (req, res) => {
   }
   const session = await createSession(
     player1Id,
-    vsBot ? BOT_PLAYER_ID : player2Id,
+    vsBot ? getRandomBotName() : player2Id,
     undefined,
     Boolean(vsBot)
   );
@@ -44,7 +44,7 @@ gameRouter.post("/session/:id/move", async (req, res) => {
     const session = getSession(req.params.id);
     if (result.status === "waiting" && session?.isVsBot) {
       const botMove = getBotMove(session.match.rounds);
-      result = await submitMove(req.params.id, BOT_PLAYER_ID, botMove);
+      result = await submitMove(req.params.id, session.player2Id, botMove);
     }
 
     res.json(result);

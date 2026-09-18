@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { createSession, endSession, getSession, sessionEvents } from "./session";
+import { createSession, getSessionByPlayerId, GameSession } from "./session";
 
 interface WaitingPlayer {
   socket: Socket;
@@ -8,22 +8,32 @@ interface WaitingPlayer {
 
 let waitingPlayer: WaitingPlayer | null = null;
 
-interface SessionSocketIds {
-  player1SocketId: string;
-  player2SocketId: string;
+function sendRejoined(socket: Socket, playerId: string, session: GameSession): void {
+  socket.join(session.id);
+
+  const role: "player1" | "player2" =
+    playerId === session.player1Id ? "player1" : "player2";
+
+  socket.emit("rejoined", {
+    sessionId: session.id,
+    role,
+    selfName: role === "player1" ? session.player1Name : session.player2Name,
+    opponentName: role === "player1" ? session.player2Name : session.player1Name,
+    match: session.match,
+  });
 }
-
-const sessionSockets = new Map<string, SessionSocketIds>();
-
-sessionEvents.on("sessionEnded", ({ sessionId }: { sessionId: string }) => {
-  sessionSockets.delete(sessionId);
-});
 
 export function registerMatchmaking(io: Server): void {
   io.on("connection", (socket) => {
     socket.on("joinQueue", async (playerId: string) => {
       if (typeof playerId !== "string" || playerId.trim() === "") {
         socket.emit("queueError", "playerId invalide");
+        return;
+      }
+
+      const existingSession = getSessionByPlayerId(playerId);
+      if (existingSession) {
+        sendRejoined(socket, playerId, existingSession);
         return;
       }
 
@@ -40,11 +50,6 @@ export function registerMatchmaking(io: Server): void {
 
         player1.socket.join(session.id);
         socket.join(session.id);
-
-        sessionSockets.set(session.id, {
-          player1SocketId: player1.socket.id,
-          player2SocketId: socket.id,
-        });
 
         player1.socket.emit("matched", {
           sessionId: session.id,
@@ -77,27 +82,18 @@ export function registerMatchmaking(io: Server): void {
       }
     });
 
+    socket.on("rejoinSession", (playerId: string) => {
+      if (typeof playerId !== "string" || playerId.trim() === "") return;
+
+      const session = getSessionByPlayerId(playerId);
+      if (!session) return;
+
+      sendRejoined(socket, playerId, session);
+    });
+
     socket.on("disconnect", () => {
       if (waitingPlayer?.socket.id === socket.id) {
         waitingPlayer = null;
-      }
-
-      for (const [sessionId, socketIds] of sessionSockets) {
-        const isPlayer1 = socketIds.player1SocketId === socket.id;
-        const isPlayer2 = socketIds.player2SocketId === socket.id;
-        if (isPlayer1 || isPlayer2) {
-          sessionSockets.delete(sessionId);
-          io.to(sessionId).emit("opponentLeft", { sessionId });
-
-          const session = getSession(sessionId);
-          const abandonedBy = session
-            ? isPlayer1
-              ? session.player1Id
-              : session.player2Id
-            : undefined;
-          endSession(sessionId, abandonedBy).catch(() => {});
-          break;
-        }
       }
     });
   });
