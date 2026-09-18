@@ -43,8 +43,37 @@ export const Game = () => {
   // Popup
   const [showModal, setShowModal] = useState<boolean>(true);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
+  const [showEndModal, setShowEndModal] = useState<boolean>(false);
+  const [finalResult, setFinalResult] = useState<string>("");
 
   const navigate = useNavigate();
+
+  const resetGame = async () => {
+  if (!playerId) return;
+
+  if (timerId) {
+    clearInterval(timerId);
+    setTimerId(null);
+  }
+
+  setShowEndModal(false);
+  setGameStarted(false);
+  setShowModal(true);
+  setScore1(0);
+  setScore2(0);
+  setResult("");
+  setUserChoice(null);
+  setAiChoice(null);
+};
+
+  const handleGoHomeFromEnd = () => {
+    if (timerId) {
+      clearInterval(timerId);
+    }
+    setShowEndModal(false);
+    setGameStarted(false);
+    navigate("/menu");
+  };
 
   // Au chargement de la page, on récupère l'utilisateur connecté (cookie de session)
   // pour connaître son id, nécessaire pour créer une partie côté back.
@@ -113,9 +142,7 @@ export const Game = () => {
     }
 
     try {
-      // crée la session pour avoir le nom du bot
       await createBotSession(playerId);
-      // ferme popup et affiche le jeu
       setShowModal(false);
       setGameStarted(true);
 
@@ -126,11 +153,11 @@ export const Game = () => {
             clearInterval(newTimerId);
             setTimerId(null);
             return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    setTimerId(newTimerId);
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      setTimerId(newTimerId);
     } catch (err) {
       setError("Impossible de démarrer la partie");
     }
@@ -191,7 +218,13 @@ export const Game = () => {
       // partie en recréera une nouvelle automatiquement.
       if (data.match.status === "finished") {
         setSessionId(null);
+          if (data.match.score1 > data.match.score2) {
+        setFinalResult("🎉 Victoire !");
+      } else if (data.match.score1 < data.match.score2) {
+        setFinalResult("😢 Défaite");
       }
+      setShowEndModal(true);
+    }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de la partie.");
       setSessionId(null);
@@ -216,11 +249,45 @@ export const Game = () => {
         isOpen={showModal && playerName !== "Joueur 1"}
         onClose={() => {}}
         title="🎮 Prêt à jouer ?"
-        buttonText="Commencer !"
-        onConfirm={startGame}
+        footer={
+          <button
+            onClick={startGame}
+            className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-12 py-4 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-lg"
+          >
+            Commencer !
+          </button>
+        }
       >
         <p className="text-xl text-gray-600">
           {playerName} <span className="font-bold">vs</span> {botName || "Bot"}
+        </p>
+      </Modal>
+
+      {/* MODAL DE FIN */}
+      <Modal
+        isOpen={showEndModal}
+        onClose={() => {}}
+        title="Match terminé !"
+        footer={
+          <>
+            <button
+              onClick={resetGame}
+              className="bg-red-300 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-bold"
+            >
+              Rejouer
+            </button>
+            <button
+              onClick={handleGoHomeFromEnd}
+              className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold"
+            >
+              Menu
+            </button>
+          </>
+        }
+      >
+        <p className="text-xl">{finalResult}</p>
+        <p className="text-lg mt-2">
+          Score final : <span className="font-bold text-blue-600">{score1}</span> - <span className="font-bold text-red-600">{score2}</span>
         </p>
       </Modal>
 
