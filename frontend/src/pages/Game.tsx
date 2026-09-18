@@ -6,7 +6,7 @@
 //setState = Une étiquette sur la boîte qui permet de changer son contenu.
 //Chaque fois qu'on changes le contenu, React reconstruit l'interface pour refléter ce changement.
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // pour naviguer vers d'autres pages
 import { Header } from '../components/Header';
 
@@ -22,7 +22,30 @@ export const Game = () => {
   // état pour afficher un message de chargement
   const [loading, setLoading] = useState<boolean>(false);
 
+  // id de l'utilisateur connecté, récupéré depuis le back (nécessaire pour jouer une partie)
+  const [playerId, setPlayerId] = useState<string | null>(null);
+  // id de la session de jeu en cours côté back (on la réutilise tant que le match n'est pas fini)
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  // message d'erreur réseau éventuel
+  const [error, setError] = useState<string>("");
+
   const navigate = useNavigate();
+
+  // Au chargement de la page, on récupère l'utilisateur connecté (cookie de session)
+  // pour connaître son id, nécessaire pour créer une partie côté back.
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch("/api/me", { credentials: "include" });
+        if (!response.ok) throw new Error();
+        const user = await response.json();
+        setPlayerId(user.id);
+      } catch {
+        setError("Impossible de récupérer ton profil.");
+      }
+    };
+    fetchUser();
+  }, []);
 
   const choices = ["rock", "paper", "scissors"];
 
@@ -36,40 +59,69 @@ export const Game = () => {
 
 
   // -------------------------------------------------------------------------
-// Fonction pour simuler le backend (à remplacer par un appel API plus tard)
-  const simulateBackend = (userChoice: string) => {
-    const aiChoice = choices[Math.floor(Math.random() * 3)];
-
-    let result;
-    if (userChoice === aiChoice) {
-      result = "Égalité !";
-    } else if (
-      (userChoice === "rock" && aiChoice === "scissors") ||
-      (userChoice === "paper" && aiChoice === "rock") ||
-      (userChoice === "scissors" && aiChoice === "paper")
-    ) {
-      result = "Tu as gagné ! 🎉";
-    } else {
-      result = "Tu as perdu... 😢";
-    }
-
-    return { aiChoice, result };
+  // Traduit le résultat renvoyé par le back en message affiché à l'écran.
+  const resultLabels: Record<string, string> = {
+    player1: "Tu as gagné ! 🎉",
+    player2: "Tu as perdu... 😢",
+    draw: "Égalité !",
+    afk: "Pas de coup joué à temps...",
   };
 
+  // Crée une nouvelle partie contre le bot côté back et retourne son id.
+  const createBotSession = async (pid: string): Promise<string> => {
+    const response = await fetch("/api/game/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ player1Id: pid, vsBot: true }),
+    });
+    if (!response.ok) throw new Error("Impossible de créer la partie.");
+    const session = await response.json();
+    setSessionId(session.id);
+    return session.id;
+  };
 
   // -------------------------------------------------------------------------
-// appelée quand l'utilisateur clique sur un bouton. Maj les états et simule un délai
-// pour imiter un appel API.
-  const handlePlay = (choice: string) => {
-	setUserChoice(choice);
-	setLoading(true);
+  // appelée quand l'utilisateur clique sur un bouton. Envoie le coup au back
+  // (le bot répond automatiquement) et affiche le résultat de la manche.
+  const handlePlay = async (choice: string) => {
+    if (!playerId) {
+      setError("Profil non chargé, réessaie dans un instant.");
+      return;
+    }
 
-	setTimeout(() => {
-		const { aiChoice, result } = simulateBackend(choice);
-		setAiChoice(aiChoice);
-		setResult(result);
-		setLoading(false);
-	}, 1000); // délai pour simuler appel API (enlevé plus tard)
+    setUserChoice(choice);
+    setAiChoice(null);
+    setError("");
+    setLoading(true);
+
+    try {
+      const currentSessionId = sessionId ?? (await createBotSession(playerId));
+
+      const response = await fetch(`/api/game/session/${currentSessionId}/move`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ playerId, move: choice }),
+      });
+      if (!response.ok) throw new Error("Le coup n'a pas pu être joué.");
+      const data = await response.json();
+
+      const lastRound = data.match.rounds[data.match.rounds.length - 1];
+      setAiChoice(lastRound.move2);
+      setResult(resultLabels[lastRound.result] ?? "");
+
+      // Le match (en 3 manches gagnantes côté back) est terminé : la prochaine
+      // partie en recréera une nouvelle automatiquement.
+      if (data.match.status === "finished") {
+        setSessionId(null);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la partie.");
+      setSessionId(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
 
@@ -102,6 +154,10 @@ export const Game = () => {
             </button>
           ))}
         </div>
+
+        {error && (
+          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>
+        )}
 
         {loading ? (
           <p className="text-xl text-gray-600">Chargement...</p>

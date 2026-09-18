@@ -13,9 +13,6 @@ ALTER TABLE "Friendship" DROP CONSTRAINT "Friendship_user1Id_fkey";
 ALTER TABLE "Friendship" DROP CONSTRAINT "Friendship_user2Id_fkey";
 
 -- DropForeignKey
-ALTER TABLE "Game" DROP CONSTRAINT "Game_winnerId_fkey";
-
--- DropForeignKey
 ALTER TABLE "Message" DROP CONSTRAINT "Message_receiverId_fkey";
 
 -- DropForeignKey
@@ -23,9 +20,6 @@ ALTER TABLE "Message" DROP CONSTRAINT "Message_senderId_fkey";
 
 -- DropForeignKey
 ALTER TABLE "Notification" DROP CONSTRAINT "Notification_userId_fkey";
-
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "elo" INTEGER NOT NULL DEFAULT 100;
 
 -- DropTable
 DROP TABLE "Friendship";
