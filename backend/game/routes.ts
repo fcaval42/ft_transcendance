@@ -6,14 +6,14 @@ import { BOT_PLAYER_ID, getBotMove } from "./bot";
 
 export const gameRouter = Router();
 
-gameRouter.post("/session", (req, res) => {
+gameRouter.post("/session", async (req, res) => {
   const { player1Id, player2Id, vsBot } = req.body ?? {};
   if (!player1Id || (!player2Id && !vsBot)) {
     return res
       .status(400)
       .json({ error: "player1Id et (player2Id ou vsBot) sont requis" });
   }
-  const session = createSession(
+  const session = await createSession(
     player1Id,
     vsBot ? BOT_PLAYER_ID : player2Id,
     undefined,
@@ -30,7 +30,7 @@ gameRouter.get("/session/:id", (req, res) => {
   res.json(session);
 });
 
-gameRouter.post("/session/:id/move", (req, res) => {
+gameRouter.post("/session/:id/move", async (req, res) => {
   const { playerId, move } = (req.body ?? {}) as {
     playerId?: string;
     move?: Move;
@@ -39,12 +39,12 @@ gameRouter.post("/session/:id/move", (req, res) => {
     return res.status(400).json({ error: "playerId et move sont requis" });
   }
   try {
-    let result = submitMove(req.params.id, playerId, move);
+    let result = await submitMove(req.params.id, playerId, move);
 
     const session = getSession(req.params.id);
     if (result.status === "waiting" && session?.isVsBot) {
       const botMove = getBotMove(session.match.rounds);
-      result = submitMove(req.params.id, BOT_PLAYER_ID, botMove);
+      result = await submitMove(req.params.id, BOT_PLAYER_ID, botMove);
     }
 
     res.json(result);

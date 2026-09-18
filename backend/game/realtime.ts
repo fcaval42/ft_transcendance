@@ -22,13 +22,13 @@ export function registerRealtime(io: Server): void {
   );
 
   io.on("connection", (socket) => {
-    socket.on("playMove", ({ sessionId, playerId, move }: PlayMovePayload) => {
+    socket.on("playMove", async ({ sessionId, playerId, move }: PlayMovePayload) => {
       if (!sessionId || !playerId || !move) {
         socket.emit("moveError", "sessionId, playerId et move sont requis");
         return;
       }
       try {
-        submitMove(sessionId, playerId, move);
+        await submitMove(sessionId, playerId, move);
         // Pas besoin de renvoyer le résultat ici : dès que la manche est
         // résolue (les 2 joueurs ont joué), "roundResolved" se déclenche
         // dans session.ts et diffuse "roundResult" à toute la room.
