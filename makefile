@@ -8,7 +8,7 @@ open:
 	open https://localhost:8443/
 
 o:
-	open http://10.18.195.241:8080/
+	open https://10.18.195.241:8080/
 
 db:
 	open http://localhost:5555/
