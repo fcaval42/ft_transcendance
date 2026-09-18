@@ -6,6 +6,9 @@ dist/
 .env
 node_modules/
 .schema
-TODO.md
 /front_end
-Pvp_ben.tsx
+certs/
+*.pem
+*.crt
+*.key
+.nfs*
