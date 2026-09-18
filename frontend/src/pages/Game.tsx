@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // pour naviguer vers d'autres pages
 import { Header } from '../components/Header';
+import { Modal } from "../components/Modal";
 
 export const Game = () => {
 
@@ -28,6 +29,20 @@ export const Game = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   // message d'erreur réseau éventuel
   const [error, setError] = useState<string>("");
+  // temps pour le chrono
+  const [timeleft, setTimeLeft] = useState<number>(5);
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
+  // scores
+  const [score1, setScore1] = useState<number>(0);
+  const [score2, setScore2] = useState<number>(0);
+
+  // récupérer nom du joueur + bot
+  const [playerName, setPlayerName] = useState<string>("Joueur 1");
+  const [botName, setBotName] = useState<string>("Bot");
+
+  // Popup
+  const [showModal, setShowModal] = useState<boolean>(true);
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -40,11 +55,18 @@ export const Game = () => {
         if (!response.ok) throw new Error();
         const user = await response.json();
         setPlayerId(user.id);
+        setPlayerName(user.username);
       } catch {
         setError("Impossible de récupérer ton profil.");
       }
     };
     fetchUser();
+
+    return () => {
+      if (timerId) {
+        clearInterval(timerId);
+      }
+    };
   }, []);
 
   const choices = ["rock", "paper", "scissors"];
@@ -56,7 +78,6 @@ export const Game = () => {
     paper: "📄",
     scissors: "✂️",
   };
-
 
   // -------------------------------------------------------------------------
   // Traduit le résultat renvoyé par le back en message affiché à l'écran.
@@ -78,7 +99,23 @@ export const Game = () => {
     if (!response.ok) throw new Error("Impossible de créer la partie.");
     const session = await response.json();
     setSessionId(session.id);
+    setBotName(session.player2Name);
     return session.id;
+  };
+
+  // -------------------------------------------------------------------------
+  const startGame = async () => {
+    if(!playerId) return;
+
+    try {
+      // crée la session pour avoir le nom du bot
+      await createBotSession(playerId);
+      // ferme popup et affiche le jeu
+      setShowModal(false);
+      setGameStarted(true);
+    } catch (err) {
+      setError("Impossible de démarrer la partie");
+    }
   };
 
   // -------------------------------------------------------------------------
@@ -90,10 +127,17 @@ export const Game = () => {
       return;
     }
 
+    // on nettoie l'ancien timer
+    if (timerId) {
+      clearInterval(timerId);
+      setTimerId(null);
+    }
+
     setUserChoice(choice);
     setAiChoice(null);
     setError("");
     setLoading(true);
+    setTimeLeft(5);
 
     try {
       const currentSessionId = sessionId ?? (await createBotSession(playerId));
@@ -110,6 +154,20 @@ export const Game = () => {
       const lastRound = data.match.rounds[data.match.rounds.length - 1];
       setAiChoice(lastRound.move2);
       setResult(resultLabels[lastRound.result] ?? "");
+      setScore1(data.match.score1);
+      setScore2(data.match.score2);
+
+      const newTimerId = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(newTimerId);
+            setTimerId(null);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      setTimerId(newTimerId);
 
       // Le match (en 3 manches gagnantes côté back) est terminé : la prochaine
       // partie en recréera une nouvelle automatiquement.
@@ -124,7 +182,6 @@ export const Game = () => {
     }
   };
 
-
   // -------------------------------------------------------------------------
   // Fonction pour retourner à l'accueil
   const handleGoHome = () => {
@@ -133,53 +190,83 @@ export const Game = () => {
 
   // -------------------------------------------------------------------------
   return (
-	    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       <Header />
 
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          Pierre-Feuille-Ciseaux
-        </h1>
+      {/* POPUP */}
+      <Modal
+        isOpen={showModal && playerName !== "Joueur 1"}
+        onClose={() => {}}
+        title="🎮 Prêt à jouer ?"
+        buttonText="Commencer !"
+        onConfirm={startGame}
+      >
+        <p className="text-xl text-gray-600">
+          {playerName} <span className="font-bold">vs</span> {botName || "Bot"}
+        </p>
+      </Modal>
 
-        <div className="flex justify-center gap-4 mb-8">
-          {choices.map((choice) => (
-            <button
-              key={choice}
-              onClick={() => handlePlay(choice)}
-              disabled={loading}
-              className="w-20 h-20 text-4xl bg-orange-300 text-white rounded-lg hover:bg-orange-400 transition-colors disabled:opacity-50 flex items-center justify-center"
-            >
-              {emojis[choice]}
-            </button>
-          ))}
-        </div>
+      {gameStarted && (
+        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+            Pierre-Feuille-Ciseaux
+          </h1>
 
-        {error && (
-          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>
-        )}
-
-        {loading ? (
-          <p className="text-xl text-gray-600">Chargement...</p>
-        ) : userChoice && aiChoice ? (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-            <p className="text-xl">
-              Tu as choisi : <span className="text-2xl">{emojis[userChoice]}</span>
-            </p>
-            <p className="text-xl">
-              L'IA a choisi : <span className="text-2xl">{emojis[aiChoice]}</span>
-            </p>
-            <p className="text-2xl font-bold text-orange-800 mt-2">{result}</p>
+          <div className="flex justify-between mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
+            <div className="text-center">
+              <div className="font-bold text-lg">{playerName}</div>
+              <div className="text-3xl font-bold text-blue-600">{score1}</div>
+            </div>
+            <div className="text-2xl">vs</div>
+            <div className="text-center">
+              <div className="font-bold text-lg">{botName}</div>
+              <div className="text-3xl font-bold text-red-600">{score2}</div>
+            </div>
           </div>
-        ) : null}
 
-        <button
-          onClick={handleGoHome}
-          className="mt-6 bg-emerald-400 text-white px-4 py-2 rounded hover:bg-emerald-500 transition-colors"
-        >
-          Retour au menu
-        </button>
-      </div>
+          <div className="text-xl font-medium mb-6 p-2 bg-orange-50 rounded-lg">
+            ⏳ Temps restant : <span className="font-bold">{timeleft}s</span>
+          </div>
+
+          <div className="flex justify-center gap-4 mb-8">
+            {choices.map((choice) => (
+              <button
+                key={choice}
+                onClick={() => handlePlay(choice)}
+                disabled={loading}
+                className="w-20 h-20 text-4xl bg-orange-300 text-white rounded-lg hover:bg-orange-400 transition-colors disabled:opacity-50 flex items-center justify-center"
+              >
+                {emojis[choice]}
+              </button>
+            ))}
+          </div>
+
+          {error && (
+            <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>
+          )}
+
+          {loading ? (
+            <p className="text-xl text-gray-600">Chargement...</p>
+          ) : userChoice && aiChoice ? (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+              <p className="text-xl">
+                Tu as choisi : <span className="text-2xl">{emojis[userChoice]}</span>
+              </p>
+              <p className="text-xl">
+                L'IA a choisi : <span className="text-2xl">{emojis[aiChoice]}</span>
+              </p>
+              <p className="text-2xl font-bold text-orange-800 mt-2">{result}</p>
+            </div>
+          ) : null}
+
+          <button
+            onClick={handleGoHome}
+            className="mt-6 bg-emerald-400 text-white px-4 py-2 rounded hover:bg-emerald-500 transition-colors"
+          >
+            Retour au menu
+          </button>
+        </div>
+      )}
     </div>
   );
 };
