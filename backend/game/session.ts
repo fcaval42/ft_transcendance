@@ -1,16 +1,10 @@
 import { randomUUID } from "crypto";
 import { EventEmitter } from "events";
 import { prisma } from "../auth";
-import { Match, createMatch, playMatchRound, ROUND_TIME_LIMIT_MS } from "./match";
+import { Match, Winner, createMatch, playMatchRound, ROUND_TIME_LIMIT_MS } from "./match";
 import { Move } from "./rules";
+import { computeElo } from "./elo";
 
-// Emet "roundResolved" ({ sessionId, match }) chaque fois qu'une manche se
-// termine (coup joué normalement OU timeout AFK). Sert de pont vers la couche
-// temps réel (Socket.io, voir realtime.ts) sans que ce fichier ait besoin de
-// connaître Socket.io.
-// Emet aussi "sessionEnded" ({ sessionId }) dès qu'une session est détruite
-// (partie finie ou abandon), pour que matchmaking.ts puisse nettoyer son
-// propre état (association socket <-> session) quelle que soit la cause.
 export const sessionEvents = new EventEmitter();
 
 export interface GameSession {
@@ -54,10 +48,6 @@ export async function createSession(
   winsNeeded?: number,
   isVsBot = false,
 ): Promise<GameSession> {
-  // Les pseudos affichés au front viennent de la DB. Pour le bot, player2Id
-  // est déjà un nom d'affichage (ex: "Hugo [BOT]") et ne correspond à aucun
-  // User en DB : le findMany ne le trouvera simplement pas, et le fallback
-  // ci-dessous réutilise directement cette valeur.
   const users = await prisma.user.findMany({
     where: { id: { in: [player1Id, player2Id] } },
     select: { id: true, username: true },
@@ -76,9 +66,6 @@ export async function createSession(
     pendingMove2: null,
   };
 
-  // Une partie PvP existe en DB tant qu'elle est en cours (voir endSession).
-  // On réutilise l'id de la session comme id de la ligne Game : un seul
-  // identifiant à faire circuler entre le jeu en mémoire et la DB.
   if (!isVsBot) {
     await prisma.game.create({
       data: {
@@ -100,16 +87,52 @@ export function getSession(sessionId: string): GameSession | undefined {
   return sessions.get(sessionId);
 }
 
-export async function endSession(sessionId: string): Promise<void> {
+async function applyMatchResult(
+  session: GameSession,
+  winner: "player1" | "player2"
+): Promise<void> {
+  const winnerId = winner === "player1" ? session.player1Id : session.player2Id;
+  const loserId = winner === "player1" ? session.player2Id : session.player1Id;
+
+  const [winnerUser, loserUser] = await Promise.all([
+    prisma.user.findUnique({ where: { id: winnerId }, select: { elo: true } }),
+    prisma.user.findUnique({ where: { id: loserId }, select: { elo: true } }),
+  ]);
+  if (!winnerUser || !loserUser) return;
+
+  const { winnerElo, loserElo } = computeElo(winnerUser.elo, loserUser.elo);
+
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: winnerId },
+      data: { wins: { increment: 1 }, elo: winnerElo },
+    }),
+    prisma.user.update({
+      where: { id: loserId },
+      data: { losses: { increment: 1 }, elo: loserElo },
+    }),
+  ]);
+}
+
+export async function endSession(sessionId: string, abandonedBy?: string): Promise<void> {
   clearRoundTimer(sessionId);
   const session = sessions.get(sessionId);
   sessions.delete(sessionId);
 
   if (session && !session.isVsBot) {
+    const winner: Winner = abandonedBy
+      ? abandonedBy === session.player1Id
+        ? "player2"
+        : "player1"
+      : session.match.winner;
+
+    if (winner) {
+      await applyMatchResult(session, winner).catch(() => {});
+    }
+
     try {
       await prisma.game.delete({ where: { id: sessionId } });
     } catch {
-      // Déjà supprimée (ex: abandon et fin de partie concurrents) — pas grave.
     }
   }
 
@@ -159,11 +182,9 @@ async function resolvePendingRound(session: GameSession): Promise<{
   const match = session.match;
 
   if (match.status === "finished") {
-    // Le match est terminé : on libère la session (elle ne servira plus,
-    // et le résultat final est renvoyé directement dans la réponse ci-dessous).
     await endSession(session.id);
   } else {
-    armRoundTimer(session.id); // arme un nouveau timer (annule l'ancien au passage)
+    armRoundTimer(session.id);
   }
 
   sessionEvents.emit("roundResolved", { sessionId: session.id, match });

@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { createSession, endSession, sessionEvents } from "./session";
+import { createSession, endSession, getSession, sessionEvents } from "./session";
 
 interface WaitingPlayer {
   socket: Socket;
@@ -8,11 +8,12 @@ interface WaitingPlayer {
 
 let waitingPlayer: WaitingPlayer | null = null;
 
-// Associe chaque session PvP en cours aux ids des 2 sockets qui y jouent,
-// pour pouvoir détecter la déconnexion d'un joueur en cours de partie et
-// nettoyer immédiatement (au lieu d'attendre le timeout AFK). Nettoyée dès
-// que la session se termine, quelle qu'en soit la cause (voir "sessionEnded").
-const sessionSockets = new Map<string, Set<string>>();
+interface SessionSocketIds {
+  player1SocketId: string;
+  player2SocketId: string;
+}
+
+const sessionSockets = new Map<string, SessionSocketIds>();
 
 sessionEvents.on("sessionEnded", ({ sessionId }: { sessionId: string }) => {
   sessionSockets.delete(sessionId);
@@ -27,9 +28,6 @@ export function registerMatchmaking(io: Server): void {
       }
 
       if (waitingPlayer && waitingPlayer.playerId === playerId) {
-        // Même joueur déjà en attente (double clic, ou 2 onglets du même
-        // compte) : on ne le fait pas s'affronter lui-même, la partie ne
-        // pourrait jamais se terminer (le 2e coup écraserait toujours le 1er).
         socket.emit("queueError", "Tu es déjà en attente d'une partie");
         return;
       }
@@ -40,13 +38,13 @@ export function registerMatchmaking(io: Server): void {
 
         const session = await createSession(player1.playerId, playerId);
 
-        // Les 2 joueurs rejoignent une room nommée par le sessionId, pour
-        // pouvoir leur diffuser le résultat de chaque manche en même temps
-        // (voir realtime.ts).
         player1.socket.join(session.id);
         socket.join(session.id);
 
-        sessionSockets.set(session.id, new Set([player1.socket.id, socket.id]));
+        sessionSockets.set(session.id, {
+          player1SocketId: player1.socket.id,
+          player2SocketId: socket.id,
+        });
 
         player1.socket.emit("matched", {
           sessionId: session.id,
@@ -85,10 +83,19 @@ export function registerMatchmaking(io: Server): void {
       }
 
       for (const [sessionId, socketIds] of sessionSockets) {
-        if (socketIds.has(socket.id)) {
+        const isPlayer1 = socketIds.player1SocketId === socket.id;
+        const isPlayer2 = socketIds.player2SocketId === socket.id;
+        if (isPlayer1 || isPlayer2) {
           sessionSockets.delete(sessionId);
           io.to(sessionId).emit("opponentLeft", { sessionId });
-          endSession(sessionId).catch(() => {});
+
+          const session = getSession(sessionId);
+          const abandonedBy = session
+            ? isPlayer1
+              ? session.player1Id
+              : session.player2Id
+            : undefined;
+          endSession(sessionId, abandonedBy).catch(() => {});
           break;
         }
       }

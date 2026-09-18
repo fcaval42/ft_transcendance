@@ -9,10 +9,6 @@ interface PlayMovePayload {
   move?: Move;
 }
 
-// Couche temps réel du jeu (une fois 2 joueurs appariés par matchmaking.ts).
-// Ne remplace pas les routes REST (toujours utilisées pour le mode vs bot) :
-// elle ajoute juste un chemin Socket.io pour le PvP, en réutilisant
-// exactement la même logique de partie (submitMove).
 export function registerRealtime(io: Server): void {
   sessionEvents.on(
     "roundResolved",
@@ -29,9 +25,6 @@ export function registerRealtime(io: Server): void {
       }
       try {
         await submitMove(sessionId, playerId, move);
-        // Pas besoin de renvoyer le résultat ici : dès que la manche est
-        // résolue (les 2 joueurs ont joué), "roundResolved" se déclenche
-        // dans session.ts et diffuse "roundResult" à toute la room.
       } catch (e) {
         socket.emit("moveError", (e as Error).message);
       }
