@@ -6,9 +6,10 @@
 //setState = Une étiquette sur la boîte qui permet de changer son contenu.
 //Chaque fois qu'on changes le contenu, React reconstruit l'interface pour refléter ce changement.
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // pour naviguer vers d'autres pages
 import { Header } from '../components/Header';
+import { Modal } from "../components/Modal";
 
 export const Game = () => {
 
@@ -22,7 +23,80 @@ export const Game = () => {
   // état pour afficher un message de chargement
   const [loading, setLoading] = useState<boolean>(false);
 
+  // id de l'utilisateur connecté, récupéré depuis le back (nécessaire pour jouer une partie)
+  const [playerId, setPlayerId] = useState<string | null>(null);
+  // id de la session de jeu en cours côté back (on la réutilise tant que le match n'est pas fini)
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  // message d'erreur réseau éventuel
+  const [error, setError] = useState<string>("");
+  // temps pour le chrono
+  const [timeleft, setTimeLeft] = useState<number>(5);
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
+  // scores
+  const [score1, setScore1] = useState<number>(0);
+  const [score2, setScore2] = useState<number>(0);
+
+  // récupérer nom du joueur + bot
+  const [playerName, setPlayerName] = useState<string>("Joueur 1");
+  const [botName, setBotName] = useState<string>("Bot");
+
+  // Popup
+  const [showModal, setShowModal] = useState<boolean>(true);
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
+  const [showEndModal, setShowEndModal] = useState<boolean>(false);
+  const [finalResult, setFinalResult] = useState<string>("");
+
   const navigate = useNavigate();
+
+  const resetGame = async () => {
+  if (!playerId) return;
+
+  if (timerId) {
+    clearInterval(timerId);
+    setTimerId(null);
+  }
+
+  setShowEndModal(false);
+  setGameStarted(false);
+  setShowModal(true);
+  setScore1(0);
+  setScore2(0);
+  setResult("");
+  setUserChoice(null);
+  setAiChoice(null);
+};
+
+  const handleGoHomeFromEnd = () => {
+    if (timerId) {
+      clearInterval(timerId);
+    }
+    setShowEndModal(false);
+    setGameStarted(false);
+    navigate("/menu");
+  };
+
+  // Au chargement de la page, on récupère l'utilisateur connecté (cookie de session)
+  // pour connaître son id, nécessaire pour créer une partie côté back.
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch("/api/me", { credentials: "include" });
+        if (!response.ok) throw new Error();
+        const user = await response.json();
+        setPlayerId(user.id);
+        setPlayerName(user.username);
+      } catch {
+        setError("Impossible de récupérer ton profil.");
+      }
+    };
+    fetchUser();
+
+    return () => {
+      if (timerId) {
+        clearInterval(timerId);
+      }
+    };
+  }, []);
 
   const choices = ["rock", "paper", "scissors"];
 
@@ -34,44 +108,130 @@ export const Game = () => {
     scissors: "✂️",
   };
 
+  // -------------------------------------------------------------------------
+  // Traduit le résultat renvoyé par le back en message affiché à l'écran.
+  const resultLabels: Record<string, string> = {
+    player1: "Tu as gagné ! 🎉",
+    player2: "Tu as perdu... 😢",
+    draw: "Égalité !",
+    afk: "Pas de coup joué à temps...",
+  };
+
+  // Crée une nouvelle partie contre le bot côté back et retourne son id.
+  const createBotSession = async (pid: string): Promise<string> => {
+    const response = await fetch("/api/game/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ player1Id: pid, vsBot: true }),
+    });
+    if (!response.ok) throw new Error("Impossible de créer la partie.");
+    const session = await response.json();
+    setSessionId(session.id);
+    setBotName(session.player2Name);
+    return session.id;
+  };
 
   // -------------------------------------------------------------------------
-// Fonction pour simuler le backend (à remplacer par un appel API plus tard)
-  const simulateBackend = (userChoice: string) => {
-    const aiChoice = choices[Math.floor(Math.random() * 3)];
+  const startGame = async () => {
+    if(!playerId) return;
 
-    let result;
-    if (userChoice === aiChoice) {
-      result = "Égalité !";
-    } else if (
-      (userChoice === "rock" && aiChoice === "scissors") ||
-      (userChoice === "paper" && aiChoice === "rock") ||
-      (userChoice === "scissors" && aiChoice === "paper")
-    ) {
-      result = "Tu as gagné ! 🎉";
-    } else {
-      result = "Tu as perdu... 😢";
+    if (timerId) {
+      clearInterval(timerId);
+      setTimerId(null);
     }
 
-    return { aiChoice, result };
-  };
+    try {
+      await createBotSession(playerId);
+      setShowModal(false);
+      setGameStarted(true);
 
+      setTimeLeft(5);
+      const newTimerId = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(newTimerId);
+            setTimerId(null);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      setTimerId(newTimerId);
+    } catch (err) {
+      setError("Impossible de démarrer la partie");
+    }
+  };
 
   // -------------------------------------------------------------------------
-// appelée quand l'utilisateur clique sur un bouton. Maj les états et simule un délai
-// pour imiter un appel API.
-  const handlePlay = (choice: string) => {
-	setUserChoice(choice);
-	setLoading(true);
+  // appelée quand l'utilisateur clique sur un bouton. Envoie le coup au back
+  // (le bot répond automatiquement) et affiche le résultat de la manche.
+  const handlePlay = async (choice: string) => {
+    if (!playerId) {
+      setError("Profil non chargé, réessaie dans un instant.");
+      return;
+    }
 
-	setTimeout(() => {
-		const { aiChoice, result } = simulateBackend(choice);
-		setAiChoice(aiChoice);
-		setResult(result);
-		setLoading(false);
-	}, 1000); // délai pour simuler appel API (enlevé plus tard)
+    // on nettoie l'ancien timer
+    if (timerId) {
+      clearInterval(timerId);
+      setTimerId(null);
+    }
+
+    setUserChoice(choice);
+    setAiChoice(null);
+    setError("");
+    setLoading(true);
+    setTimeLeft(5);
+
+    try {
+      const currentSessionId = sessionId ?? (await createBotSession(playerId));
+
+      const response = await fetch(`/api/game/session/${currentSessionId}/move`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ playerId, move: choice }),
+      });
+      if (!response.ok) throw new Error("Le coup n'a pas pu être joué.");
+      const data = await response.json();
+
+      const lastRound = data.match.rounds[data.match.rounds.length - 1];
+      setAiChoice(lastRound.move2);
+      setResult(resultLabels[lastRound.result] ?? "");
+      setScore1(data.match.score1);
+      setScore2(data.match.score2);
+
+      const newTimerId = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(newTimerId);
+            setTimerId(null);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      setTimerId(newTimerId);
+
+      // Le match (en 3 manches gagnantes côté back) est terminé : la prochaine
+      // partie en recréera une nouvelle automatiquement.
+      if (data.match.status === "finished") {
+        setSessionId(null);
+          if (data.match.score1 > data.match.score2) {
+        setFinalResult("🎉 Victoire !");
+      } else if (data.match.score1 < data.match.score2) {
+        setFinalResult("😢 Défaite");
+      }
+      setShowEndModal(true);
+    }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la partie.");
+      setSessionId(null);
+    } finally {
+      setLoading(false);
+    }
   };
-
 
   // -------------------------------------------------------------------------
   // Fonction pour retourner à l'accueil
@@ -81,49 +241,117 @@ export const Game = () => {
 
   // -------------------------------------------------------------------------
   return (
-	    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       <Header />
 
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          Pierre-Feuille-Ciseaux
-        </h1>
+      {/* POPUP */}
+      <Modal
+        isOpen={showModal && playerName !== "Joueur 1"}
+        onClose={() => {}}
+        title="🎮 Prêt à jouer ?"
+        footer={
+          <button
+            onClick={startGame}
+            className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-12 py-4 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-lg"
+          >
+            Commencer !
+          </button>
+        }
+      >
+        <p className="text-xl text-gray-600">
+          {playerName} <span className="font-bold">vs</span> {botName || "Bot"}
+        </p>
+      </Modal>
 
-        <div className="flex justify-center gap-4 mb-8">
-          {choices.map((choice) => (
+      {/* MODAL DE FIN */}
+      <Modal
+        isOpen={showEndModal}
+        onClose={() => {}}
+        title="Match terminé !"
+        footer={
+          <>
             <button
-              key={choice}
-              onClick={() => handlePlay(choice)}
-              disabled={loading}
-              className="w-20 h-20 text-4xl bg-orange-300 text-white rounded-lg hover:bg-orange-400 transition-colors disabled:opacity-50 flex items-center justify-center"
+              onClick={resetGame}
+              className="bg-red-300 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-bold"
             >
-              {emojis[choice]}
+              Rejouer
             </button>
-          ))}
-        </div>
+            <button
+              onClick={handleGoHomeFromEnd}
+              className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold"
+            >
+              Menu
+            </button>
+          </>
+        }
+      >
+        <p className="text-xl">{finalResult}</p>
+        <p className="text-lg mt-2">
+          Score final : <span className="font-bold text-blue-600">{score1}</span> - <span className="font-bold text-red-600">{score2}</span>
+        </p>
+      </Modal>
 
-        {loading ? (
-          <p className="text-xl text-gray-600">Chargement...</p>
-        ) : userChoice && aiChoice ? (
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-            <p className="text-xl">
-              Tu as choisi : <span className="text-2xl">{emojis[userChoice]}</span>
-            </p>
-            <p className="text-xl">
-              L'IA a choisi : <span className="text-2xl">{emojis[aiChoice]}</span>
-            </p>
-            <p className="text-2xl font-bold text-orange-800 mt-2">{result}</p>
+      {gameStarted && (
+        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+            Pierre-Feuille-Ciseaux
+          </h1>
+
+          <div className="flex justify-between mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
+            <div className="text-center">
+              <div className="font-bold text-lg">{playerName}</div>
+              <div className="text-3xl font-bold text-blue-600">{score1}</div>
+            </div>
+            <div className="text-2xl">vs</div>
+            <div className="text-center">
+              <div className="font-bold text-lg">{botName}</div>
+              <div className="text-3xl font-bold text-red-600">{score2}</div>
+            </div>
           </div>
-        ) : null}
 
-        <button
-          onClick={handleGoHome}
-          className="mt-6 bg-emerald-400 text-white px-4 py-2 rounded hover:bg-emerald-500 transition-colors"
-        >
-          Retour au menu
-        </button>
-      </div>
+          <div className="text-xl font-medium mb-6 p-2 bg-orange-50 rounded-lg">
+            ⏳ Temps restant : <span className="font-bold">{timeleft}s</span>
+          </div>
+
+          <div className="flex justify-center gap-4 mb-8">
+            {choices.map((choice) => (
+              <button
+                key={choice}
+                onClick={() => handlePlay(choice)}
+                disabled={loading}
+                className="w-20 h-20 text-4xl bg-orange-300 text-white rounded-lg hover:bg-orange-400 transition-colors disabled:opacity-50 flex items-center justify-center"
+              >
+                {emojis[choice]}
+              </button>
+            ))}
+          </div>
+
+          {error && (
+            <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>
+          )}
+
+          {loading ? (
+            <p className="text-xl text-gray-600">Chargement...</p>
+          ) : userChoice && aiChoice ? (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+              <p className="text-xl">
+                Tu as choisi : <span className="text-2xl">{emojis[userChoice]}</span>
+              </p>
+              <p className="text-xl">
+                L'IA a choisi : <span className="text-2xl">{emojis[aiChoice]}</span>
+              </p>
+              <p className="text-2xl font-bold text-orange-800 mt-2">{result}</p>
+            </div>
+          ) : null}
+
+          <button
+            onClick={handleGoHome}
+            className="mt-6 bg-emerald-400 text-white px-4 py-2 rounded hover:bg-emerald-500 transition-colors"
+          >
+            Retour au menu
+          </button>
+        </div>
+      )}
     </div>
   );
 };

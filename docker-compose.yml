@@ -41,7 +41,7 @@ services:
       depends_on:
         - frontend
         - backend
-  
+
 volumes:
   postgres_data:
   caddy_data:
@@ -52,7 +52,7 @@ volumes:
 # tu n'as pas besoin d'installer PostgreSQL sur ta machine (vive Docker). + tout
 # le monde aura la même version de PostgreSQL.
 
-# Quelques commandes de base utiles : 
+# Quelques commandes de base utiles :
 #| `docker-compose up -d` | Lance la base de données en arrière-plan. |
 #| `docker ps` | Vérifie que le conteneur PostgreSQL est bien lancé. |
 #| `docker-compose down` | Arrête la base de données (les données sont sauvegardées). |
@@ -80,6 +80,6 @@ volumes:
 
 # Commandes en plus:
 # docker exec -it ft_transcendence_db psql -U postgres -d ft_transcendence :
-#     Accéder à la base de données en ligne de commande 
+#     Accéder à la base de données en ligne de commande
 # docker-compose down -v  # Supprime le volume (ATTENTION : les données seront perdues !)
 # docker-compose up -d    # Relance un conteneur propre
