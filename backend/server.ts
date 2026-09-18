@@ -5,7 +5,8 @@ import { createUser, authenticateUser, setUserOffline, prisma, findOrCreateOAuth
 import { AuthenticatedRequest, authenticateToken } from './middleware/authmiddleware';
 
 const app = express();
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: true,
+    credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
