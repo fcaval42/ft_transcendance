@@ -2,3 +2,7 @@
 node_modules/
 .schema
 /front_end
+certs/
+*.pem
+*.crt
+*.key
