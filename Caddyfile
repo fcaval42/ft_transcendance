@@ -1,4 +1,3 @@
-# Bloc HTTPS (écoute sur le port 443 interne, mappé sur 8443)
 :443 {
     tls /etc/caddy/certs/cert.pem /etc/caddy/certs/key.pem
 
