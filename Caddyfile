@@ -1,4 +1,4 @@
-https://localhost/ {
+https://localhost {
     tls internal
 
     handle /api/* {
@@ -14,7 +14,7 @@ https://localhost/ {
     }
 }
 
-http://10.18.195.241/ {
+http://10.18.195.241 {
 
     handle /api/* {
         reverse_proxy backend:3001

@@ -15,7 +15,7 @@ export const Home = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-4">
         <img
-      src="/favicon.ico"
+      src="/logo.png"
       alt="Transcendance"
       className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-50 xl:h-50 object-contain"
     />
