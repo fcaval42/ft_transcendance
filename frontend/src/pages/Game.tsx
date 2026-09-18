@@ -107,12 +107,30 @@ export const Game = () => {
   const startGame = async () => {
     if(!playerId) return;
 
+    if (timerId) {
+      clearInterval(timerId);
+      setTimerId(null);
+    }
+
     try {
       // crée la session pour avoir le nom du bot
       await createBotSession(playerId);
       // ferme popup et affiche le jeu
       setShowModal(false);
       setGameStarted(true);
+
+      setTimeLeft(5);
+      const newTimerId = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(newTimerId);
+            setTimerId(null);
+            return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    setTimerId(newTimerId);
     } catch (err) {
       setError("Impossible de démarrer la partie");
     }
