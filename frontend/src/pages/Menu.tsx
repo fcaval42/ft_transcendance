@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
-import { LogoutButton } from "../components/LougoutButton";
+import { Header } from "../components/Header";
 
 export const Menu = () => {
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-6 relative">
-      
-      <LogoutButton />
+      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-6 relative">
+        <Header />
 
       <h1 className="text-4xl font-bold mb-8">Menu Principal</h1>
 

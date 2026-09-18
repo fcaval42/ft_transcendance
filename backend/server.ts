@@ -69,6 +69,7 @@ app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => 
         isOnline: true,
         wins: true,
         losses: true,
+        elo: true,
         createdAt: true,
       },
     });
