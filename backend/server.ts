@@ -10,7 +10,8 @@ import { registerMatchmaking } from './game/matchmaking';
 import { registerRealtime } from './game/realtime';
 
 const app = express();
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: true,
+    credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/game', gameRouter);
