@@ -21,13 +21,6 @@ export const Menu = () => {
       >
         <span>👥</span> Player vs Player
       </Link>
-
-      <Link
-        to="/tournament"
-        className="bg-violet-300 text-white px-8 py-4 rounded-lg hover:bg-violet-400 transition-colors text-xl w-64 text-center flex items-center justify-center gap-2"
-      >
-        <span>🏆</span> Tournoi
-      </Link>
     </div>
   );
 };

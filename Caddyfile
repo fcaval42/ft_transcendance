@@ -1,5 +1,5 @@
-https://localhost {
-    tls internal
+:443 {
+    tls /etc/caddy/certs/cert.pem /etc/caddy/certs/key.pem
 
     handle /api/* {
         reverse_proxy backend:3001
@@ -14,17 +14,6 @@ https://localhost {
     }
 }
 
-http://10.18.195.241 {
-
-    handle /api/* {
-        reverse_proxy backend:3001
-    }
-
-    handle /socket.io/* {
-        reverse_proxy backend:3001
-    }
-
-    handle {
-        reverse_proxy frontend:3000
-    }
+:80 {
+    redir https://{host}:8443{uri} permanent
 }

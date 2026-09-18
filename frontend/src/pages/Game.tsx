@@ -29,9 +29,6 @@ export const Game = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   // message d'erreur réseau éventuel
   const [error, setError] = useState<string>("");
-  // temps pour le chrono
-  const [timeleft, setTimeLeft] = useState<number>(5);
-  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
   // scores
   const [score1, setScore1] = useState<number>(0);
   const [score2, setScore2] = useState<number>(0);
@@ -51,11 +48,6 @@ export const Game = () => {
   const resetGame = async () => {
   if (!playerId) return;
 
-  if (timerId) {
-    clearInterval(timerId);
-    setTimerId(null);
-  }
-
   setShowEndModal(false);
   setGameStarted(false);
   setShowModal(true);
@@ -67,9 +59,6 @@ export const Game = () => {
 };
 
   const handleGoHomeFromEnd = () => {
-    if (timerId) {
-      clearInterval(timerId);
-    }
     setShowEndModal(false);
     setGameStarted(false);
     navigate("/menu");
@@ -91,11 +80,7 @@ export const Game = () => {
     };
     fetchUser();
 
-    return () => {
-      if (timerId) {
-        clearInterval(timerId);
-      }
-    };
+    return () => {};
   }, []);
 
   const choices = ["rock", "paper", "scissors"];
@@ -136,28 +121,10 @@ export const Game = () => {
   const startGame = async () => {
     if(!playerId) return;
 
-    if (timerId) {
-      clearInterval(timerId);
-      setTimerId(null);
-    }
-
     try {
       await createBotSession(playerId);
       setShowModal(false);
       setGameStarted(true);
-
-      setTimeLeft(5);
-      const newTimerId = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(newTimerId);
-            setTimerId(null);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      setTimerId(newTimerId);
     } catch (err) {
       setError("Impossible de démarrer la partie");
     }
@@ -172,17 +139,10 @@ export const Game = () => {
       return;
     }
 
-    // on nettoie l'ancien timer
-    if (timerId) {
-      clearInterval(timerId);
-      setTimerId(null);
-    }
-
     setUserChoice(choice);
     setAiChoice(null);
     setError("");
     setLoading(true);
-    setTimeLeft(5);
 
     try {
       const currentSessionId = sessionId ?? (await createBotSession(playerId));
@@ -201,18 +161,6 @@ export const Game = () => {
       setResult(resultLabels[lastRound.result] ?? "");
       setScore1(data.match.score1);
       setScore2(data.match.score2);
-
-      const newTimerId = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(newTimerId);
-            setTimerId(null);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      setTimerId(newTimerId);
 
       // Le match (en 3 manches gagnantes côté back) est terminé : la prochaine
       // partie en recréera une nouvelle automatiquement.
@@ -250,12 +198,20 @@ export const Game = () => {
         onClose={() => {}}
         title="🎮 Prêt à jouer ?"
         footer={
-          <button
-            onClick={startGame}
-            className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-12 py-4 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-lg"
-          >
-            Commencer !
-          </button>
+          <div className="flex flex-col gap-6">
+            <button
+              onClick={startGame}
+              className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-12 py-4 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-lg"
+            >
+              Commencer !
+            </button>
+            <button
+              onClick={handleGoHome}
+              className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold"
+            >
+              Retour au menu
+            </button>
+          </div>
         }
       >
         <p className="text-xl text-gray-600">
@@ -272,7 +228,7 @@ export const Game = () => {
           <>
             <button
               onClick={resetGame}
-              className="bg-red-300 hover:bg-red-400 text-white px-6 py-2 rounded-lg font-bold"
+              className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-6 py-2 rounded-lg font-bold"
             >
               Rejouer
             </button>
@@ -307,10 +263,6 @@ export const Game = () => {
               <div className="font-bold text-lg">{botName}</div>
               <div className="text-3xl font-bold text-red-600">{score2}</div>
             </div>
-          </div>
-
-          <div className="text-xl font-medium mb-6 p-2 bg-orange-50 rounded-lg">
-            ⏳ Temps restant : <span className="font-bold">{timeleft}s</span>
           </div>
 
           <div className="flex justify-center gap-4 mb-8">
