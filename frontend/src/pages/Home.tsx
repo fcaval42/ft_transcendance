@@ -3,15 +3,6 @@ import { useAuthStatus } from "../utils/checkRoute";
 import { Link, Navigate } from "react-router-dom";
 
 export const Home = () => {
-    const isAuthenticated = useAuthStatus();
-
-  if (isAuthenticated === null) {
-    return null;
-  }
-
-  if (isAuthenticated) {
-    return (<Navigate to="/menu" replace />);
-  }
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-4">
         <img
