@@ -30,7 +30,7 @@ export const Profile = () => {
       <h1 className="text-4xl font-bold break-words">
         {user.username}</h1>
     <div className="flex flex-col items-center gap-4 mt-4 w-full max-w-md">
-        <div className="bg-gray-500/30 rounded-xl p-6 shadow-sm w-full border-5 border-indigo-400">
+        <div className="bg-gray-300/30 rounded-xl p-6 shadow-sm w-full border-5 border-indigo-400">
         <div className="flex flex-col items-center gap-4">
         <div className="text-gray-700 font-medium">
             Date de création: {new Date(user.createdAt).toLocaleDateString('fr-FR')}
