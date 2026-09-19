@@ -33,6 +33,10 @@ function clearRoundTimer(sessionId: string): void {
 
 function armRoundTimer(sessionId: string): void {
   clearRoundTimer(sessionId);
+  const session = sessions.get(sessionId);
+  if (session) {
+    session.match.roundDeadline = Date.now() + ROUND_TIME_LIMIT_MS;
+  }
   const timer = setTimeout(async () => {
     try {
       await forceTimeout(sessionId);
@@ -185,6 +189,7 @@ async function resolvePendingRound(session: GameSession): Promise<{
   const match = session.match;
 
   if (match.status === "finished") {
+    match.roundDeadline = null;
     await endSession(session.id);
   } else {
     armRoundTimer(session.id);
