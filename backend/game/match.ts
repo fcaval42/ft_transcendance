@@ -19,6 +19,7 @@ export interface Match {
   rounds: RoundOutcome[];
   status: MatchStatus;
   winner: Winner;
+  roundDeadline: number | null;
 }
 
 export function createMatch(winsNeeded = 3): Match {
@@ -29,6 +30,7 @@ export function createMatch(winsNeeded = 3): Match {
     rounds: [],
     status: "playing",
     winner: null,
+    roundDeadline: null,
   };
 }
 

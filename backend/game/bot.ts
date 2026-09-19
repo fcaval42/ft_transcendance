@@ -5,7 +5,9 @@ const NAMES_BOT = ["Hugo [BOT]", "Fleur [BOT]", "Fredo [BOT]", "Nominoe [BOT]",
 	"Romain [BOT]", "Noemie [BOT]", "Ben [BOT]"
 				  ]
 
-export const BOT_PLAYER_ID = NAMES_BOT[Math.floor(Math.random() * NAMES_BOT.length)]
+export function getRandomBotName(): string {
+  return NAMES_BOT[Math.floor(Math.random() * NAMES_BOT.length)];
+}
 
 const MOVES: Move[] = ["rock", "paper", "scissors"];
 

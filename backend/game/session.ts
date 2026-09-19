@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { EventEmitter } from "events";
 import { prisma } from "../auth";
-import { Match, Winner, createMatch, playMatchRound, ROUND_TIME_LIMIT_MS } from "./match";
+import { Match, createMatch, playMatchRound, ROUND_TIME_LIMIT_MS } from "./match";
 import { Move } from "./rules";
 import { computeElo } from "./elo";
 
@@ -33,6 +33,10 @@ function clearRoundTimer(sessionId: string): void {
 
 function armRoundTimer(sessionId: string): void {
   clearRoundTimer(sessionId);
+  const session = sessions.get(sessionId);
+  if (session) {
+    session.match.roundDeadline = Date.now() + ROUND_TIME_LIMIT_MS;
+  }
   const timer = setTimeout(async () => {
     try {
       await forceTimeout(sessionId);
@@ -87,6 +91,15 @@ export function getSession(sessionId: string): GameSession | undefined {
   return sessions.get(sessionId);
 }
 
+export function getSessionByPlayerId(playerId: string): GameSession | undefined {
+  for (const session of sessions.values()) {
+    if (session.player1Id === playerId || session.player2Id === playerId) {
+      return session;
+    }
+  }
+  return undefined;
+}
+
 async function applyMatchResult(
   session: GameSession,
   winner: "player1" | "player2"
@@ -114,20 +127,14 @@ async function applyMatchResult(
   ]);
 }
 
-export async function endSession(sessionId: string, abandonedBy?: string): Promise<void> {
+export async function endSession(sessionId: string): Promise<void> {
   clearRoundTimer(sessionId);
   const session = sessions.get(sessionId);
   sessions.delete(sessionId);
 
   if (session && !session.isVsBot) {
-    const winner: Winner = abandonedBy
-      ? abandonedBy === session.player1Id
-        ? "player2"
-        : "player1"
-      : session.match.winner;
-
-    if (winner) {
-      await applyMatchResult(session, winner).catch(() => {});
+    if (session.match.winner) {
+      await applyMatchResult(session, session.match.winner).catch(() => {});
     }
 
     try {
@@ -182,6 +189,7 @@ async function resolvePendingRound(session: GameSession): Promise<{
   const match = session.match;
 
   if (match.status === "finished") {
+    match.roundDeadline = null;
     await endSession(session.id);
   } else {
     armRoundTimer(session.id);
