@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthButtons from "../components/AuthButtons";
 import { Toast } from "../components/Toast";
+import { HeaderLogout } from "../components/Header";
 
 
 export const Login = () => {
@@ -56,6 +57,7 @@ export const Login = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <HeaderLogout />
 
       {toast.show && (
         <Toast

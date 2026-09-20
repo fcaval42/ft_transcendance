@@ -1,10 +1,12 @@
 // src/pages/Home.tsx
 import { useAuthStatus } from "../utils/checkRoute";
 import { Link, Navigate } from "react-router-dom";
+import { HeaderLogout } from "../components/Header";
 
 export const Home = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-4">
+      <HeaderLogout />
         <img
       src="/logo.png"
       alt="Transcendance"
