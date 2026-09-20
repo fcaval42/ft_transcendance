@@ -10,6 +10,7 @@
     "connect": "Iniciar sesión",
     "noAccount": "¿No tienes una cuenta?",
     "register": "Regístrate",
+    "success": "¡Inicio de sesión exitoso! Bienvenido 👋",
     "back": "Volver al inicio"
   },
   "header": {
@@ -29,14 +30,27 @@
     "start": "¡Comenzar!",
     "cancel": "Volver al menú"
   },
+  "register": {
+    "inscription": "¡Registro exitoso! Bienvenido 👋",
+    "connection": "Registrarse",
+    "mail": "Correo electrónico",
+    "already": "¿Ya tienes una cuenta? Iniciar sesión",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "register": "Regístrate",
+    "back": "Volver al inicio"
+  },
   "gameVsBot": {
     "leave": "Volver al menú",
     "title": "Piedra-Papel-Tijeras",
     "yourChoice": "Elegiste:",
+    "timeLeft": "⏳ Tiempo restante: ",
     "botChoice": "La IA eligió:",
+    "opsChoice": "El oponente eligió: ",
+    "opsName": " eligió: ",
     "draw": "¡Es un empate!",
-    "win": "¡Ganaste!",
-    "lose": "Perdiste..."
+    "win": "¡Ganaste! 🎉",
+    "lose": "Perdiste...😢"
   },
   "popUpWin": {
     "title": "¡Juego terminado!",
@@ -55,6 +69,7 @@
   "popUpVsPlayer": {
     "ready": "¿Listo para jugar?",
     "start": "¡Comenzar!",
+    "time": "No se jugó ningún movimiento a tiempo...",
     "opponent": "Oponente...",
     "cancel": "Volver al menú"
   },
@@ -62,5 +77,26 @@
     "title": "Buscando...",
     "searching": "Buscando un oponente...",
     "cancel": "Volver al menú"
+  },
+  "profile": {
+    "rate": "Tasa de victorias: ",
+    "victory": "Victorias: ",
+    "defeat": "Derrotas: ",
+    "elo": "Elo: ",
+    "created": "Cuenta creada el: ",
+    "cancel": "Volver al menú"
+  },
+  "error": {
+    "create": "No se pudo crear el juego.",
+    "start": "No se pudo iniciar el juego",
+    "load": "Perfil no cargado, intente de nuevo en un momento.",
+    "play": "No se pudo jugar el movimiento.",
+    "game": "Error durante el juego.",
+    "server": "Error al conectarse al servidor.",
+    "player": "Jugador 1",
+    "empty": "Por favor complete todos los campos.",
+    "invalid": "Correo electrónico o contraseña inválidos.",
+    "password": "Las contraseñas no coinciden.",
+    "register": "Error durante el registro."
   }
 }

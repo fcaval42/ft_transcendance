@@ -97,6 +97,6 @@
     "empty": "Veuillez remplir tous les champs.",
     "invalid": "E-mail ou mot de passe invalide.",
     "password": "Les mots de passe ne correspondent pas.",
-    "register": "Erreur lors de l'inscription.",
+    "register": "Erreur lors de l'inscription."
   }
 }
