@@ -30,6 +30,16 @@
     "start": "Commencer !",
     "cancel": "Retour au menu"
   },
+  "register": {
+    "inscription": "Inscription reussie ! Bienvenue 👋",
+    "connection": "Inscription",
+    "mail": "E-mail",
+    "already": "Vous avez déjà un compte ? Se connecter",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "register": "S'inscrire",
+    "back": "Retour à l'accueil"
+  },
   "gameVsBot": {
     "leave": "Retour au menu",
     "title": "Pierre-Feuille-Ciseaux",
@@ -85,6 +95,8 @@
     "server": "Erreur lors de la connexion au serveur.",
     "player": "Joueur 1",
     "empty": "Veuillez remplir tous les champs.",
-    "invalid": "E-mail ou mot de passe invalide."
+    "invalid": "E-mail ou mot de passe invalide.",
+    "password": "Les mots de passe ne correspondent pas.",
+    "register": "Erreur lors de l'inscription.",
   }
 }
