@@ -36,9 +36,9 @@ services:
         - "8080:80"
         - "8443:443"
       volumes:
-        - ./Caddyfile:/etc/caddy/Caddyfile
+        - ./Caddyfile:/etc/caddy/Caddyfile:z
         - caddy_data:/data
-        - ./certs:/etc/caddy/certs:ro
+        - ./certs:/etc/caddy/certs:ro,z
         - caddy_config:/config
       depends_on:
         - frontend

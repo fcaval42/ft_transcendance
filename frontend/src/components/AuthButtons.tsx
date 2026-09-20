@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import "./AuthButtons.css";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Icône Google.
 // Ceci est un SVG = format image vectorielle. Dessin quoi.
@@ -39,14 +40,15 @@ const FortyTwoIcon = () => (
 
 
 const AuthButtons = () => {
+  const { t } = useTranslation();
   return (
     <div className="auth-container">
             <div className="guest-menu">
                 <button className="auth-button login-42" onClick={() => window.location.href = 'api/auth/42'}>
-                    <FortyTwoIcon /> Se connecter avec 42
+                    <FortyTwoIcon /> {t("authButton.42")}
                 </button>
                 <button className="auth-button google" onClick={() => window.location.href = 'api/auth/google'}>
-                    <GoogleIcon /> Se connecter avec Google
+                    <GoogleIcon /> {t("authButton.google")}
                 </button>
             </div>
     </div>

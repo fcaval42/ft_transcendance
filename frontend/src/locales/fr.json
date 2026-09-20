@@ -1,0 +1,104 @@
+{
+  "home": {
+    "welcome": "Bienvenue sur Transcendance",
+    "login": "Se connecter"
+  },
+  "login": {
+    "connection": "Connexion",
+    "mail": "E-mail",
+    "or": "ou",
+    "password": "Mot de passe",
+    "connect": "Se connecter",
+    "noAccount": "Pas encore inscrit ?",
+    "register": "S'inscrire",
+    "success": "Connexion réussie ! Bienvenue 👋",
+    "back": "Retour à l'accueil"
+  },
+  "header": {
+    "disconnect": "Se déconnecter"
+  },
+  "authButton": {
+    "42": "Se connecter avec 42",
+    "google": "Se connecter avec Google"
+  },
+  "menu": {
+    "menu": "Menu Principal",
+    "vsBot": "Jouer contre un bot",
+    "vsPlayer": "Jouer contre un joueur"
+  },
+  "popUpVsBot": {
+    "ready": "Prêt à jouer ?",
+    "start": "Commencer !",
+    "cancel": "Retour au menu"
+  },
+  "register": {
+    "inscription": "Inscription reussie ! Bienvenue 👋",
+    "connection": "Inscription",
+    "mail": "E-mail",
+    "already": "Vous avez déjà un compte ? Se connecter",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "register": "S'inscrire",
+    "back": "Retour à l'accueil"
+  },
+  "gameVsBot": {
+    "leave": "Retour au menu",
+    "title": "Pierre-Feuille-Ciseaux",
+    "yourChoice": "Tu as choisi:",
+    "timeLeft": "⏳ Temps restant: ",
+    "botChoice": "L'IA a choisi:",
+    "opsChoice": "L'adversaire a choisi: ",
+    "opsName": " a choisi: ",
+    "draw": "Égalité !",
+    "loading": "Chargement...",
+    "win": "Tu as gagné ! 🎉",
+    "lose": "Tu as perdu...😢"
+  },
+  "popUpWin": {
+    "title": "Match terminé !",
+    "message": "Victoire !",
+    "score": "Score final:",
+    "playAgain": "Rejouer",
+    "backToMenu": "Menu"
+  },
+  "popUpLose": {
+    "title": "Match terminé !",
+    "message": "Défaite...",
+    "score": "Score final:",
+    "playAgain": "Rejouer",
+    "backToMenu": "Menu"
+  },
+  "popUpVsPlayer": {
+    "ready": "🎮 Prêt à jouer ?",
+    "start": "Commencer !",
+    "time": "Pas de coup joué à temps...",
+    "opponent": "Adversaire...",
+    "cancel": "Retour au menu"
+  },
+  "popUpSearchPlayer": {
+    "title": "🔍 Recherche...",
+    "searching": "Recherche d'un adversaire...",
+    "cancel": "Retour au menu"
+  },
+  "profile":{
+    "rate": "Taux de victoire: ",
+    "victory": "Victoires: ",
+    "defeat": "Défaites: ",
+    "elo": "Elo: ",
+    "created": "Compte créé le: ",
+    "cancel": "Retour au menu"
+  },
+  "error": {
+    "create": "Impossible de créer la partie.",
+    "start": "Impossible de démarrer la partie",
+    "load": "Profil non chargé, réessaie dans un instant.",
+    "play": "Le coup n'a pas pu être joué.",
+    "game": "Erreur lors de la partie.",
+    "server": "Erreur lors de la connexion au serveur.",
+    "player": "Joueur 1",
+    "empty": "Veuillez remplir tous les champs.",
+    "invalid": "E-mail ou mot de passe invalide.",
+    "password": "Les mots de passe ne correspondent pas.",
+    "register": "Erreur lors de l'inscription."
+  }
+}

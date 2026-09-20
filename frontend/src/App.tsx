@@ -13,9 +13,9 @@ function App() {
     <Router>
       <Routes>
         { /* Route par défaut (page d'accueil) */}
-        <Route path="/" element={<Home />} />
         { /* Route pour la page de connexion */}
         <Route element={<UnlogRoute />}>
+          <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Route>

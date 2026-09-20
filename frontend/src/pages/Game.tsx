@@ -8,10 +8,12 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // pour naviguer vers d'autres pages
+import { useTranslation } from 'react-i18next';
 import { Header } from '../components/Header';
 import { Modal } from "../components/Modal";
 
 export const Game = () => {
+  const { t } = useTranslation();
 
 // stocke le choix de l'utilisateur (rock/paper/scissors ou null)
   const [userChoice, setUserChoice] = useState<string | null>(null);
@@ -96,10 +98,10 @@ export const Game = () => {
   // -------------------------------------------------------------------------
   // Traduit le résultat renvoyé par le back en message affiché à l'écran.
   const resultLabels: Record<string, string> = {
-    player1: "Tu as gagné ! 🎉",
-    player2: "Tu as perdu... 😢",
-    draw: "Égalité !",
-    afk: "Pas de coup joué à temps...",
+    player1: t("gameVsBot.win"),
+    player2: t("gameVsBot.lose"),
+    draw: t("gameVsBot.draw"),
+    afk: t("gameVsBot.time"),
   };
 
   // Crée une nouvelle partie contre le bot côté back et retourne son id.
@@ -110,7 +112,7 @@ export const Game = () => {
       credentials: "include",
       body: JSON.stringify({ player1Id: pid, vsBot: true }),
     });
-    if (!response.ok) throw new Error("Impossible de créer la partie.");
+    if (!response.ok) throw new Error(t("error.create") as string);
     const session = await response.json();
     setSessionId(session.id);
     setBotName(session.player2Name);
@@ -126,7 +128,7 @@ export const Game = () => {
       setShowModal(false);
       setGameStarted(true);
     } catch (err) {
-      setError("Impossible de démarrer la partie");
+      setError(t("error.start") as string);
     }
   };
 
@@ -135,7 +137,7 @@ export const Game = () => {
   // (le bot répond automatiquement) et affiche le résultat de la manche.
   const handlePlay = async (choice: string) => {
     if (!playerId) {
-      setError("Profil non chargé, réessaie dans un instant.");
+      setError(t("error.load") as string);
       return;
     }
 
@@ -153,7 +155,7 @@ export const Game = () => {
         credentials: "include",
         body: JSON.stringify({ playerId, move: choice }),
       });
-      if (!response.ok) throw new Error("Le coup n'a pas pu être joué.");
+      if (!response.ok) throw new Error(t("error.play") as string);
       const data = await response.json();
 
       const lastRound = data.match.rounds[data.match.rounds.length - 1];
@@ -167,14 +169,14 @@ export const Game = () => {
       if (data.match.status === "finished") {
         setSessionId(null);
           if (data.match.score1 > data.match.score2) {
-        setFinalResult("🎉 Victoire !");
+        setFinalResult("🎉 " + t("popUpWin.message"));
       } else if (data.match.score1 < data.match.score2) {
-        setFinalResult("😢 Défaite");
+        setFinalResult("😢 " + t("popUpLose.message"));
       }
       setShowEndModal(true);
     }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de la partie.");
+      setError(err instanceof Error ? err.message : t("error.game") as string);
       setSessionId(null);
     } finally {
       setLoading(false);
@@ -194,22 +196,22 @@ export const Game = () => {
 
       {/* POPUP */}
       <Modal
-        isOpen={showModal && playerName !== "Joueur 1"}
+        isOpen={showModal && playerName !== t("error.player")}
         onClose={() => {}}
-        title="🎮 Prêt à jouer ?"
+        title={"🎮 " + t("popUpVsBot.ready")}
         footer={
           <div className="flex flex-col gap-6">
             <button
               onClick={startGame}
               className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-12 py-4 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-lg"
             >
-              Commencer !
+              {t("popUpVsBot.start")}
             </button>
             <button
               onClick={handleGoHome}
               className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold"
             >
-              Retour au menu
+              {t("popUpVsBot.cancel")}
             </button>
           </div>
         }
@@ -223,34 +225,34 @@ export const Game = () => {
       <Modal
         isOpen={showEndModal}
         onClose={() => {}}
-        title="Match terminé !"
+        title={t("popUpWin.title")}
         footer={
           <>
             <button
               onClick={resetGame}
               className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-6 py-2 rounded-lg font-bold"
             >
-              Rejouer
+              {t("popUpWin.playAgain")}
             </button>
             <button
               onClick={handleGoHomeFromEnd}
               className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold"
             >
-              Menu
+              {t("popUpWin.backToMenu")}
             </button>
           </>
         }
       >
         <p className="text-xl">{finalResult}</p>
         <p className="text-lg mt-2">
-          Score final : <span className="font-bold text-blue-600">{score1}</span> - <span className="font-bold text-red-600">{score2}</span>
+          {t("popUpWin.score")} <span className="font-bold text-blue-600">{score1}</span> - <span className="font-bold text-red-600">{score2}</span>
         </p>
       </Modal>
 
       {gameStarted && (
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-6">
-            Pierre-Feuille-Ciseaux
+            {t("gameVsBot.title")}
           </h1>
 
           <div className="flex justify-between mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
@@ -283,14 +285,14 @@ export const Game = () => {
           )}
 
           {loading ? (
-            <p className="text-xl text-gray-600">Chargement...</p>
+            <p className="text-xl text-gray-600">{t("gameVsBot.loading")}</p>
           ) : userChoice && aiChoice ? (
             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
               <p className="text-xl">
-                Tu as choisi : <span className="text-2xl">{emojis[userChoice]}</span>
+                {t("gameVsBot.yourChoice")} <span className="text-2xl">{emojis[userChoice]}</span>
               </p>
               <p className="text-xl">
-                L'IA a choisi : <span className="text-2xl">{emojis[aiChoice]}</span>
+                {t("gameVsBot.botChoice")} <span className="text-2xl">{emojis[aiChoice]}</span>
               </p>
               <p className="text-2xl font-bold text-orange-800 mt-2">{result}</p>
             </div>
@@ -300,7 +302,7 @@ export const Game = () => {
             onClick={handleGoHome}
             className="mt-6 bg-emerald-400 text-white px-4 py-2 rounded hover:bg-emerald-500 transition-colors"
           >
-            Retour au menu
+            {t("gameVsBot.leave")}
           </button>
         </div>
       )}

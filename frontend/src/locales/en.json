@@ -1,0 +1,104 @@
+{
+  "home": {
+    "welcome": "Welcome to Transcendance",
+    "login": "Sign in"
+  },
+  "login": {
+    "connection": "Login",
+    "mail": "Email",
+    "password": "Password",
+    "or": "or",
+    "connect": "Sign in",
+    "noAccount": "Not registered yet?",
+    "register": "Sign up",
+    "success": "Login successful! Welcome 👋",
+    "back": "Back to home"
+  },
+  "header": {
+    "disconnect": "Sign out"
+  },
+  "authButton": {
+    "42": "Sign in with 42",
+    "google": "Sign in with Google"
+  },
+  "menu": {
+    "menu": "Main Menu",
+    "vsBot": "Play against a bot",
+    "vsPlayer": "Play against a player"
+  },
+  "popUpVsBot": {
+    "ready": "Ready to play?",
+    "start": "Start!",
+    "cancel": "Back to menu"
+  },
+  "register": {
+    "inscription": "Registration successful! Welcome 👋",
+    "connection": "Sign up",
+    "mail": "Email",
+    "already": "Already have an account? Sign in",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "register": "Sign up",
+    "back": "Back to home"
+  },
+  "gameVsBot": {
+    "leave": "Back to menu",
+    "title": "Rock-Paper-Scissors",
+    "yourChoice": "You chose:",
+    "timeLeft": "⏳ Time left: ",
+    "botChoice": "The AI chose:",
+    "opsChoice": "Opponent chose: ",
+    "opsName": " chose: ",
+    "draw": "It's a draw!",
+    "loading": "Loading...",
+    "win": "You won! 🎉",
+    "lose": "You lost...😢"
+  },
+  "popUpWin": {
+    "title": "Game over!",
+    "message": "Victory!",
+    "score": "Final score:",
+    "playAgain": "Play again",
+    "backToMenu": "Menu"
+  },
+  "popUpLose": {
+    "title": "Game over!",
+    "message": "Defeat...",
+    "score": "Final score:",
+    "playAgain": "Play again",
+    "backToMenu": "Menu"
+  },
+  "popUpVsPlayer": {
+    "ready": "🎮 Ready to play?",
+    "start": "Start!",
+    "time": "No move played in time...",
+    "opponent": "Opponent...",
+    "cancel": "Back to menu"
+  },
+  "popUpSearchPlayer": {
+    "title": "🔍 Searching...",
+    "searching": "Searching for an opponent...",
+    "cancel": "Back to menu"
+  },
+  "profile": {
+    "rate": "Win rate: ",
+    "victory": "Wins: ",
+    "defeat": "Losses: ",
+    "elo": "Elo: ",
+    "created": "Account created on: ",
+    "cancel": "Back to menu"
+  },
+  "error": {
+    "create": "Unable to create the game.",
+    "start": "Unable to start the game",
+    "load": "Profile not loaded, please try again in a moment.",
+    "play": "The move could not be played.",
+    "game": "Error during the game.",
+    "server": "Error connecting to the server.",
+    "player": "Player 1",
+    "empty": "Please fill in all fields.",
+    "invalid": "Invalid email or password.",
+    "password": "Passwords do not match.",
+    "register": "Error during registration."
+  }
+}

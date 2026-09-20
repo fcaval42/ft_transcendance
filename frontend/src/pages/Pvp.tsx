@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { Header } from '../components/Header';
 import { Modal } from "../components/Modal";
+import { useTranslation } from 'react-i18next';
 
 type Move = 'rock' | 'paper' | 'scissors';
 type RoundResult = 'player1' | 'player2' | 'draw' | 'afk';
@@ -48,15 +49,16 @@ export const Pvp = () => {
   const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const choices: Move[] = ["rock", "paper", "scissors"];
   const emojis: Record<Move, string> = { rock: "🪨", paper: "📄", scissors: "✂️" };
 
   // Message affiché après une manche, du point de vue du joueur courant (role).
   const labelForResult = (roundResult: RoundResult, role: Role | null): string => {
-    if (roundResult === "draw") return "Égalité !";
-    if (roundResult === "afk") return "Personne n'a joué à temps...";
+    if (roundResult === "draw") return t("gameVsBot.draw");
+    if (roundResult === "afk") return t("gameVsBot.time");
     if (!role) return "";
-    return roundResult === role ? "Tu as gagné ! 🎉" : "Tu as perdu... 😢";
+    return roundResult === role ? t("gameVsBot.win") : t("gameVsBot.lose");
   };
 
   // Score du point de vue du joueur courant : score1 = moi, score2 = l'adversaire.
@@ -164,8 +166,8 @@ export const Pvp = () => {
           data.match.winner === null
             ? "Match interrompu."
             : data.match.winner === role
-            ? "Tu as gagné la partie ! 🏆"
-            : "Tu as perdu la partie... 😢";
+            ? t("gameVsBot.win")
+            : t("gameVsBot.lose");
         setResult(finalMessage);
         redirectTimeoutRef.current = setTimeout(() => navigate("/menu"), 2500);
       } else {
@@ -222,7 +224,7 @@ export const Pvp = () => {
   // Actions
   const startGame = () => {
     if (!playerId) {
-      setError("Profil non chargé, réessaie dans un instant.");
+      setError(t("error.load") as string);
       return;
     }
     setError("");
@@ -268,38 +270,38 @@ export const Pvp = () => {
       )}
 
       {/* MODAL DÉBUT */}
-      <Modal isOpen={showModal} onClose={() => {}} title="🎮 Prêt à jouer ?"
+      <Modal isOpen={showModal} onClose={() => {}} title={t("popUpVsPlayer.ready")}
         footer={
           <div className="flex flex-col gap-6">
             <button onClick={startGame}
               className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-12 py-4 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-lg">
-              Commencer !
+                {t("popUpVsPlayer.start")}
             </button>
             <button onClick={handleGoHome}
               className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold">
-              Retour au menu
+              {t("popUpVsPlayer.cancel")}
             </button>
           </div>
         }>
         <p className="text-xl text-gray-600">
-          {playerName} <span className="font-bold">vs</span> {opponentName ?? "un adversaire"}
+          {playerName} <span className="font-bold">vs</span> {opponentName ?? t("popUpVsPlayer.opponent")}
         </p>
       </Modal>
 
       {/* MODAL RECHERCHE */}
-      <Modal isOpen={isSearching} onClose={() => {}} title="🔍 Recherche..."
+      <Modal isOpen={isSearching} onClose={() => {}} title={t("popUpSearchPlayer.title")}
         footer={
           <button onClick={handleGoHome}
             className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold">
-            Retour au menu
+            {t("popUpVsPlayer.cancel")}
           </button>
         }>
-        <p className="text-xl text-gray-600">Recherche d'un adversaire...</p>
+        <p className="text-xl text-gray-600">{t("popUpSearchPlayer.searching")}</p>
       </Modal>
 
       {gameStarted && (
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">Pierre-Feuille-Ciseaux</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">{t("gameVsBot.title")}</h1>
 
           <div className="flex justify-between mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
             <div className="text-center">
@@ -308,13 +310,13 @@ export const Pvp = () => {
             </div>
             <div className="text-2xl">vs</div>
             <div className="text-center">
-              <div className="font-bold text-lg">{opponentName ?? "Adversaire"}</div>
+              <div className="font-bold text-lg">{opponentName ?? t("popUpVsPlayer.opponent")}</div>
               <div className="text-3xl font-bold text-red-600">{score2}</div>
             </div>
           </div>
 
           <div className="text-xl font-medium mb-6 p-2 bg-orange-50 rounded-lg">
-            ⏳ Temps restant : <span className="font-bold">{timeleft}s</span>
+            {t("gameVsBot.timeLeft")} <span className="font-bold">{timeleft}s</span>
           </div>
 
           <div className="flex justify-center gap-4 mb-8">
@@ -327,11 +329,11 @@ export const Pvp = () => {
           </div>
 
           {loading ? (
-            <p className="text-xl text-gray-600">L'adversaire choisit...</p>
+            <p className="text-xl text-gray-600">{t("gameVsBot.opsChoice")}</p>
           ) : userChoice && opponentChoice ? (
             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-              <p className="text-xl">Tu as choisi : <span className="text-2xl">{emojis[userChoice]}</span></p>
-              <p className="text-xl">{opponentName ?? "Adversaire"} a choisi : <span className="text-2xl">{emojis[opponentChoice]}</span></p>
+              <p className="text-xl">{t("gameVsBot.yourChoice")} <span className="text-2xl">{emojis[userChoice]}</span></p>
+              <p className="text-xl">{opponentName ?? "Adversaire"} {t("gameVsBot.opsName")} <span className="text-2xl">{emojis[opponentChoice]}</span></p>
               <p className="text-2xl font-bold text-orange-800 mt-2">{result}</p>
             </div>
           ) : result ? (
@@ -339,7 +341,7 @@ export const Pvp = () => {
           ) : null}
 
           <button onClick={handleGoHome} className="mt-6 bg-emerald-400 text-white px-4 py-2 rounded hover:bg-emerald-500 transition-colors">
-            Retour au menu
+            {t("popUpVsPlayer.cancel")}
           </button>
         </div>
       )}
