@@ -25,7 +25,7 @@ export const Login = () => {
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError(t("error.empty"));
+      setError(t("error.empty") as string);
       return;
     }
     setError("");
@@ -69,7 +69,7 @@ export const Login = () => {
           />
       )}
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Connexion</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">{t("login.connection")}</h1>
 
         {/* BOUTONS 42 + GOOGLE*/}
         <AuthButtons />
@@ -77,7 +77,7 @@ export const Login = () => {
         {/* Séparateur "ou" */}
         <div className="my-4 flex items-center">
           <div className="flex-1 border-t border-gray-300"></div>
-          <span className="mx-2 text-gray-500">ou</span>
+          <span className="mx-2 text-gray-500">{t("login.or")}</span>
           <div className="flex-1 border-t border-gray-300"></div>
         </div>
 

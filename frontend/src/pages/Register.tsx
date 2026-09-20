@@ -20,11 +20,11 @@ export const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !email || !password || !confirmPassword) {
-      setError(t("error.empty"));
+      setError(t("error.empty") as string);
       return;
     }
     if (password !== confirmPassword) {
-      setError(t("error.password"));
+      setError(t("error.password") as string);
       return;
     }
 
@@ -98,7 +98,7 @@ export const Register = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="your@email.com"
+              placeholder="name@email.com"
               required
             />
           </div>

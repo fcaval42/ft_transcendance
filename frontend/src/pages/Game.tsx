@@ -112,7 +112,7 @@ export const Game = () => {
       credentials: "include",
       body: JSON.stringify({ player1Id: pid, vsBot: true }),
     });
-    if (!response.ok) throw new Error(t("error.create"));
+    if (!response.ok) throw new Error(t("error.create") as string);
     const session = await response.json();
     setSessionId(session.id);
     setBotName(session.player2Name);
@@ -128,7 +128,7 @@ export const Game = () => {
       setShowModal(false);
       setGameStarted(true);
     } catch (err) {
-      setError(t("error.start"));
+      setError(t("error.start") as string);
     }
   };
 
@@ -137,7 +137,7 @@ export const Game = () => {
   // (le bot répond automatiquement) et affiche le résultat de la manche.
   const handlePlay = async (choice: string) => {
     if (!playerId) {
-      setError(t("error.load"));
+      setError(t("error.load") as string);
       return;
     }
 
@@ -155,7 +155,7 @@ export const Game = () => {
         credentials: "include",
         body: JSON.stringify({ playerId, move: choice }),
       });
-      if (!response.ok) throw new Error(t("error.play"));
+      if (!response.ok) throw new Error(t("error.play") as string);
       const data = await response.json();
 
       const lastRound = data.match.rounds[data.match.rounds.length - 1];
@@ -176,7 +176,7 @@ export const Game = () => {
       setShowEndModal(true);
     }
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("error.game"));
+      setError(err instanceof Error ? err.message : t("error.game") as string);
       setSessionId(null);
     } finally {
       setLoading(false);
@@ -232,27 +232,27 @@ export const Game = () => {
               onClick={resetGame}
               className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-6 py-2 rounded-lg font-bold"
             >
-              Rejouer
+              {t("popUpWin.playAgain")}
             </button>
             <button
               onClick={handleGoHomeFromEnd}
               className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold"
             >
-              Menu
+              {t("popUpWin.backToMenu")}
             </button>
           </>
         }
       >
         <p className="text-xl">{finalResult}</p>
         <p className="text-lg mt-2">
-          Score final : <span className="font-bold text-blue-600">{score1}</span> - <span className="font-bold text-red-600">{score2}</span>
+          {t("popUpWin.score")} <span className="font-bold text-blue-600">{score1}</span> - <span className="font-bold text-red-600">{score2}</span>
         </p>
       </Modal>
 
       {gameStarted && (
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-6">
-            Pierre-Feuille-Ciseaux
+            {t("gameVsBot.title")}
           </h1>
 
           <div className="flex justify-between mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
@@ -285,14 +285,14 @@ export const Game = () => {
           )}
 
           {loading ? (
-            <p className="text-xl text-gray-600">Chargement...</p>
+            <p className="text-xl text-gray-600">{t("gameVsBot.loading")}</p>
           ) : userChoice && aiChoice ? (
             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
               <p className="text-xl">
-                Tu as choisi : <span className="text-2xl">{emojis[userChoice]}</span>
+                {t("gameVsBot.yourChoice")} <span className="text-2xl">{emojis[userChoice]}</span>
               </p>
               <p className="text-xl">
-                L'IA a choisi : <span className="text-2xl">{emojis[aiChoice]}</span>
+                {t("gameVsBot.botChoice")} <span className="text-2xl">{emojis[aiChoice]}</span>
               </p>
               <p className="text-2xl font-bold text-orange-800 mt-2">{result}</p>
             </div>
@@ -302,7 +302,7 @@ export const Game = () => {
             onClick={handleGoHome}
             className="mt-6 bg-emerald-400 text-white px-4 py-2 rounded hover:bg-emerald-500 transition-colors"
           >
-            Retour au menu
+            {t("gameVsBot.leave")}
           </button>
         </div>
       )}

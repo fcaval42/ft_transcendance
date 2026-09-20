@@ -50,6 +50,7 @@
     "opsName": " eligió: ",
     "draw": "¡Es un empate!",
     "win": "¡Ganaste! 🎉",
+    "loading": "Cargando...",
     "lose": "Perdiste...😢"
   },
   "popUpWin": {
@@ -67,14 +68,15 @@
     "backToMenu": "Menú"
   },
   "popUpVsPlayer": {
-    "ready": "¿Listo para jugar?",
+    "ready": "🎮 ¿Listo para jugar?",
     "start": "¡Comenzar!",
+    "or": "o",
     "time": "No se jugó ningún movimiento a tiempo...",
     "opponent": "Oponente...",
     "cancel": "Volver al menú"
   },
   "popUpSearchPlayer": {
-    "title": "Buscando...",
+    "title": "🔍 Buscando...",
     "searching": "Buscando un oponente...",
     "cancel": "Volver al menú"
   },

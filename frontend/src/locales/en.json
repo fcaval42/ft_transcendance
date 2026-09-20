@@ -7,6 +7,7 @@
     "connection": "Login",
     "mail": "Email",
     "password": "Password",
+    "or": "or",
     "connect": "Sign in",
     "noAccount": "Not registered yet?",
     "register": "Sign up",
@@ -49,6 +50,7 @@
     "opsChoice": "Opponent chose: ",
     "opsName": " chose: ",
     "draw": "It's a draw!",
+    "loading": "Loading...",
     "win": "You won! 🎉",
     "lose": "You lost...😢"
   },
@@ -67,14 +69,14 @@
     "backToMenu": "Menu"
   },
   "popUpVsPlayer": {
-    "ready": "Ready to play?",
+    "ready": "🎮 Ready to play?",
     "start": "Start!",
     "time": "No move played in time...",
     "opponent": "Opponent...",
     "cancel": "Back to menu"
   },
   "popUpSearchPlayer": {
-    "title": "Searching...",
+    "title": "🔍 Searching...",
     "searching": "Searching for an opponent...",
     "cancel": "Back to menu"
   },

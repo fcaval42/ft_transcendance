@@ -6,6 +6,7 @@
   "login": {
     "connection": "Connexion",
     "mail": "E-mail",
+    "or": "ou",
     "password": "Mot de passe",
     "connect": "Se connecter",
     "noAccount": "Pas encore inscrit ?",
@@ -49,6 +50,7 @@
     "opsChoice": "L'adversaire a choisi: ",
     "opsName": " a choisi: ",
     "draw": "Égalité !",
+    "loading": "Chargement...",
     "win": "Tu as gagné ! 🎉",
     "lose": "Tu as perdu...😢"
   },
@@ -67,14 +69,14 @@
     "backToMenu": "Menu"
   },
   "popUpVsPlayer": {
-    "ready": "Prêt à jouer ?",
+    "ready": "🎮 Prêt à jouer ?",
     "start": "Commencer !",
     "time": "Pas de coup joué à temps...",
     "opponent": "Adversaire...",
     "cancel": "Retour au menu"
   },
   "popUpSearchPlayer": {
-    "title": "Recherche...",
+    "title": "🔍 Recherche...",
     "searching": "Recherche d'un adversaire...",
     "cancel": "Retour au menu"
   },

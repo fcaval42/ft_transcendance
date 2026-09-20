@@ -224,7 +224,7 @@ export const Pvp = () => {
   // Actions
   const startGame = () => {
     if (!playerId) {
-      setError(t("error.load"));
+      setError(t("error.load") as string);
       return;
     }
     setError("");
@@ -270,38 +270,38 @@ export const Pvp = () => {
       )}
 
       {/* MODAL DÉBUT */}
-      <Modal isOpen={showModal} onClose={() => {}} title="🎮 Prêt à jouer ?"
+      <Modal isOpen={showModal} onClose={() => {}} title={t("popUpVsPlayer.ready")}
         footer={
           <div className="flex flex-col gap-6">
             <button onClick={startGame}
               className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-12 py-4 rounded-xl text-2xl font-bold transition-all transform hover:scale-105 shadow-lg">
-                {t("gameVsPlayer.start")}
+                {t("popUpVsPlayer.start")}
             </button>
             <button onClick={handleGoHome}
               className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold">
-              {t("gameVsPlayer.cancel")}
+              {t("popUpVsPlayer.cancel")}
             </button>
           </div>
         }>
         <p className="text-xl text-gray-600">
-          {playerName} <span className="font-bold">vs</span> {opponentName ?? "un adversaire"}
+          {playerName} <span className="font-bold">vs</span> {opponentName ?? t("popUpVsPlayer.opponent")}
         </p>
       </Modal>
 
       {/* MODAL RECHERCHE */}
-      <Modal isOpen={isSearching} onClose={() => {}} title="🔍 Recherche..."
+      <Modal isOpen={isSearching} onClose={() => {}} title={t("popUpSearchPlayer.title")}
         footer={
           <button onClick={handleGoHome}
             className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold">
-            {t("gameVsPlayer.cancel")}
+            {t("popUpVsPlayer.cancel")}
           </button>
         }>
-        <p className="text-xl text-gray-600">Recherche d'un adversaire...</p>
+        <p className="text-xl text-gray-600">{t("popUpSearchPlayer.searching")}</p>
       </Modal>
 
       {gameStarted && (
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">Pierre-Feuille-Ciseaux</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">{t("gameVsBot.title")}</h1>
 
           <div className="flex justify-between mb-6 p-4 bg-gray-50 rounded-lg shadow-sm">
             <div className="text-center">
@@ -310,13 +310,13 @@ export const Pvp = () => {
             </div>
             <div className="text-2xl">vs</div>
             <div className="text-center">
-              <div className="font-bold text-lg">{opponentName ?? "Adversaire"}</div>
+              <div className="font-bold text-lg">{opponentName ?? t("popUpVsPlayer.opponent")}</div>
               <div className="text-3xl font-bold text-red-600">{score2}</div>
             </div>
           </div>
 
           <div className="text-xl font-medium mb-6 p-2 bg-orange-50 rounded-lg">
-            {t("gameVsPlayer.timeLeft")} <span className="font-bold">{timeleft}s</span>
+            {t("gameVsBot.timeLeft")} <span className="font-bold">{timeleft}s</span>
           </div>
 
           <div className="flex justify-center gap-4 mb-8">
@@ -341,7 +341,7 @@ export const Pvp = () => {
           ) : null}
 
           <button onClick={handleGoHome} className="mt-6 bg-emerald-400 text-white px-4 py-2 rounded hover:bg-emerald-500 transition-colors">
-            {t("gameVsPlayer.cancel")}
+            {t("popUpVsPlayer.cancel")}
           </button>
         </div>
       )}

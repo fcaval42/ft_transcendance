@@ -35,7 +35,7 @@ export const Profile = () => {
         <div className="bg-gray-300/30 rounded-xl p-6 shadow-sm w-full border-5 border-indigo-400">
         <div className="flex flex-col items-center gap-4">
         <div className="text-gray-700 font-medium">
-            {t("profile.created")} + {new Date(user.createdAt).toLocaleDateString('fr-FR')}
+            {t("profile.created")} {new Date(user.createdAt).toLocaleDateString('fr-FR')}
         </div>
 
         <div className="flex gap-4">
@@ -46,7 +46,7 @@ export const Profile = () => {
             {t("profile.defeat")} {user.losses || 0}
             </div>
             <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg shadow-sm">
-            {t("profile.elo")}: {user.elo || 0}
+            {t("profile.elo")} {user.elo || 0}
             </div>
         </div>
 
