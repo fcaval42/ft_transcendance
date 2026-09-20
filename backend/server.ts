@@ -138,7 +138,7 @@ app.get('/api/auth/42/callback', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.redirect('https://localhost:8443/');
+    res.redirect('https://localhost:8443/menu');
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Échec de l authentification OAuth' });
   }
@@ -202,7 +202,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.redirect('https://localhost:8443/');
+    res.redirect('https://localhost:8443/menu');
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Échec de l authentification Google' });
   }
