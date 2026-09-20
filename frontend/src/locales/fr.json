@@ -65,6 +65,14 @@
     "searching": "Recherche d'un adversaire...",
     "cancel": "Retour au menu"
   },
+  "profile":{
+    "rate": "Taux de victoire: ",
+    "victory": "Victoires: ",
+    "defeat": "Défaites: ",
+    "elo": "Elo: ",
+    "created": "Compte créé le: ",
+    "cancel": "Retour au menu"
+  },
   "error": {
     "create": "Impossible de créer la partie.",
     "start": "Impossible de démarrer la partie",
