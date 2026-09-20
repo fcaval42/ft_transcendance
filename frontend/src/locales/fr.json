@@ -34,10 +34,13 @@
     "leave": "Retour au menu",
     "title": "Pierre-Feuille-Ciseaux",
     "yourChoice": "Tu as choisi:",
+    "timeLeft": "⏳ Temps restant: ",
     "botChoice": "L'IA a choisi:",
+    "opsChoice": "L'adversaire a choisi: ",
+    "opsName": " a choisi: ",
     "draw": "Égalité !",
-    "win": "Tu as gagné !",
-    "lose": "Tu as perdu..."
+    "win": "Tu as gagné ! 🎉",
+    "lose": "Tu as perdu...😢"
   },
   "popUpWin": {
     "title": "Match terminé !",

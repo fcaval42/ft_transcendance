@@ -98,8 +98,8 @@ export const Game = () => {
   // -------------------------------------------------------------------------
   // Traduit le résultat renvoyé par le back en message affiché à l'écran.
   const resultLabels: Record<string, string> = {
-    player1: t("gameVsBot.win") + "🎉",
-    player2: t("gameVsBot.lose") + "😢",
+    player1: t("gameVsBot.win"),
+    player2: t("gameVsBot.lose"),
     draw: t("gameVsBot.draw"),
     afk: t("gameVsBot.time"),
   };
