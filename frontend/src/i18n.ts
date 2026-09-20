@@ -5,7 +5,7 @@ import fr from './locales/fr.json';
 import en from './locales/en.json';
 import es from './locales/es.json';
 
-export const defaultNS = 'common';
+export const defaultNS = 'translation';
 export const resources = {
   fr: { translation: fr },
   en: { translation: en },
@@ -18,6 +18,7 @@ i18n
     resources,
     lng: 'fr',
     fallbackLng: 'en',
+    defaultNS,
     interpolation: {
       escapeValue: false,
     },

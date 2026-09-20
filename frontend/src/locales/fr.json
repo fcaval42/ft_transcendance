@@ -55,6 +55,7 @@
   "popUpVsPlayer": {
     "ready": "Prêt à jouer ?",
     "start": "Commencer !",
+    "time": "Pas de coup joué à temps...",
     "opponent": "Adversaire...",
     "cancel": "Retour au menu"
   },
@@ -62,5 +63,13 @@
     "title": "Recherche...",
     "searching": "Recherche d'un adversaire...",
     "cancel": "Retour au menu"
+  },
+  "error": {
+    "create": "Impossible de créer la partie.",
+    "start": "Impossible de démarrer la partie",
+    "load": "Profil non chargé, réessaie dans un instant.",
+    "play": "Le coup n'a pas pu être joué.",
+    "game": "Erreur lors de la partie.",
+    "player": "Joueur 1"
   }
 }

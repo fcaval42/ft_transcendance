@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 export const LogoutButton = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
@@ -22,7 +24,7 @@ export const LogoutButton = () => {
     <button
       className="bg-yellow-400 text-white px-4 py-2 rounded-lg hover:bg-yellow-500 transition-colors font-bold" onClick={handleLogout}
     >
-      Se déconnecter
+      {t("header.disconnect")}
     </button>
   );
 };
