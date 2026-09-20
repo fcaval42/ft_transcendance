@@ -6,6 +6,7 @@ import { Menu } from "./pages/Menu"
 import { Home } from "./pages/Home";
 import { Register } from "./pages/Register";
 import { Profile } from "./pages/Profile";
+import { Pvp } from "./pages/Pvp";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/menu" element={<Menu />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/game" element={<Game />} />
+          <Route path="/Pvp" element={<Pvp />} />
         </Route>
       </Routes>
     </Router>

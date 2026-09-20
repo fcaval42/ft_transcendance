@@ -12,12 +12,55 @@
     "register": "S'inscrire",
     "back": "Retour à l'accueil"
   },
+  "header": {
+    "disconnect": "Se déconnecter"
+  },
   "authButton": {
     "42": "Se connecter avec 42",
     "google": "Se connecter avec Google"
   },
   "menu": {
-    "disconnect": "Se déconnecter",
     "menu": "Menu Principal",
     "vsBot": "Jouer contre un bot",
+    "vsPlayer": "Jouer contre un joueur"
+  },
+  "popUpVsBot": {
+    "ready": "Prêt à jouer ?",
+    "start": "Commencer !",
+    "cancel": "Retour au menu"
+  },
+  "gameVsBot": {
+    "leave": "Retour au menu",
+    "title": "Pierre-Feuille-Ciseaux",
+    "yourChoice": "Tu as choisi:",
+    "botChoice": "L'IA a choisi:",
+    "draw": "Égalité !",
+    "win": "Tu as gagné !",
+    "lose": "Tu as perdu..."
+  },
+  "popUpWin": {
+    "title": "Match terminé !",
+    "message": "Victoire !",
+    "score": "Score final:",
+    "playAgain": "Rejouer",
+    "backToMenu": "Menu"
+  },
+  "popUpLose": {
+    "title": "Match terminé !",
+    "message": "Défaite...",
+    "score": "Score final:",
+    "playAgain": "Rejouer",
+    "backToMenu": "Menu"
+  },
+  "popUpVsPlayer": {
+    "ready": "Prêt à jouer ?",
+    "start": "Commencer !",
+    "opponent": "Adversaire...",
+    "cancel": "Retour au menu"
+  },
+  "popUpSearchPlayer": {
+    "title": "Recherche...",
+    "searching": "Recherche d'un adversaire...",
+    "cancel": "Retour au menu"
+  }
 }

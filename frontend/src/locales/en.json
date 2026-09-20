@@ -1,0 +1,66 @@
+{
+  "home": {
+    "welcome": "Welcome to Transcendance",
+    "login": "Sign in"
+  },
+  "login": {
+    "connection": "Login",
+    "mail": "Email",
+    "password": "Password",
+    "connect": "Sign in",
+    "noAccount": "Not registered yet?",
+    "register": "Sign up",
+    "back": "Back to home"
+  },
+    "header": {
+        "disconnect": "Sign out"
+    },
+  "authButton": {
+    "42": "Sign in with 42",
+    "google": "Sign in with Google"
+  },
+  "menu": {
+    "menu": "Main Menu",
+    "vsBot": "Play against a bot",
+    "vsPlayer": "Play against a player"
+  },
+  "popUpVsBot": {
+    "ready": "Ready to play?",
+    "start": "Start!",
+    "cancel": "Back to menu"
+  },
+  "gameVsBot": {
+    "leave": "Back to menu",
+    "title": "Rock-Paper-Scissors",
+    "yourChoice": "You chose:",
+    "botChoice": "The AI chose:",
+    "draw": "It's a draw!",
+    "win": "You won!",
+    "lose": "You lost..."
+  },
+  "popUpWin": {
+    "title": "Game over!",
+    "message": "Victory!",
+    "score": "Final score:",
+    "playAgain": "Play again",
+    "backToMenu": "Menu"
+  },
+  "popUpLose": {
+    "title": "Game over!",
+    "message": "Defeat...",
+    "score": "Final score:",
+    "playAgain": "Play again",
+    "backToMenu": "Menu"
+  },
+  "popUpVsPlayer": {
+    "ready": "Ready to play?",
+    "start": "Start!",
+    "opponent": "Opponent...",
+    "cancel": "Back to menu"
+  },
+  "popUpSearchPlayer": {
+    "title": "Searching...",
+    "searching": "Searching for an opponent...",
+    "cancel": "Back to menu"
+  }
+}

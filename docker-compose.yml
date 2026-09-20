@@ -26,6 +26,8 @@ services:
 
   frontend:
     build: ./frontend
+    environment:
+      WDS_SOCKET_PORT: 8443
     expose:
       - "3000"
   caddy:

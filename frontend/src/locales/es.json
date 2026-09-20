@@ -1,0 +1,66 @@
+{
+  "home": {
+    "welcome": "Bienvenido a Transcendance",
+    "login": "Iniciar sesión"
+  },
+  "login": {
+    "connection": "Inicio de sesión",
+    "mail": "Correo electrónico",
+    "password": "Contraseña",
+    "connect": "Iniciar sesión",
+    "noAccount": "¿No tienes una cuenta?",
+    "register": "Regístrate",
+    "back": "Volver al inicio"
+  },
+  "header": {
+    "disconnect": "Cerrar sesión"
+  },
+  "authButton": {
+    "42": "Iniciar sesión con 42",
+    "google": "Iniciar sesión con Google"
+  },
+  "menu": {
+    "menu": "Menú Principal",
+    "vsBot": "Jugar contra un bot",
+    "vsPlayer": "Jugar contra un jugador"
+  },
+  "popUpVsBot": {
+    "ready": "¿Listo para jugar?",
+    "start": "¡Comenzar!",
+    "cancel": "Volver al menú"
+  },
+  "gameVsBot": {
+    "leave": "Volver al menú",
+    "title": "Piedra-Papel-Tijeras",
+    "yourChoice": "Elegiste:",
+    "botChoice": "La IA eligió:",
+    "draw": "¡Es un empate!",
+    "win": "¡Ganaste!",
+    "lose": "Perdiste..."
+  },
+  "popUpWin": {
+    "title": "¡Juego terminado!",
+    "message": "¡Victoria!",
+    "score": "Puntuación final:",
+    "playAgain": "Jugar de nuevo",
+    "backToMenu": "Menú"
+  },
+  "popUpLose": {
+    "title": "¡Juego terminado!",
+    "message": "Derrota...",
+    "score": "Puntuación final:",
+    "playAgain": "Jugar de nuevo",
+    "backToMenu": "Menú"
+  },
+  "popUpVsPlayer": {
+    "ready": "¿Listo para jugar?",
+    "start": "¡Comenzar!",
+    "opponent": "Oponente...",
+    "cancel": "Volver al menú"
+  },
+  "popUpSearchPlayer": {
+    "title": "Buscando...",
+    "searching": "Buscando un oponente...",
+    "cancel": "Volver al menú"
+  }
+}
