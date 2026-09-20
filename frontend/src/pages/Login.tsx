@@ -4,12 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthButtons from "../components/AuthButtons";
 import { Toast } from "../components/Toast";
 import { HeaderLogout } from "../components/Header";
+import { useTranslation } from "react-i18next";
 
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const { t } = useTranslation();
   const [toast, setToast] = useState<{ show: boolean; message: string; type: "success" |
     "error" }>
     ({
@@ -23,7 +25,7 @@ export const Login = () => {
   const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError("Veuillez remplir tous les champs.");
+      setError(t("error.empty"));
       return;
     }
     setError("");
@@ -40,16 +42,16 @@ export const Login = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Identifiants invalides.");
+        throw new Error(data.error || t("error.invalid"));
       }
 
       // affiche le toast (popup) puis on redirige
-      setToast({ show: true, message: "Connexion réussie ! Bienvenue 👋", type: "success"});
+      setToast({ show: true, message: t("login.success"), type: "success"});
       setTimeout(() => navigate("/menu"), 1000)
 
     } catch (error: any) {
-      setToast({ show: true, message: error.message || "Erreur lors de la connexion au serveur", type: "error" });
-      setError(error.message || "Erreur lors de la connexion au serveur.");
+      setToast({ show: true, message: error.message || t("error.server"), type: "error" });
+      setError(error.message || t("error.server"));
     } finally {
       setLoading(false);
     }
@@ -90,7 +92,7 @@ export const Login = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 mb-2">
-              Email
+              {t("login.mail")}
             </label>
             <input
               type="email"
@@ -98,13 +100,13 @@ export const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="ton@email.com"
+              placeholder="name@email.com"
               required
             />
           </div>
           <div className="mb-6">
             <label htmlFor="password" className="block text-gray-700 mb-2">
-              Mot de passe
+              {t("login.password")}
             </label>
             <input
               type="password"
@@ -120,13 +122,13 @@ export const Login = () => {
             type="submit"
             className="w-full bg-indigo-400 text-white p-2 rounded hover:bg-indigo-500 transition-colors"
           >
-            Se connecter
+            {t("login.connect")}
           </button>
 
           {/* Séparateur "s'inscrire" */}
           <div className="my-4 flex items-center">
             <div className="flex-1 border-t border-gray-300"></div>
-            <span className="mx-2 text-gray-500">Pas encore inscrit ?</span>
+            <span className="mx-2 text-gray-500">{t("login.noAccount")}</span>
             <div className="flex-1 border-t border-gray-300"></div>
           </div>
 
@@ -134,13 +136,13 @@ export const Login = () => {
             to="/register"
             className="block w-full bg-pink-400 text-white p-2 rounded hover:bg-pink-500 transition-colors text-center"
           >
-            S'inscrire
+            {t("login.register")}
           </Link>
         </form>
 
         <div className="mt-4 text-center">
           <Link to="/" className="text-blue-500 hover:underline">
-            Retour à l'accueil
+            {t("login.back")}
           </Link>
         </div>
       </div>

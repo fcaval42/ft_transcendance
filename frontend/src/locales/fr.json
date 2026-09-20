@@ -10,6 +10,7 @@
     "connect": "Se connecter",
     "noAccount": "Pas encore inscrit ?",
     "register": "S'inscrire",
+    "success": "Connexion réussie ! Bienvenue 👋",
     "back": "Retour à l'accueil"
   },
   "header": {
@@ -70,6 +71,9 @@
     "load": "Profil non chargé, réessaie dans un instant.",
     "play": "Le coup n'a pas pu être joué.",
     "game": "Erreur lors de la partie.",
-    "player": "Joueur 1"
+    "server": "Erreur lors de la connexion au serveur.",
+    "player": "Joueur 1",
+    "empty": "Veuillez remplir tous les champs.",
+    "invalid": "E-mail ou mot de passe invalide."
   }
 }
