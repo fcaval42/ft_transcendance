@@ -1,0 +1,23 @@
+{
+  "home": {
+    "welcome": "Bienvenue sur Transcendance",
+    "login": "Se connecter"
+  },
+  "login": {
+    "connection": "Connexion",
+    "mail": "E-mail",
+    "password": "Mot de passe",
+    "connect": "Se connecter",
+    "noAccount": "Pas encore inscrit ?",
+    "register": "S'inscrire",
+    "back": "Retour à l'accueil"
+  },
+  "authButton": {
+    "42": "Se connecter avec 42",
+    "google": "Se connecter avec Google"
+  },
+  "menu": {
+    "disconnect": "Se déconnecter",
+    "menu": "Menu Principal",
+    "vsBot": "Jouer contre un bot",
+}
