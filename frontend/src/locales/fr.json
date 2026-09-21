@@ -46,6 +46,7 @@
     "title": "Pierre-Feuille-Ciseaux",
     "yourChoice": "Tu as choisi:",
     "timeLeft": "⏳ Temps restant: ",
+    "time":"Pas de coup joué à temps...",
     "botChoice": "L'IA a choisi:",
     "opsChoice": "L'adversaire a choisi: ",
     "opsName": " a choisi: ",

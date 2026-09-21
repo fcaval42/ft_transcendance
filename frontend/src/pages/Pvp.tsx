@@ -274,7 +274,6 @@ export const Pvp = () => {
 
   const handlePlayAgain = () => {
     stopVisualTimer();
-    if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current);
     setShowEndModal(false);
     setGameStarted(false);
     setScore1(0);
