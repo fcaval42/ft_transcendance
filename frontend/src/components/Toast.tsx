@@ -24,4 +24,3 @@ export const Toast = ({ message, type, onClose }: ToastType) => {
     </div>
   );
 };
-
