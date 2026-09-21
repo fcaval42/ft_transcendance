@@ -32,15 +32,17 @@ export const Pvp = () => {
   const [result, setResult] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [playerId, setPlayerId] = useState<string | null>(null);
-  const [playerName, setPlayerName] = useState<string>("Joueur 1");
+  const [playerName, setPlayerName] = useState<string>("");
   const [opponentName, setOpponentName] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(true);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [score1, setScore1] = useState<number>(0);
   const [score2, setScore2] = useState<number>(0);
   const [timeleft, setTimeLeft] = useState<number>(ROUND_TIME_LIMIT_S);
   const [error, setError] = useState<string>("");
+  const [showEndModal, setShowEndModal] = useState<boolean>(false);
+  const [endMessage, setEndMessage] = useState<string>("");
 
   const socketRef = useRef<Socket | null>(null);
   const sessionIdRef = useRef<string | null>(null);
@@ -120,6 +122,8 @@ export const Pvp = () => {
         setOpponentChoice(null);
         setResult("");
         setError("");
+        setShowEndModal(false);
+        setEndMessage("");
         applyMatchState(data.match, data.role);
         setShowModal(false);
         setIsSearching(false);
@@ -140,6 +144,8 @@ export const Pvp = () => {
         setOpponentChoice(null);
         setResult("");
         setError("");
+        setShowEndModal(false);
+        setEndMessage("");
         applyMatchState(data.match, data.role);
         setShowModal(false);
         setIsSearching(false);
@@ -169,7 +175,8 @@ export const Pvp = () => {
             ? t("gameVsBot.win")
             : t("gameVsBot.lose");
         setResult(finalMessage);
-        redirectTimeoutRef.current = setTimeout(() => navigate("/menu"), 2500);
+        setEndMessage(finalMessage);
+        setShowEndModal(true);
       } else {
         setResult(labelForResult(lastRound.result, role));
         startVisualTimer(data.match.roundDeadline);
@@ -199,6 +206,7 @@ export const Pvp = () => {
           const user = await res.json();
           setPlayerName(user.username);
           setPlayerId(user.id);
+          setShowModal(true);
         }
       } catch {}
     };
@@ -260,6 +268,26 @@ export const Pvp = () => {
     navigate("/menu");
   };
 
+  const handleGoHomeFromEnd = () => {
+    setShowEndModal(false);
+    handleGoHome();
+  };
+
+  const handlePlayAgain = () => {
+    stopVisualTimer();
+    setShowEndModal(false);
+    setGameStarted(false);
+    setScore1(0);
+    setScore2(0);
+    setUserChoice(null);
+    setOpponentChoice(null);
+    setResult("");
+    setOpponentName(null);
+    setShowModal(true);
+    sessionIdRef.current = null;
+    roleRef.current = null;
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
@@ -297,6 +325,26 @@ export const Pvp = () => {
           </button>
         }>
         <p className="text-xl text-gray-600">{t("popUpSearchPlayer.searching")}</p>
+      </Modal>
+
+      {/* MODAL FIN DE PARTIE */}
+      <Modal isOpen={showEndModal} onClose={() => {}} title={t("popUpWin.title")}
+        footer={
+          <>
+            <button onClick={handlePlayAgain}
+              className="bg-fuchsia-300 hover:bg-fuchsia-400 text-white px-6 py-2 rounded-lg font-bold">
+              {t("popUpWin.playAgain")}
+            </button>
+            <button onClick={handleGoHomeFromEnd}
+              className="bg-emerald-400 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold">
+              {t("popUpWin.backToMenu")}
+            </button>
+          </>
+        }>
+        <p className="text-xl">{endMessage}</p>
+        <p className="text-lg mt-2">
+          {t("popUpWin.score")} <span className="font-bold text-blue-600">{score1}</span> - <span className="font-bold text-red-600">{score2}</span>
+        </p>
       </Modal>
 
       {gameStarted && (
