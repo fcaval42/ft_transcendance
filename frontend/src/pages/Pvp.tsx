@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
 import { Modal } from "../components/Modal";
 import { useTranslation } from 'react-i18next';
 
@@ -290,8 +291,10 @@ export const Pvp = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <Header />
+
+      <main className="flex-1 flex flex-col items-center justify-center p-4 pt-20">
 
       {error && (
         <div className="mb-4 p-2 bg-red-100 text-red-700 rounded max-w-md">{error}</div>
@@ -393,6 +396,8 @@ export const Pvp = () => {
           </button>
         </div>
       )}
+      </main>
+      <Footer />
     </div>
   );
 };

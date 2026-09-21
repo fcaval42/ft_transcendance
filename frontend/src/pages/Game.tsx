@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // pour naviguer vers d'autres pages
 import { useTranslation } from 'react-i18next';
 import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
 import { Modal } from "../components/Modal";
 
 export const Game = () => {
@@ -191,10 +192,11 @@ export const Game = () => {
 
   // -------------------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <Header />
 
-      {/* POPUP */}
+      <main className="flex-1 flex flex-col items-center justify-center p-4 pt-20">
+        {/* POPUP */}
       <Modal
         isOpen={showModal && playerName !== t("error.player")}
         onClose={() => {}}
@@ -306,6 +308,8 @@ export const Game = () => {
           </button>
         </div>
       )}
+      </main>
+      <Footer />
     </div>
   );
 };
