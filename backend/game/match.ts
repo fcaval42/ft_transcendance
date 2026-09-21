@@ -2,6 +2,10 @@ import { Move, RoundResult, playRound } from "./rules";
 
 export const ROUND_TIME_LIMIT_MS = 5_000;
 
+export const WELL_TRIGGER_CHANCE = 1;
+export const WELL_TIME_LIMIT_BOT_MS = 1_000;
+export const WELL_TIME_LIMIT_PVP_MS = 2_000;
+
 export type MatchStatus = "playing" | "finished";
 export type Winner = "player1" | "player2" | null;
 
@@ -10,6 +14,13 @@ export interface RoundOutcome {
   move1: Move | null;
   move2: Move | null;
   result: RoundResult;
+  viaWell?: boolean;
+}
+
+export interface WellState {
+  triggered: boolean;
+  available: boolean;
+  deadline: number | null;
 }
 
 export interface Match {
@@ -20,6 +31,7 @@ export interface Match {
   status: MatchStatus;
   winner: Winner;
   roundDeadline: number | null;
+  well: WellState;
 }
 
 export function createMatch(winsNeeded = 3): Match {
@@ -31,6 +43,7 @@ export function createMatch(winsNeeded = 3): Match {
     status: "playing",
     winner: null,
     roundDeadline: null,
+    well: { triggered: false, available: false, deadline: null },
   };
 }
 
@@ -55,6 +68,33 @@ export function playMatchRound(
     result,
   });
 
+  checkMatchEnd(match);
+
+  return match;
+}
+
+export function resolveWellWin(match: Match, winner: "player1" | "player2"): Match {
+  if (match.status === "finished") {
+    throw new Error("Ce match est déjà terminé");
+  }
+
+  if (winner === "player1") match.score1++;
+  else match.score2++;
+
+  match.rounds.push({
+    roundNumber: match.rounds.length + 1,
+    move1: null,
+    move2: null,
+    result: winner,
+    viaWell: true,
+  });
+
+  checkMatchEnd(match);
+
+  return match;
+}
+
+function checkMatchEnd(match: Match): void {
   if (match.score1 >= match.winsNeeded) {
     match.status = "finished";
     match.winner = "player1";
@@ -65,8 +105,6 @@ export function playMatchRound(
     match.status = "finished";
     match.winner = null;
   }
-
-  return match;
 }
 
 function hasThreeConsecutiveAfkRounds(rounds: RoundOutcome[]): boolean {

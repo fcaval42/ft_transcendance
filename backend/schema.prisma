@@ -36,7 +36,6 @@ model User {
 
   gamesAsPlayer1         Game[]                  @relation("GamePlayer1")
   gamesAsPlayer2         Game[]                  @relation("GamePlayer2")
-  moves                  GameMove[]              @relation("GameMovePlayer")
 
   @@index([email])
   @@index([username])
@@ -60,7 +59,7 @@ model Game {
 
   // Option de customisation (Game Customization Module)
   maxScore     Int        @default(3)   // Ex: Premier à 3 points gagne
-  roundTimeout Int        @default(10)  // Temps max par manche en secondes
+  roundTimeout Int        @default(5)  // Temps max par manche en secondes
 
   createdAt    DateTime   @default(now())
   endedAt      DateTime?
@@ -68,7 +67,6 @@ model Game {
   // Relations
   player1    User        @relation(fields: [player1Id], references: [id], name: "GamePlayer1", onDelete: Cascade)
   player2    User?       @relation(fields: [player2Id], references: [id], name: "GamePlayer2", onDelete: Cascade)
-  moves      GameMove[]
 }
 
 enum GameStatus {
@@ -76,18 +74,6 @@ enum GameStatus {
   PLAYING
   FINISHED
   CANCELLED
-}
-
-model GameMove {
-  id        String   @id @default(cuid())
-  gameId    String
-  playerId  String
-  round     Int      // Numéro du round (1, 2, 3...)
-  move      MoveType // ROCK, PAPER, SCISSORS
-  createdAt DateTime @default(now())
-
-  game   Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  player User @relation(fields: [playerId], references: [id], name: "GameMovePlayer", onDelete: Cascade)
 }
 
 enum MoveType {

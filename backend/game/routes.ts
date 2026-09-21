@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createSession, submitMove, getSession } from "./session";
+import { createSession, submitMove, attemptWell, getSession } from "./session";
 import { Move } from "./rules";
 import { ROUND_TIME_LIMIT_MS } from "./match";
 import { getRandomBotName, getBotMove } from "./bot";
@@ -31,15 +31,16 @@ gameRouter.get("/session/:id", (req, res) => {
 });
 
 gameRouter.post("/session/:id/move", async (req, res) => {
-  const { playerId, move } = (req.body ?? {}) as {
+  const { playerId, move, roundNumber } = (req.body ?? {}) as {
     playerId?: string;
     move?: Move;
+    roundNumber?: number;
   };
   if (!playerId || !move) {
     return res.status(400).json({ error: "playerId et move sont requis" });
   }
   try {
-    let result = await submitMove(req.params.id, playerId, move);
+    let result = await submitMove(req.params.id, playerId, move, roundNumber);
 
     const session = getSession(req.params.id);
     if (result.status === "waiting" && session?.isVsBot) {
@@ -48,6 +49,19 @@ gameRouter.post("/session/:id/move", async (req, res) => {
     }
 
     res.json(result);
+  } catch (e) {
+    res.status(400).json({ error: (e as Error).message });
+  }
+});
+
+gameRouter.post("/session/:id/well", async (req, res) => {
+  const { playerId } = (req.body ?? {}) as { playerId?: string };
+  if (!playerId) {
+    return res.status(400).json({ error: "playerId est requis" });
+  }
+  try {
+    const match = await attemptWell(req.params.id, playerId);
+    res.json({ status: "round_played", match });
   } catch (e) {
     res.status(400).json({ error: (e as Error).message });
   }

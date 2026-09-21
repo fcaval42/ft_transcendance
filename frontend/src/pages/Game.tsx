@@ -35,6 +35,9 @@ export const Game = () => {
   // scores
   const [score1, setScore1] = useState<number>(0);
   const [score2, setScore2] = useState<number>(0);
+  // Nombre de manches déjà jouées, pour dire au back quel round on attend
+  // (roundCount + 1) et éviter qu'un coup arrivé en retard soit compté sur le mauvais round.
+  const [roundCount, setRoundCount] = useState<number>(0);
 
   // récupérer nom du joueur + bot
   const [playerName, setPlayerName] = useState<string>("Joueur 1");
@@ -59,6 +62,7 @@ export const Game = () => {
   setResult("");
   setUserChoice(null);
   setAiChoice(null);
+  setRoundCount(0);
 };
 
   const handleGoHomeFromEnd = () => {
@@ -154,7 +158,7 @@ export const Game = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ playerId, move: choice }),
+        body: JSON.stringify({ playerId, move: choice, roundNumber: roundCount + 1 }),
       });
       if (!response.ok) throw new Error(t("error.play") as string);
       const data = await response.json();
@@ -164,6 +168,7 @@ export const Game = () => {
       setResult(resultLabels[lastRound.result] ?? "");
       setScore1(data.match.score1);
       setScore2(data.match.score2);
+      setRoundCount(data.match.rounds.length);
 
       // Le match (en 3 manches gagnantes côté back) est terminé : la prochaine
       // partie en recréera une nouvelle automatiquement.
@@ -179,6 +184,7 @@ export const Game = () => {
     } catch (err) {
       setError(err instanceof Error ? err.message : t("error.game") as string);
       setSessionId(null);
+      setRoundCount(0);
     } finally {
       setLoading(false);
     }

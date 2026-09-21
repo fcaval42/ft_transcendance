@@ -11,7 +11,7 @@ o:
 	open https://10.18.195.241:8443/
 
 npx:
-	npx prisma studio
+	cd backend && npx prisma studio
 
 db:
 	open http://localhost:5555/

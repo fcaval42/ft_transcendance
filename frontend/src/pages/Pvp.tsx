@@ -50,6 +50,9 @@ export const Pvp = () => {
   const roleRef = useRef<Role | null>(null);
   const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Round couramment attendu par le serveur (rounds.length + 1), envoyé avec chaque
+  // playMove pour que le back rejette un coup arrivé après la résolution du round.
+  const currentRoundRef = useRef<number>(1);
 
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -125,6 +128,7 @@ export const Pvp = () => {
         setError("");
         setShowEndModal(false);
         setEndMessage("");
+        currentRoundRef.current = data.match.rounds.length + 1;
         applyMatchState(data.match, data.role);
         setShowModal(false);
         setIsSearching(false);
@@ -147,6 +151,7 @@ export const Pvp = () => {
         setError("");
         setShowEndModal(false);
         setEndMessage("");
+        currentRoundRef.current = data.match.rounds.length + 1;
         applyMatchState(data.match, data.role);
         setShowModal(false);
         setIsSearching(false);
@@ -157,6 +162,7 @@ export const Pvp = () => {
 
     socket.on("roundResult", (data: { match: Match }) => {
       const lastRound = data.match.rounds[data.match.rounds.length - 1];
+      currentRoundRef.current = data.match.rounds.length + 1;
       const role = roleRef.current;
       const myMove = role === "player1" ? lastRound.move1 : lastRound.move2;
       const oppMove = role === "player1" ? lastRound.move2 : lastRound.move1;
@@ -257,6 +263,7 @@ export const Pvp = () => {
       sessionId: sessionIdRef.current,
       playerId,
       move: choice,
+      roundNumber: currentRoundRef.current,
     });
   };
 

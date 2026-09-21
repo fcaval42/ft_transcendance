@@ -1,7 +1,16 @@
 import { randomUUID } from "crypto";
 import { EventEmitter } from "events";
 import { prisma } from "../auth";
-import { Match, createMatch, playMatchRound, ROUND_TIME_LIMIT_MS } from "./match";
+import {
+  Match,
+  createMatch,
+  playMatchRound,
+  resolveWellWin,
+  ROUND_TIME_LIMIT_MS,
+  WELL_TRIGGER_CHANCE,
+  WELL_TIME_LIMIT_BOT_MS,
+  WELL_TIME_LIMIT_PVP_MS,
+} from "./match";
 import { Move } from "./rules";
 import { computeElo } from "./elo";
 
@@ -22,6 +31,7 @@ export interface GameSession {
 const sessions = new Map<string, GameSession>();
 
 const roundTimers = new Map<string, NodeJS.Timeout>();
+const wellTimers = new Map<string, NodeJS.Timeout>();
 
 function clearRoundTimer(sessionId: string): void {
   const timer = roundTimers.get(sessionId);
@@ -44,6 +54,54 @@ function armRoundTimer(sessionId: string): void {
     }
   }, ROUND_TIME_LIMIT_MS);
   roundTimers.set(sessionId, timer);
+}
+
+function clearWellTimer(sessionId: string): void {
+  const timer = wellTimers.get(sessionId);
+  if (timer) {
+    clearTimeout(timer);
+    wellTimers.delete(sessionId);
+  }
+}
+
+// Referme la fenêtre du puit si elle était ouverte pour le round qui vient de se terminer
+// (round joué normalement avant que quelqu'un n'ait eu le temps d'appuyer dessus).
+function closeWellWindow(sessionId: string): void {
+  const session = sessions.get(sessionId);
+  clearWellTimer(sessionId);
+  if (session && session.match.well.available) {
+    session.match.well.available = false;
+    session.match.well.deadline = null;
+  }
+}
+
+// Tenté à chaque nouveau round : tant que le puit n'est pas encore apparu ce match,
+// il a WELL_TRIGGER_CHANCE de chance d'apparaître pour ce round précis.
+// Ne se déclenche jamais deux fois dans le même match (well.triggered).
+function armWellTimer(sessionId: string): void {
+  const session = sessions.get(sessionId);
+  if (!session) return;
+  const match = session.match;
+  if (match.status === "finished") return;
+  if (match.well.triggered) return;
+  if (Math.random() >= WELL_TRIGGER_CHANCE) return;
+
+  match.well.triggered = true;
+  match.well.available = true;
+  const windowMs = session.isVsBot ? WELL_TIME_LIMIT_BOT_MS : WELL_TIME_LIMIT_PVP_MS;
+  match.well.deadline = Date.now() + windowMs;
+
+  sessionEvents.emit("wellAvailable", { sessionId, match });
+
+  const timer = setTimeout(() => {
+    const s = sessions.get(sessionId);
+    wellTimers.delete(sessionId);
+    if (!s || !s.match.well.available) return;
+    s.match.well.available = false;
+    s.match.well.deadline = null;
+    sessionEvents.emit("wellExpired", { sessionId, match: s.match });
+  }, windowMs);
+  wellTimers.set(sessionId, timer);
 }
 
 export async function createSession(
@@ -84,6 +142,7 @@ export async function createSession(
 
   sessions.set(session.id, session);
   armRoundTimer(session.id);
+  armWellTimer(session.id);
   return session;
 }
 
@@ -129,6 +188,7 @@ async function applyMatchResult(
 
 export async function endSession(sessionId: string): Promise<void> {
   clearRoundTimer(sessionId);
+  clearWellTimer(sessionId);
   const session = sessions.get(sessionId);
   sessions.delete(sessionId);
 
@@ -153,9 +213,19 @@ export type SubmitMoveResult =
 export async function submitMove(
   sessionId: string,
   playerId: string,
-  move: Move
+  move: Move,
+  expectedRoundNumber?: number
 ): Promise<SubmitMoveResult> {
   const session = getSessionOrThrow(sessionId);
+
+  // Si le client précise pour quel round il joue, on rejette un coup arrivé en retard
+  // (round déjà résolu entre-temps, ex: timeout AFK) au lieu de l'appliquer au round suivant.
+  if (expectedRoundNumber !== undefined) {
+    const currentRoundNumber = session.match.rounds.length + 1;
+    if (expectedRoundNumber !== currentRoundNumber) {
+      throw new Error("Ce coup arrive trop tard, le round suivant a déjà commencé");
+    }
+  }
 
   if (playerId === session.player1Id) {
     session.pendingMove1 = move;
@@ -182,6 +252,8 @@ async function resolvePendingRound(session: GameSession): Promise<{
   status: "round_played";
   match: Match;
 }> {
+  closeWellWindow(session.id);
+
   playMatchRound(session.match, session.pendingMove1, session.pendingMove2);
   session.pendingMove1 = null;
   session.pendingMove2 = null;
@@ -193,11 +265,50 @@ async function resolvePendingRound(session: GameSession): Promise<{
     await endSession(session.id);
   } else {
     armRoundTimer(session.id);
+    armWellTimer(session.id);
   }
 
   sessionEvents.emit("roundResolved", { sessionId: session.id, match });
 
   return { status: "round_played", match };
+}
+
+// Appelé quand un joueur appuie sur le puit. Le premier arrivé gagne le round en cours ;
+// aucun effet si le puit n'est pas (ou plus) disponible à cet instant.
+export async function attemptWell(sessionId: string, playerId: string): Promise<Match> {
+  const session = getSessionOrThrow(sessionId);
+  const match = session.match;
+
+  if (!match.well.available) {
+    throw new Error("Le puit n'est pas disponible");
+  }
+
+  let winner: "player1" | "player2";
+  if (playerId === session.player1Id) {
+    winner = "player1";
+  } else if (playerId === session.player2Id) {
+    winner = "player2";
+  } else {
+    throw new Error("Ce joueur ne fait pas partie de cette session");
+  }
+
+  closeWellWindow(sessionId);
+
+  resolveWellWin(match, winner);
+  session.pendingMove1 = null;
+  session.pendingMove2 = null;
+
+  if (match.status === "finished") {
+    match.roundDeadline = null;
+    await endSession(sessionId);
+  } else {
+    armRoundTimer(sessionId);
+    armWellTimer(sessionId);
+  }
+
+  sessionEvents.emit("roundResolved", { sessionId, match });
+
+  return match;
 }
 
 function getSessionOrThrow(sessionId: string): GameSession {
