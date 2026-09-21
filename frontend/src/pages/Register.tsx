@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Toast } from "../components/Toast";
+import { HeaderLogout } from "../components/Header";
+import { Footer } from "../components/Footer";
 import { useTranslation } from "react-i18next";
 
 export const Register = () => {
@@ -52,7 +54,9 @@ export const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <HeaderLogout />
+      <main className="flex-1 flex flex-col items-center justify-center p-4 pt-20">
       {toast.show && (
         <Toast
           message={toast.message}
@@ -152,6 +156,8 @@ export const Register = () => {
           </Link>
         </div>
       </div>
+      </main>
+      <Footer />
     </div>
   );
 };
