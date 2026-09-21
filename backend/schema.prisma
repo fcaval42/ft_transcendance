@@ -24,7 +24,7 @@ model User {
   oauthId      String?  // ID distant du provider
   @@unique([oauthProvider, oauthId]) // Évite les doublons d'un même compte externe
 
-  // Statistiques de jeu[eslint] EACCES: permission denied, open '/home/bbeaurai/Code/ft_transcendence/frontend/node_modules/.cache/.eslintcache'
+  // Statistiques de jeu[eslint] EACCES: permission denied, open '/home/bbeaurai/Code/ft_transcendance/frontend/node_modules/.cache/.eslintcache'
   wins         Int      @default(0)
   losses       Int      @default(0)
   elo          Int      @default(100)
