@@ -109,6 +109,10 @@ export async function createSession(
   player2Id: string,
   winsNeeded?: number,
   isVsBot = false,
+  // true pour le flux matchmaking (Socket.io) : on arme les timers séparément,
+  // une fois que les deux sockets ont rejoint la room, sinon un puit déclenché
+  // au round 1 peut émettre "wellAvailable" avant que quiconque écoute la room.
+  deferTimers = false,
 ): Promise<GameSession> {
   const users = await prisma.user.findMany({
     where: { id: { in: [player1Id, player2Id] } },
@@ -141,9 +145,18 @@ export async function createSession(
   }
 
   sessions.set(session.id, session);
-  armRoundTimer(session.id);
-  armWellTimer(session.id);
+  if (!deferTimers) {
+    armRoundTimer(session.id);
+    armWellTimer(session.id);
+  }
   return session;
+}
+
+// À appeler juste après que les sockets ont rejoint la room de la session
+// (quand createSession a été appelé avec deferTimers = true).
+export function armSessionTimers(sessionId: string): void {
+  armRoundTimer(sessionId);
+  armWellTimer(sessionId);
 }
 
 export function getSession(sessionId: string): GameSession | undefined {
