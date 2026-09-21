@@ -6,6 +6,14 @@ import { Footer } from '../components/Footer';
 import { Modal } from "../components/Modal";
 import { useTranslation } from 'react-i18next';
 
+// Fonction de calcul Elo (copie du backend)
+const K_FACTOR = 32;
+
+function computeElo(winnerElo: number, loserElo: number): number {
+  const expectedWinner = 1 / (1 + 10 ** ((loserElo - winnerElo) / 400));
+  return Math.round(K_FACTOR * (1 - expectedWinner));
+}
+
 type Move = 'rock' | 'paper' | 'scissors';
 type RoundResult = 'player1' | 'player2' | 'draw' | 'afk';
 type Role = 'player1' | 'player2';
@@ -35,6 +43,9 @@ export const Pvp = () => {
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [playerName, setPlayerName] = useState<string>("");
   const [opponentName, setOpponentName] = useState<string | null>(null);
+  const [playerElo, setPlayerElo] = useState<number>(0);
+  const [opponentElo, setOpponentElo] = useState<number>(0);
+  const [eloChange, setEloChange] = useState<number>(0);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
@@ -72,6 +83,27 @@ export const Pvp = () => {
     } else {
       setScore1(match.score2);
       setScore2(match.score1);
+    }
+  };
+
+  // Récupère l'Elo des deux joueurs
+  const fetchUserElo = async (selfId: string, opponentId: string) => {
+    try {
+      const [selfResponse, opponentResponse] = await Promise.all([
+        fetch(`/api/user/${selfId}`),
+        fetch(`/api/user/${opponentId}`),
+      ]);
+      
+      if (selfResponse.ok && opponentResponse.ok) {
+        const selfData = await selfResponse.json();
+        const opponentData = await opponentResponse.json();
+        
+        // selfId = joueur actuel, opponentId = adversaire, quel que soit le role
+        setPlayerElo(selfData.elo || 0);
+        setOpponentElo(opponentData.elo || 0);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération de l'Elo:", error);
     }
   };
 
@@ -114,11 +146,14 @@ export const Pvp = () => {
 
     socket.on(
       "matched",
-      (data: { sessionId: string; role: Role; selfName: string; opponentName: string; match: Match }) => {
+      (data: { sessionId: string; role: Role; selfId: string; selfName: string; opponentId: string; opponentName: string; match: Match }) => {
         sessionIdRef.current = data.sessionId;
         roleRef.current = data.role;
         setPlayerName(data.selfName);
         setOpponentName(data.opponentName);
+        setPlayerId(data.selfId);
+        // Fetch Elo des deux joueurs
+        fetchUserElo(data.selfId, data.opponentId);
         setUserChoice(null);
         setOpponentChoice(null);
         setResult("");
@@ -136,11 +171,14 @@ export const Pvp = () => {
     // Reprise d'une partie déjà en cours (reconnexion), sans passer par les modals.
     socket.on(
       "rejoined",
-      (data: { sessionId: string; role: Role; selfName: string; opponentName: string; match: Match }) => {
+      (data: { sessionId: string; role: Role; selfId: string; selfName: string; opponentId: string; opponentName: string; match: Match }) => {
         sessionIdRef.current = data.sessionId;
         roleRef.current = data.role;
         setPlayerName(data.selfName);
         setOpponentName(data.opponentName);
+        setPlayerId(data.selfId);
+        // Fetch Elo des deux joueurs
+        fetchUserElo(data.selfId, data.opponentId);
         setUserChoice(null);
         setOpponentChoice(null);
         setResult("");
@@ -171,12 +209,26 @@ export const Pvp = () => {
         sessionIdRef.current = null;
         const finalMessage =
           data.match.winner === null
-            ? "Match interrompu."
+            ? t("gameVsBot.interrupted")
             : data.match.winner === role
             ? t("gameVsBot.win")
             : t("gameVsBot.lose");
         setResult(finalMessage);
         setEndMessage(finalMessage);
+        
+        // Calculer l'Elo gagné/perdu
+        if (data.match.winner === role && role) {
+          // Le joueur a gagné : calcul positif
+          const gainedElo = computeElo(playerElo, opponentElo);
+          setEloChange(gainedElo);
+        } else if (data.match.winner && role) {
+          // Le joueur a perdu : calcul négatif (on inverse les rôles)
+          const lostElo = -computeElo(opponentElo, playerElo);
+          setEloChange(lostElo);
+        } else {
+          setEloChange(0);
+        }
+        
         setShowEndModal(true);
       } else {
         setResult(labelForResult(lastRound.result, role));
@@ -348,6 +400,11 @@ export const Pvp = () => {
         <p className="text-lg mt-2">
           {t("popUpWin.score")} <span className="font-bold text-blue-600">{score1}</span> - <span className="font-bold text-red-600">{score2}</span>
         </p>
+        {eloChange !== 0 && (
+          <p className={`text-lg mt-2 font-bold ${eloChange > 0 ? "text-green-600" : "text-red-600"}`}>
+            {eloChange > 0 ? "+" : ""}{eloChange} {t("popUpWin.elo")}
+          </p>
+        )}
       </Modal>
 
       {gameStarted && (

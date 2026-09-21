@@ -53,12 +53,14 @@
     "draw": "It's a draw!",
     "loading": "Loading...",
     "win": "You won! 🎉",
-    "lose": "You lost...😢"
+    "lose": "You lost...😢",
+    "interrupted": "Match interrupted."
   },
   "popUpWin": {
     "title": "Game over!",
     "message": "Victory!",
     "score": "Final score:",
+    "elo": "Elo points",
     "playAgain": "Play again",
     "backToMenu": "Menu"
   },
