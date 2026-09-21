@@ -101,6 +101,7 @@
     "player": "Joueur 1",
     "empty": "Veuillez remplir tous les champs.",
     "invalid": "E-mail ou mot de passe invalide.",
+    "email": "L'adresse email doit se terminer par .com ou .fr.",
     "password": "Les mots de passe ne correspondent pas.",
     "register": "Erreur lors de l'inscription."
   },

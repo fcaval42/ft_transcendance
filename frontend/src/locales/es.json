@@ -101,6 +101,7 @@
     "player": "Jugador 1",
     "empty": "Por favor complete todos los campos.",
     "invalid": "Correo electrónico o contraseña inválidos.",
+    "email": "El correo electrónico debe terminar en .com o .fr.",
     "password": "Las contraseñas no coinciden.",
     "register": "Error durante el registro."
   },

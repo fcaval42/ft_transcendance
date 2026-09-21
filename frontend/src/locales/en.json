@@ -101,6 +101,7 @@
     "player": "Player 1",
     "empty": "Please fill in all fields.",
     "invalid": "Invalid email or password.",
+    "email": "The email address must end with .com or .fr.",
     "password": "Passwords do not match.",
     "register": "Error during registration."
   },
