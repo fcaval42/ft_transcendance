@@ -45,6 +45,7 @@
     "title": "Piedra-Papel-Tijeras",
     "yourChoice": "Elegiste:",
     "timeLeft": "⏳ Tiempo restante: ",
+    "time":"No se jugó ningún movimiento a tiempo...",
     "botChoice": "La IA eligió:",
     "opsChoice": "El oponente eligió: ",
     "opsName": " eligió: ",

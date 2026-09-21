@@ -46,6 +46,7 @@
     "title": "Rock-Paper-Scissors",
     "yourChoice": "You chose:",
     "timeLeft": "⏳ Time left: ",
+    "time":"No move played in time...",
     "botChoice": "The AI chose:",
     "opsChoice": "Opponent chose: ",
     "opsName": " chose: ",
