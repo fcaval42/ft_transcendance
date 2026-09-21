@@ -32,9 +32,9 @@ export const Pvp = () => {
   const [result, setResult] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [playerId, setPlayerId] = useState<string | null>(null);
-  const [playerName, setPlayerName] = useState<string>("Joueur 1");
+  const [playerName, setPlayerName] = useState<string>("");
   const [opponentName, setOpponentName] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(true);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [score1, setScore1] = useState<number>(0);
@@ -206,6 +206,7 @@ export const Pvp = () => {
           const user = await res.json();
           setPlayerName(user.username);
           setPlayerId(user.id);
+          setShowModal(true);
         }
       } catch {}
     };
