@@ -52,12 +52,14 @@
     "draw": "¡Es un empate!",
     "win": "¡Ganaste! 🎉",
     "loading": "Cargando...",
-    "lose": "Perdiste...😢"
+    "lose": "Perdiste...😢",
+    "interrupted": "Partida interrumpida."
   },
   "popUpWin": {
     "title": "¡Juego terminado!",
     "message": "¡Victoria!",
     "score": "Puntuación final:",
+    "elo": "puntos Elo",
     "playAgain": "Jugar de nuevo",
     "backToMenu": "Menú"
   },
