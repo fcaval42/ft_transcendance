@@ -8,11 +8,17 @@ export const useAuthStatus = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("/api/me", {
+        const response = await fetch("/api/auth/status", {
           credentials: "include",
         });
 
-        setIsAuthenticated(response.ok);
+        if (!response.ok) {
+          setIsAuthenticated(false);
+          return;
+        }
+
+        const data = await response.json();
+        setIsAuthenticated(Boolean(data.authenticated));
       } catch {
         setIsAuthenticated(false);
       }

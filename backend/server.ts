@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import jwt from 'jsonwebtoken';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { createUser, authenticateUser, setUserOffline, prisma, findOrCreateOAuthUser } from './auth';
@@ -10,11 +11,34 @@ import { registerMatchmaking } from './game/matchmaking';
 import { registerRealtime } from './game/realtime';
 
 const app = express();
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
+
 app.use(cors({ origin: true,
     credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/game', gameRouter);
+
+app.get('/api/auth/status', (req, res) => {
+  const token = req.cookies?.token;
+
+  if (!token) {
+    return res.status(200).json({ authenticated: false });
+  }
+
+  try {
+    jwt.verify(token, JWT_SECRET);
+    return res.status(200).json({ authenticated: true });
+  } catch {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+    return res.status(200).json({ authenticated: false });
+  }
+});
 
 app.post('/api/signin', async (req, res) => {
   try {
@@ -35,9 +59,9 @@ app.post('/api/login', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.status(200).json({ user, message: 'Connexion réussie' });
+    res.status(200).json({ success: true, user, message: 'Connexion réussie' });
   } catch (error) {
-    res.status(401).json({ error: 'Invalid credentials' });
+    res.status(200).json({ success: false, error: 'Invalid credentials' });
   }
 });
 
