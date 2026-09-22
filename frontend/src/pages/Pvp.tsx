@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
 import { Header } from '../components/Header';
@@ -76,14 +76,14 @@ export const Pvp = () => {
   const choices: Move[] = ["rock", "paper", "scissors"];
   const emojis: Record<Move, string> = { rock: "🪨", paper: "📄", scissors: "✂️" };
 
-  const labelForResult = (roundResult: RoundResult, role: Role | null): string => {
+  const labelForResult = useCallback((roundResult: RoundResult, role: Role | null): string => {
     if (roundResult === "draw") return t("gameVsBot.draw");
     if (roundResult === "afk") return t("gameVsBot.time");
     if (!role) return "";
     return roundResult === role ? t("gameVsBot.win") : t("gameVsBot.lose");
-  };
+  }, [t]);
 
-  const applyMatchState = (match: Match, role: Role) => {
+  const applyMatchState = useCallback((match: Match, role: Role) => {
     if (role === "player1") {
       setScore1(match.score1);
       setScore2(match.score2);
@@ -91,16 +91,23 @@ export const Pvp = () => {
       setScore1(match.score2);
       setScore2(match.score1);
     }
-  };
+  }, []);
 
-  const stopVisualTimer = () => {
+  const stopVisualTimer = useCallback(() => {
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
       timerIntervalRef.current = null;
     }
-  };
+  }, []);
 
-  const startVisualTimer = (deadline: number | null) => {
+  const clearRedirectTimeout = useCallback(() => {
+    if (redirectTimeoutRef.current) {
+      clearTimeout(redirectTimeoutRef.current);
+      redirectTimeoutRef.current = null;
+    }
+  }, []);
+
+  const startVisualTimer = useCallback((deadline: number | null) => {
     stopVisualTimer();
     if (deadline === null) {
       setTimeLeft(0);
@@ -113,9 +120,9 @@ export const Pvp = () => {
     };
     tick();
     timerIntervalRef.current = setInterval(tick, 250);
-  };
+  }, [stopVisualTimer]);
 
-  const ensureSocket = (pid: string): Socket => {
+  const ensureSocket = useCallback((pid: string): Socket => {
     if (socketRef.current) return socketRef.current;
 
     const socket = io();
@@ -255,7 +262,7 @@ export const Pvp = () => {
     });
 
     return socket;
-  };
+  }, [applyMatchState, labelForResult, opponentElo, playerElo, startVisualTimer, stopVisualTimer, t]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -274,15 +281,15 @@ export const Pvp = () => {
 
   useEffect(() => {
     if (playerId) ensureSocket(playerId);
-  }, [playerId]);
+  }, [playerId, ensureSocket]);
 
   useEffect(() => {
     return () => {
       stopVisualTimer();
-      if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current);
+      clearRedirectTimeout();
       socketRef.current?.disconnect();
     };
-  }, []);
+  }, [clearRedirectTimeout, stopVisualTimer]);
 
   const startGame = () => {
     if (!playerId) {
@@ -324,7 +331,7 @@ export const Pvp = () => {
 
   const handleGoHome = () => {
     stopVisualTimer();
-    if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current);
+    clearRedirectTimeout();
     if (isSearching) socketRef.current?.emit("leaveQueue");
     socketRef.current?.disconnect();
     socketRef.current = null;

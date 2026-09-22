@@ -1,5 +1,4 @@
-import { useAuthStatus } from "../utils/checkRoute";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { HeaderLogout } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { useTranslation } from "react-i18next";

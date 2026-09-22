@@ -120,9 +120,10 @@ export const Login = () => {
           </div>
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-indigo-400 text-white p-2 rounded hover:bg-indigo-500 transition-colors"
           >
-            {t("login.connect")}
+            {loading ? `${t("login.connect")}...` : t("login.connect")}
           </button>
 
           <div className="my-4 flex items-center">

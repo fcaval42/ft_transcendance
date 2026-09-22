@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import "./AuthButtons.css";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const GoogleIcon = () => (

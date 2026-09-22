@@ -108,7 +108,7 @@ app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => 
   }
 });
 
-app.get('/api/auth/42', (req, res) => {
+app.get('/api/auth/42', (_req, res) => {
   const redirectUri = encodeURIComponent(process.env.FORTYTWO_REDIRECT_URI || '');
   const clientId = process.env.FORTYTWO_CLIENT_ID;
 
@@ -175,7 +175,7 @@ app.get('/api/auth/42/callback', async (req, res) => {
   }
 });
 
-app.get('/api/auth/google', (req, res) => {
+app.get('/api/auth/google', (_req, res) => {
   const googleAuthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
   
   googleAuthUrl.searchParams.append('client_id', process.env.GOOGLE_CLIENT_ID!);
