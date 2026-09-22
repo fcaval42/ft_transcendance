@@ -32,6 +32,12 @@ export const Footer = () => {
             >
               {t("footer.terms")}
             </Link>
+            <Link
+              to="/ai-info"
+              className="text-gray-300 hover:text-white transition-colors text-sm"
+            >
+              {t("footer.aiInfo")}
+            </Link>
           </nav>
         </div>
         <div className="mt-4 pt-4 border-t border-gray-900 text-center text-xs text-white-500">

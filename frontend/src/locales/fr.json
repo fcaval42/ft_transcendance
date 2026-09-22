@@ -101,6 +101,7 @@
     "player": "Joueur 1",
     "empty": "Veuillez remplir tous les champs.",
     "invalid": "E-mail ou mot de passe invalide.",
+    "email": "L'adresse email doit se terminer par .com ou .fr.",
     "password": "Les mots de passe ne correspondent pas.",
     "register": "Erreur lors de l'inscription."
   },
@@ -109,6 +110,7 @@
     "instructions": "Instructions",
     "privacy": "Confidentialité",
     "terms": "Conditions de service",
+    "aiInfo": "Jeu et expérience utilisateur",
     "rights": "Tous droits réservés."
   },
   "instructions": {
@@ -203,5 +205,19 @@
     "changesNotification": "Nous vous informerons des changements importants par e-mail ou via une notification sur la plateforme.",
     "contactTitle": "Contact",
     "contactDesc": "Si vous avez des questions concernant ces conditions, n'hésitez pas à nous contacter."
+  },
+  "aiInfo": {
+    "title": "Jeu et expérience utilisateur",
+    "introTitle": "Votre adversaire",
+    "introDesc": "Quand vous jouez en solo, vous n'affrontez pas un script aléatoire. Vous affrontez une IA légère qui réagit à votre façon de jouer, en temps réel, directement sur notre propre serveur.",
+    "howTitle": "Comment le bot choisit son coup",
+    "howDesc": "Plutôt qu'un modèle de machine learning complexe, notre bot utilise une heuristique simple et transparente basée sur ce qui vient de se passer lors de la manche précédente :",
+    "howStep1": "Si vous avez gagné la manche précédente, le bot suppose que vous allez rejouer le même coup gagnant.",
+    "howStep2": "Si vous avez perdu la manche précédente, le bot suppose que vous allez changer pour le coup qui l'aurait battu.",
+    "howStep3": "Il joue ensuite le coup qui bat sa prédiction, et se rabat sur un choix aléatoire lorsqu'il n'a encore rien à apprendre, comme lors de la toute première manche ou après un match nul.",
+    "whyTitle": "Pourquoi une heuristique plutôt que du machine learning ?",
+    "whyDesc": "Cette approche garde chaque partie instantanée et facile à comprendre : pas de données d'entraînement, pas d'appel à une API externe, pas de latence en attendant un modèle. Tout tourne sur notre propre serveur et le bot n'utilise que les coups que vous avez réellement joués pendant la session en cours.",
+    "fairTitle": "Fair-play garanti",
+    "fairDesc": "Le bot ne voit jamais votre choix avant de faire le sien. Les deux coups sont verrouillés puis comparés au même moment. Il ne réagit qu'à ce qui s'est déjà passé, jamais à ce qui va se passer."
   }
 }

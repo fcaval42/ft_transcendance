@@ -101,6 +101,7 @@
     "player": "Player 1",
     "empty": "Please fill in all fields.",
     "invalid": "Invalid email or password.",
+    "email": "The email address must end with .com or .fr.",
     "password": "Passwords do not match.",
     "register": "Error during registration."
   },
@@ -109,6 +110,7 @@
     "instructions": "Instructions",
     "privacy": "Privacy",
     "terms": "Terms of Service",
+    "aiInfo": "Gaming and user experience",
     "rights": "All rights reserved."
   },
   "instructions": {
@@ -203,5 +205,19 @@
     "changesNotification": "We will inform you of important changes by email or via a notification on the platform.",
     "contactTitle": "Contact",
     "contactDesc": "If you have any questions about these terms, feel free to contact us."
+  },
+  "aiInfo": {
+    "title": "Gaming and user experience",
+    "introTitle": "Meet your opponent",
+    "introDesc": "When you play solo, you're not facing a random script. You're facing a lightweight AI opponent that reacts to how you play, in real time, directly on our own server.",
+    "howTitle": "How the bot decides its move",
+    "howDesc": "Instead of a heavy machine-learning model, our bot uses a simple, transparent heuristic based on what just happened in the previous round:",
+    "howStep1": "If you won the previous round, the bot assumes you'll play the same winning move again.",
+    "howStep2": "If you lost the previous round, the bot assumes you'll switch to the move that would have beaten it.",
+    "howStep3": "It then plays the move that beats its prediction, and falls back to a random choice whenever there's nothing to learn from yet, such as the very first round or after a draw.",
+    "whyTitle": "Why a heuristic instead of machine learning?",
+    "whyDesc": "This approach keeps every match instant and easy to reason about: no training data, no external API calls, no latency waiting on a model. It runs entirely on our own server and only ever uses the moves you've actually played during the current session.",
+    "fairTitle": "Fair play, guaranteed",
+    "fairDesc": "The bot never sees your current choice before making its own. Both moves are locked in and compared at the same time. It only ever reacts to what already happened, never to what's about to happen."
   }
 }

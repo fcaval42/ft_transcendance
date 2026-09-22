@@ -99,27 +99,6 @@ export const Pvp = () => {
     }
   };
 
-  // Récupère l'Elo des deux joueurs
-  const fetchUserElo = async (selfId: string, opponentId: string) => {
-    try {
-      const [selfResponse, opponentResponse] = await Promise.all([
-        fetch(`/api/user/${selfId}`),
-        fetch(`/api/user/${opponentId}`),
-      ]);
-
-      if (selfResponse.ok && opponentResponse.ok) {
-        const selfData = await selfResponse.json();
-        const opponentData = await opponentResponse.json();
-
-        // selfId = joueur actuel, opponentId = adversaire, quel que soit le role
-        setPlayerElo(selfData.elo || 0);
-        setOpponentElo(opponentData.elo || 0);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la récupération de l'Elo:", error);
-    }
-  };
-
   const stopVisualTimer = () => {
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
@@ -159,14 +138,14 @@ export const Pvp = () => {
 
     socket.on(
       "matched",
-      (data: { sessionId: string; role: Role; selfId: string; selfName: string; opponentId: string; opponentName: string; match: Match }) => {
+      (data: { sessionId: string; role: Role; selfId: string; selfName: string; selfElo: number; opponentId: string; opponentName: string; opponentElo: number; match: Match }) => {
         sessionIdRef.current = data.sessionId;
         roleRef.current = data.role;
         setPlayerName(data.selfName);
         setOpponentName(data.opponentName);
         setPlayerId(data.selfId);
-        // Fetch Elo des deux joueurs
-        fetchUserElo(data.selfId, data.opponentId);
+        setPlayerElo(data.selfElo || 0);
+        setOpponentElo(data.opponentElo || 0);
         setUserChoice(null);
         setOpponentChoice(null);
         setResult("");
@@ -186,14 +165,14 @@ export const Pvp = () => {
     // Reprise d'une partie déjà en cours (reconnexion), sans passer par les modals.
     socket.on(
       "rejoined",
-      (data: { sessionId: string; role: Role; selfId: string; selfName: string; opponentId: string; opponentName: string; match: Match }) => {
+      (data: { sessionId: string; role: Role; selfId: string; selfName: string; selfElo: number; opponentId: string; opponentName: string; opponentElo: number; match: Match }) => {
         sessionIdRef.current = data.sessionId;
         roleRef.current = data.role;
         setPlayerName(data.selfName);
         setOpponentName(data.opponentName);
         setPlayerId(data.selfId);
-        // Fetch Elo des deux joueurs
-        fetchUserElo(data.selfId, data.opponentId);
+        setPlayerElo(data.selfElo || 0);
+        setOpponentElo(data.opponentElo || 0);
         setUserChoice(null);
         setOpponentChoice(null);
         setResult("");

@@ -10,6 +10,7 @@ import { Pvp } from "./pages/Pvp";
 import { Instructions } from "./pages/Instructions";
 import { Privacy } from "./pages/Privacy";
 import { Terms } from "./pages/Terms";
+import { AiInfo } from "./pages/AiInfo";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/instructions" element={<Instructions />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/ai-info" element={<AiInfo />} />
         </Route>
       </Routes>
     </Router>

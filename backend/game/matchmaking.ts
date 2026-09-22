@@ -17,8 +17,12 @@ function sendRejoined(socket: Socket, playerId: string, session: GameSession): v
   socket.emit("rejoined", {
     sessionId: session.id,
     role,
+    selfId: playerId,
     selfName: role === "player1" ? session.player1Name : session.player2Name,
+    selfElo: role === "player1" ? session.player1Elo : session.player2Elo,
+    opponentId: role === "player1" ? session.player2Id : session.player1Id,
     opponentName: role === "player1" ? session.player2Name : session.player1Name,
+    opponentElo: role === "player1" ? session.player2Elo : session.player1Elo,
     match: session.match,
   });
 }
@@ -62,8 +66,10 @@ export function registerMatchmaking(io: Server): void {
           sessionId: session.id,
           selfId: player1.playerId,
           selfName: session.player1Name,
+          selfElo: session.player1Elo,
           opponentId: playerId,
           opponentName: session.player2Name,
+          opponentElo: session.player2Elo,
           role: "player1",
           match: session.match,
         });
@@ -71,8 +77,10 @@ export function registerMatchmaking(io: Server): void {
           sessionId: session.id,
           selfId: playerId,
           selfName: session.player2Name,
+          selfElo: session.player2Elo,
           opponentId: player1.playerId,
           opponentName: session.player1Name,
+          opponentElo: session.player1Elo,
           role: "player2",
           match: session.match,
         });

@@ -25,6 +25,10 @@ export const Register = () => {
       setError(t("error.empty") as string);
       return;
     }
+    if (!/\.(com|fr)$/i.test(email.trim())) {
+      setError(t("error.email") as string);
+      return;
+    }
     if (password !== confirmPassword) {
       setError(t("error.password") as string);
       return;

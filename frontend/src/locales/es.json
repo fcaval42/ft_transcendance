@@ -101,6 +101,7 @@
     "player": "Jugador 1",
     "empty": "Por favor complete todos los campos.",
     "invalid": "Correo electrónico o contraseña inválidos.",
+    "email": "El correo electrónico debe terminar en .com o .fr.",
     "password": "Las contraseñas no coinciden.",
     "register": "Error durante el registro."
   },
@@ -109,6 +110,7 @@
     "instructions": "Instrucciones",
     "privacy": "Privacidad",
     "terms": "Términos de servicio",
+    "aiInfo": "Juego y experiencia de usuario",
     "rights": "Todos los derechos reservados."
   },
   "instructions": {
@@ -203,5 +205,19 @@
     "changesNotification": "Le informaremos sobre cambios importantes por correo electrónico o a través de una notificación en la plataforma.",
     "contactTitle": "Contacto",
     "contactDesc": "Si tiene alguna pregunta sobre estos términos, no dude en contactarnos."
+  },
+  "aiInfo": {
+    "title": "Juego y experiencia de usuario",
+    "introTitle": "Su adversario",
+    "introDesc": "Cuando juega en solitario, no se enfrenta a un script aleatorio. Se enfrenta a una IA ligera que reacciona a su forma de jugar, en tiempo real, directamente en nuestro propio servidor.",
+    "howTitle": "Cómo decide el bot su jugada",
+    "howDesc": "En lugar de un modelo de machine learning complejo, nuestro bot utiliza una heurística simple y transparente basada en lo que acaba de ocurrir en la ronda anterior:",
+    "howStep1": "Si ganó la ronda anterior, el bot supone que volverá a jugar la misma jugada ganadora.",
+    "howStep2": "Si perdió la ronda anterior, el bot supone que cambiará a la jugada que lo habría vencido.",
+    "howStep3": "Luego juega la jugada que vence su predicción, y recurre a una elección aleatoria cuando todavía no tiene nada que aprender, como en la primera ronda o después de un empate.",
+    "whyTitle": "¿Por qué una heurística en lugar de machine learning?",
+    "whyDesc": "Este enfoque mantiene cada partida instantánea y fácil de entender: sin datos de entrenamiento, sin llamadas a una API externa, sin latencia esperando un modelo. Todo funciona en nuestro propio servidor y el bot solo utiliza las jugadas que usted realmente hizo durante la sesión actual.",
+    "fairTitle": "Juego limpio garantizado",
+    "fairDesc": "El bot nunca ve su elección actual antes de hacer la suya. Ambas jugadas se bloquean y se comparan al mismo tiempo. Solo reacciona a lo que ya ha pasado, nunca a lo que está por pasar."
   }
 }
