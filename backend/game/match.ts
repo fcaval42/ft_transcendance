@@ -2,7 +2,7 @@ import { Move, RoundResult, playRound } from "./rules";
 
 export const ROUND_TIME_LIMIT_MS = 5_000;
 
-export const WELL_TRIGGER_CHANCE = 1;
+export const WELL_TRIGGER_CHANCE = 0.10;
 export const WELL_TIME_LIMIT_BOT_MS = 1_000;
 export const WELL_TIME_LIMIT_PVP_MS = 2_000;
 
