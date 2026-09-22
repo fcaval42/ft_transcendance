@@ -42,17 +42,21 @@ export const Login = () => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || t("error.invalid"));
+      if (!data.success) {
+        const message = data.error || String(t("error.invalid"));
+        setToast({ show: true, message, type: "error" });
+        setError(message);
+        return;
       }
 
       // affiche le toast (popup) puis on redirige
-      setToast({ show: true, message: t("login.success"), type: "success"});
-      setTimeout(() => navigate("/menu"), 1000)
+      setToast({ show: true, message: String(t("login.success")), type: "success"});
+      setTimeout(() => navigate("/menu"), 1000);
 
-    } catch (error: any) {
-      setToast({ show: true, message: error.message || t("error.server"), type: "error" });
-      setError(error.message || t("error.server"));
+    } catch {
+      const serverError = String(t("error.server"));
+      setToast({ show: true, message: serverError, type: "error" });
+      setError(serverError);
     } finally {
       setLoading(false);
     }
