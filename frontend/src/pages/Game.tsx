@@ -193,6 +193,13 @@ export const Game = () => {
   // -------------------------------------------------------------------------
   // Fonction pour retourner à l'accueil
   const handleGoHome = () => {
+	if (sessionId) {
+	  fetch(`/api/game/session/${sessionId}`, {
+	    method: "DELETE",
+	    credentials: "include",
+	  }).catch(() => {});
+	  setSessionId(null);
+	}
 	navigate("/menu"); // redirige vers la page d'accueil
   };
 
