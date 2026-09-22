@@ -13,7 +13,7 @@ gameRouter.post("/session", async (req, res) => {
   if (!player1Id || (!player2Id && !vsBot)) {
     return res
       .status(400)
-      .json({ error: t("matchmaking.playerRequired") });
+      .json({ error: "player1Id and (player2Id or vsBot) are required" });
   }
   const session = await createSession(
     player1Id,
@@ -27,7 +27,7 @@ gameRouter.post("/session", async (req, res) => {
 gameRouter.get("/session/:id", (req, res) => {
   const session = getSession(req.params.id);
   if (!session) {
-    return res.status(404).json({ error: t("matchmaking.sessionMissing") });
+    return res.status(404).json({ error: "Session not found" });
   }
   res.json(session);
 });
@@ -38,7 +38,7 @@ gameRouter.post("/session/:id/move", async (req, res) => {
     move?: Move;
   };
   if (!playerId || !move) {
-    return res.status(400).json({ error: t("matchmaking.errorMiss") });
+    return res.status(400).json({ error: "playerId and move are required" });
   }
   try {
     let result = await submitMove(req.params.id, playerId, move);

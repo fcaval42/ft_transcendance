@@ -14,7 +14,7 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
   const { t } = useTranslation();
 
   if (!token) {
-    return res.status(401).json({ error: t("error.token") });
+    return res.status(401).json({ error: "Token is required" });
   }
 
   try {
@@ -41,7 +41,7 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
             },
           });
         } catch (dbError) {
-          console.error(t("error.db"), dbError);
+          console.error("Error updating user status:", dbError);
         }
       }
 
@@ -53,10 +53,10 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
         path: '/',
       });
 
-      return res.status(401).json({ error: t("error.tokenExpired") });
+      return res.status(401).json({ error: "Token is expired" });
     }
 
     // Si le token est invalide (signature altérée, etc.)
-    return res.status(403).json({ error: t("error.token") });
+    return res.status(403).json({ error: "Token is invalid" });
   }
 }

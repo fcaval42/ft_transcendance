@@ -47,7 +47,7 @@ app.post('/api/signin', async (req, res) => {
     const user = await createUser(req.body);
     res.status(201).json(user);
   } catch (error) {
-    res.status(500).json({ error: t("error.server") });
+    res.status(500).json({ error: "Error connecting to the server." });
   }
 });
 
@@ -62,9 +62,9 @@ app.post('/api/login', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.status(200).json({ success: true, user, message: t("login.success") });
+    res.status(200).json({ success: true, user, message: "Login successful! Welcome 👋" });
   } catch (error) {
-    res.status(200).json({ success: false, error: t("login.invalidCredentials") });
+    res.status(200).json({ success: false, error: "Invalid credentials" });
   }
 });
 
@@ -81,9 +81,9 @@ app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res
       path: '/'
     });
     const { t } = useTranslation();
-    res.status(200).json({ message: t("login.logout") });
+    res.status(200).json({ message: "Logout successful" });
   } catch (error) {
-    res.status(500).json({ error: t("error.server") });
+    res.status(500).json({ error: "Error connecting to the server." });
   }
 });
 
@@ -106,11 +106,11 @@ app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => 
     });
 
     
-    if (!user) return res.status(404).json({ error: t("error.userNotFound") });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: t("error.server") });
+    res.status(500).json({ error: "Error connecting to the server." });
   }
 });
 
@@ -127,7 +127,7 @@ app.get('/api/auth/42/callback', async (req, res) => {
   const { t } = useTranslation();
 
   if (!code) {
-    return res.status(400).json({ error: t("error.oAuth") });
+    return res.status(400).json({ error:"Error during OAuth authentication" });
   }
 
   try {
@@ -172,7 +172,7 @@ app.get('/api/auth/42/callback', async (req, res) => {
     });
     res.redirect('https://localhost:8443/menu');
   } catch (error: any) {
-    res.status(500).json({ error: t("error.oAuth") });
+    res.status(500).json({ error: "Error during OAuth authentication" });
   }
 });
 
@@ -193,7 +193,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
   const { t } = useTranslation();
 
   if (!code) {
-    return res.status(400).json({ error: t("error.oAuth") });
+    return res.status(400).json({ error: "Error during OAuth authentication" });
   }
 
   try {
@@ -212,7 +212,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
     });
 
     const tokenData = await tokenResponse.json();
-    if (!tokenResponse.ok) throw new Error(tokenData.error_description || 'Erreur Token Google');
+    if (!tokenResponse.ok) throw new Error(tokenData.error_description || "Error during OAuth authentication");
 
     const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
@@ -238,7 +238,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
     res.redirect('https://localhost:8443/menu');
   } catch (error: any) {
     const { t } = useTranslation();
-    res.status(500).json({ error: t("error.oAuth") });
+    res.status(500).json({ error: "Error during OAuth authentication" });
   }
 });
 
@@ -258,12 +258,12 @@ setInterval(async () => {
     });
 
     if (result.count > 0) {
-      console.log(`[Cleanup] ${result.count} utilisateur(s) marqué(s) comme hors ligne (inactifs > 1h)`);
+      console.log(`[Cleanup] ${result.count} user(s) marked as offline (inactive > 1h)`);
     }
   } catch (error) {
-    console.error('[Cleanup] Erreur:', error);
+    console.error('[Cleanup] Error:', error);
     const { t } = useTranslation();
-    console.error('[Cleanup] Erreur:', t("error.server"));
+    console.error('[Cleanup] Error:', "Error connecting to the server.");
   }
 }, 900000);
 
@@ -274,4 +274,4 @@ const io = new SocketIOServer(httpServer, {
 registerMatchmaking(io);
 registerRealtime(io);
 
-httpServer.listen(3001, () => console.log("Serveur démarré sur http://localhost:3001"));
+httpServer.listen(3001, () => console.log("Server started on http://localhost:3001"));
