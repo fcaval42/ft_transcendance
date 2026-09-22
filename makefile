@@ -1,14 +1,17 @@
 
-.PHONY: server open o db stop
+.PHONY: server open o npx db stop
 
 server:
-	docker compose up -d --build && cd backend && npx prisma migrate dev && npx prisma studio
+	docker compose up -d --build && cd backend && npx prisma migrate dev
 
 open:
 	open https://localhost:8443/
 
 o:
-	open https://10.18.195.241:8080/
+	open https://10.18.195.241:8443/
+
+npx:
+	cd backend && npx prisma studio
 
 db:
 	open http://localhost:5555/
