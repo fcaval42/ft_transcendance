@@ -72,6 +72,18 @@ export const AiInfo = () => {
             </div>
           </section>
 
+          {/* Game customization */}
+          <section className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
+              {t("aiInfo.GameCustomizationTitle")}
+            </h2>
+            <div className="bg-pink-50 p-6 rounded-lg">
+              <p className="text-gray-600 leading-relaxed">
+                {t("aiInfo.GameCustomizationDesc")}
+              </p>
+            </div>
+          </section>
+
           {/* Bouton retour menu */}
           <div className="text-center mt-8">
             <Link

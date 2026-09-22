@@ -131,6 +131,21 @@ export const Instructions = () => {
             </div>
           </section>
 
+          {/* Personnalisation du jeu */}
+          <section className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
+              {t("instructions.puitTitle")}
+            </h2>
+            <div className="bg-pink-50 p-6 rounded-lg">
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <span className="text-2xl">👀</span>
+                  <span className="text-gray-700">{t("instructions.puitDesc")}</span>
+                </li>
+              </ul>
+            </div>
+          </section>
+
           {/* Bouton retour menu */}
           <div className="text-center mt-8">
             <Link

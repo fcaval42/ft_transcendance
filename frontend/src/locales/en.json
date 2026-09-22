@@ -148,7 +148,9 @@
     "tip1": "There is no foolproof strategy for Rock-Paper-Scissors, it's a pure game of chance. Each move has an equal probability of winning.",
     "tip2": "Make your choice quickly! You only have 5 seconds per round in PvP mode before the system counts it as a timeout.",
     "tip3": "Regularly check your profile to track your progress and Elo ranking.",
-    "tip4": "Play against the bot to practice before facing real players."
+    "tip4": "Play against the bot to practice before facing real players.",
+    "puitTitle": "Special power",
+    "puitDesc": "If you're lucky, you'll come across a special attack: THE WELL. And it's invincible. It's up to you whether you want to use its power or not! In player-versus-player combat, both players have access to the well at the same time. You'll have to be the fastest! You have two seconds to tap the well. Against the bot, you have one second! 3, 2, 1, go!"
   },
   "privacy": {
     "title": "Privacy",
@@ -218,6 +220,8 @@
     "whyTitle": "Why a heuristic instead of machine learning?",
     "whyDesc": "This approach keeps every match instant and easy to reason about: no training data, no external API calls, no latency waiting on a model. It runs entirely on our own server and only ever uses the moves you've actually played during the current session.",
     "fairTitle": "Fair play, guaranteed",
-    "fairDesc": "The bot never sees your current choice before making its own. Both moves are locked in and compared at the same time. It only ever reacts to what already happened, never to what's about to happen."
+    "fairDesc": "The bot never sees your current choice before making its own. Both moves are locked in and compared at the same time. It only ever reacts to what already happened, never to what's about to happen.",
+    "GameCustomizationTitle": "Game Customization",
+    "GameCustomizationDesc": "There's a 10% chance the well will appear during a battle. You have a certain amount of time to tap the well: 1 second when playing against the bot and 2 seconds in player-versus-player battles (both players have the well, so you have to be quick!). You can choose whether or not to tap the well; you can also play a normal move."
   }
 }

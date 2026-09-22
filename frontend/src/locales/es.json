@@ -148,7 +148,9 @@
     "tip1": "No hay una estrategia infalible para Piedra-Papel-Tijeras, es un juego de azar puro. Cada movimiento tiene la misma probabilidad de ganar.",
     "tip2": "¡Haz tu elección rápidamente! Solo tienes 5 segundos por ronda en el modo PvP antes de que el sistema lo cuente como tiempo agotado.",
     "tip3": "Revisa regularmente tu perfil para seguir tu progreso y clasificación Elo.",
-    "tip4": "Juega contra el bot para practicar antes de enfrentar a jugadores reales."
+    "tip4": "Juega contra el bot para practicar antes de enfrentar a jugadores reales.",
+    "puitTitle": "Poder especial",
+    "puitDesc": "Si tienes suerte, te encontrarás con un ataque especial: el POZO. Y es invencible. ¡Tú decides si quieres usar su poder o no! En los combates jugador contra jugador: ambos tienen el pozo al mismo tiempo. ¡Tendrás que ser el más rápido! Tienes dos segundos para pulsar el pozo. ¡Contra el bot, solo tienes un segundo! 3, 2, 1, ¡ya!"
   },
   "privacy": {
     "title": "Privacidad",
@@ -218,6 +220,8 @@
     "whyTitle": "¿Por qué una heurística en lugar de machine learning?",
     "whyDesc": "Este enfoque mantiene cada partida instantánea y fácil de entender: sin datos de entrenamiento, sin llamadas a una API externa, sin latencia esperando un modelo. Todo funciona en nuestro propio servidor y el bot solo utiliza las jugadas que usted realmente hizo durante la sesión actual.",
     "fairTitle": "Juego limpio garantizado",
-    "fairDesc": "El bot nunca ve su elección actual antes de hacer la suya. Ambas jugadas se bloquean y se comparan al mismo tiempo. Solo reacciona a lo que ya ha pasado, nunca a lo que está por pasar."
+    "fairDesc": "El bot nunca ve su elección actual antes de hacer la suya. Ambas jugadas se bloquean y se comparan al mismo tiempo. Solo reacciona a lo que ya ha pasado, nunca a lo que está por pasar.",
+    "GameCustomizationTitle": "Personalización del juego",
+    "GameCustomizationDesc": "Tienes un 10 % de probabilidades de que aparezca el pozo en un combate. Dispones de un tiempo determinado para pulsar el pozo: 1 segundo cuando juegas contra el bot y 2 segundos en un combate jugador contra jugador (los dos jugadores tienen el pozo, ¡hay que ser rápido!). Puedes elegir si pulsar o no el pozo; también puedes realizar un movimiento normal."
   }
 }
