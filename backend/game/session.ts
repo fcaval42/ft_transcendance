@@ -46,9 +46,14 @@ function clearRoundTimer(sessionId: string): void {
 function armRoundTimer(sessionId: string): void {
   clearRoundTimer(sessionId);
   const session = sessions.get(sessionId);
-  if (session) {
-    session.match.roundDeadline = Date.now() + ROUND_TIME_LIMIT_MS;
+  if (!session) return;
+
+  if (session.isVsBot) {
+    session.match.roundDeadline = null;
+    return;
   }
+
+  session.match.roundDeadline = Date.now() + ROUND_TIME_LIMIT_MS;
   const timer = setTimeout(async () => {
     try {
       await forceTimeout(sessionId);
@@ -66,8 +71,6 @@ function clearWellTimer(sessionId: string): void {
   }
 }
 
-// Referme la fenêtre du puit si elle était ouverte pour le round qui vient de se terminer
-// (round joué normalement avant que quelqu'un n'ait eu le temps d'appuyer dessus).
 function closeWellWindow(sessionId: string): void {
   const session = sessions.get(sessionId);
   clearWellTimer(sessionId);
@@ -77,9 +80,6 @@ function closeWellWindow(sessionId: string): void {
   }
 }
 
-// Tenté à chaque nouveau round : tant que le puit n'est pas encore apparu ce match,
-// il a WELL_TRIGGER_CHANCE de chance d'apparaître pour ce round précis.
-// Ne se déclenche jamais deux fois dans le même match (well.triggered).
 function armWellTimer(sessionId: string): void {
   const session = sessions.get(sessionId);
   if (!session) return;
@@ -111,9 +111,6 @@ export async function createSession(
   player2Id: string,
   winsNeeded?: number,
   isVsBot = false,
-  // true pour le flux matchmaking (Socket.io) : on arme les timers séparément,
-  // une fois que les deux sockets ont rejoint la room, sinon un puit déclenché
-  // au round 1 peut émettre "wellAvailable" avant que quiconque écoute la room.
   deferTimers = false,
 ): Promise<GameSession> {
   const users = await prisma.user.findMany({
@@ -157,8 +154,6 @@ export async function createSession(
   return session;
 }
 
-// À appeler juste après que les sockets ont rejoint la room de la session
-// (quand createSession a été appelé avec deferTimers = true).
 export function armSessionTimers(sessionId: string): void {
   armRoundTimer(sessionId);
   armWellTimer(sessionId);
@@ -236,8 +231,6 @@ export async function submitMove(
 ): Promise<SubmitMoveResult> {
   const session = getSessionOrThrow(sessionId);
 
-  // Si le client précise pour quel round il joue, on rejette un coup arrivé en retard
-  // (round déjà résolu entre-temps, ex: timeout AFK) au lieu de l'appliquer au round suivant.
   if (expectedRoundNumber !== undefined) {
     const currentRoundNumber = session.match.rounds.length + 1;
     if (expectedRoundNumber !== currentRoundNumber) {
@@ -250,7 +243,7 @@ export async function submitMove(
   } else if (playerId === session.player2Id) {
     session.pendingMove2 = move;
   } else {
-    throw new Error("Ce joueur ne fait pas partie de cette session");
+    throw new Error("Invalid player ID");
   }
 
   if (session.pendingMove1 !== null && session.pendingMove2 !== null) {
@@ -291,8 +284,6 @@ async function resolvePendingRound(session: GameSession): Promise<{
   return { status: "round_played", match };
 }
 
-// Appelé quand un joueur appuie sur le puit. Le premier arrivé gagne le round en cours ;
-// aucun effet si le puit n'est pas (ou plus) disponible à cet instant.
 export async function attemptWell(sessionId: string, playerId: string): Promise<Match> {
   const session = getSessionOrThrow(sessionId);
   const match = session.match;
@@ -331,9 +322,9 @@ export async function attemptWell(sessionId: string, playerId: string): Promise<
 
 function getSessionOrThrow(sessionId: string): GameSession {
   const session = sessions.get(sessionId);
-  if (!session) throw new Error("Session introuvable");
+  if (!session) throw new Error("Session not found");
   if (session.match.status === "finished") {
-    throw new Error("Ce match est déjà terminé");
+    throw new Error("Match is already finished");
   }
   return session;
 }

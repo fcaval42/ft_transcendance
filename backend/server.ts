@@ -45,7 +45,7 @@ app.post('/api/signin', async (req, res) => {
     const user = await createUser(req.body);
     res.status(201).json(user);
   } catch (error) {
-    res.status(500).json({ error: "Erreur serveur" });
+    res.status(500).json({ error: "Error connecting to the server." });
   }
 });
 
@@ -59,14 +59,14 @@ app.post('/api/login', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.status(200).json({ success: true, user, message: 'Connexion réussie' });
+    res.status(200).json({ success: true, user, message: "Login successful! Welcome 👋" });
   } catch (error) {
-    res.status(200).json({ success: false, error: 'Invalid credentials' });
+    res.status(200).json({ success: false, error: "Invalid credentials" });
   }
 });
 
 app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res) => {
-  try {
+    try {
     if (req.user) {
       await setUserOffline(req.user.userId);
     }
@@ -76,14 +76,14 @@ app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res
       sameSite: 'lax',
       path: '/'
     });
-    res.status(200).json({ message: 'Déconnexion réussie' });
+    res.status(200).json({ message: "Logout successful" });
   } catch (error) {
-    res.status(500).json({ error: 'Erreur serveur' });
+    res.status(500).json({ error: "Error connecting to the server." });
   }
 });
 
 app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => {
-  try {
+    try {
     const user = await prisma.user.findUnique({
       where: { id: req.user?.userId },
       select: {
@@ -99,19 +99,25 @@ app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => 
       },
     });
 
-    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: 'Erreur serveur' });
+    res.status(500).json({ error: "Error connecting to the server." });
   }
 });
 
 app.get('/api/auth/42', (req, res) => {
-  const redirectUri = encodeURIComponent(process.env.FORTYTwo_REDIRECT_URI!);
-  const clientId = process.env.FORTYTwo_CLIENT_ID;
-  const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-f91e53fba85e441db218d0c6590325543e0c6275941e910086258c28c6b9d1cf&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2F42%2Fcallback&response_type=code`;
-  
+  const redirectUri = encodeURIComponent(process.env.FORTYTWO_REDIRECT_URI || '');
+  const clientId = process.env.FORTYTWO_CLIENT_ID;
+
+  if (!clientId || !process.env.FORTYTWO_REDIRECT_URI) {
+    return res.status(500).json({ error: 'OAuth 42 is not configured' });
+  }
+
+  const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${encodeURIComponent(clientId)}&redirect_uri=${redirectUri}&response_type=code`;
+
   res.redirect(authUrl);
 });
 
@@ -119,7 +125,7 @@ app.get('/api/auth/42/callback', async (req, res) => {
   const { code } = req.query;
 
   if (!code) {
-    return res.status(400).json({ error: 'Code d authorization manquant' });
+    return res.status(400).json({ error:"Error during OAuth authentication" });
   }
 
   try {
@@ -162,9 +168,10 @@ app.get('/api/auth/42/callback', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.redirect('https://localhost:8443/menu');
+    const frontendUrl = process.env.FRONTEND_URL || 'https://localhost:3000';
+    res.redirect(`${frontendUrl}/menu`);
   } catch (error: any) {
-    res.status(500).json({ error: error.message || 'Échec de l authentification OAuth' });
+    res.status(500).json({ error: "Error during OAuth authentication" });
   }
 });
 
@@ -184,7 +191,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
   const { code } = req.query;
 
   if (!code) {
-    return res.status(400).json({ error: 'Code d authorization manquant' });
+    return res.status(400).json({ error: "Error during OAuth authentication" });
   }
 
   try {
@@ -203,7 +210,7 @@ app.get('/api/auth/google/callback', async (req, res) => {
     });
 
     const tokenData = await tokenResponse.json();
-    if (!tokenResponse.ok) throw new Error(tokenData.error_description || 'Erreur Token Google');
+    if (!tokenResponse.ok) throw new Error(tokenData.error_description || "Error during OAuth authentication");
 
     const userResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
@@ -226,9 +233,10 @@ app.get('/api/auth/google/callback', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.redirect('https://localhost:8443/menu');
+    const frontendUrl = process.env.FRONTEND_URL || 'https://localhost:3000';
+    res.redirect(`${frontendUrl}/menu`);
   } catch (error: any) {
-    res.status(500).json({ error: error.message || 'Échec de l authentification Google' });
+    res.status(500).json({ error: "Error during OAuth authentication" });
   }
 });
 
@@ -248,10 +256,11 @@ setInterval(async () => {
     });
 
     if (result.count > 0) {
-      console.log(`[Cleanup] ${result.count} utilisateur(s) marqué(s) comme hors ligne (inactifs > 1h)`);
+      console.log(`[Cleanup] ${result.count} user(s) marked as offline (inactive > 1h)`);
     }
   } catch (error) {
-    console.error('[Cleanup] Erreur:', error);
+    console.error('[Cleanup] Error:', error);
+    console.error('[Cleanup] Error:', "Error connecting to the server.");
   }
 }, 900000);
 
@@ -262,4 +271,4 @@ const io = new SocketIOServer(httpServer, {
 registerMatchmaking(io);
 registerRealtime(io);
 
-httpServer.listen(3001, () => console.log("Serveur démarré sur http://localhost:3001"));
+httpServer.listen(3001, () => console.log("Server started on http://localhost:3001"));

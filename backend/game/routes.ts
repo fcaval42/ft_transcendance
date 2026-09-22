@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createSession, submitMove, attemptWell, getSession } from "./session";
+import { createSession, submitMove, attemptWell, getSession, endSession } from "./session";
 import { Move } from "./rules";
 import { ROUND_TIME_LIMIT_MS } from "./match";
 import { getRandomBotName, getBotMove } from "./bot";
@@ -11,7 +11,7 @@ gameRouter.post("/session", async (req, res) => {
   if (!player1Id || (!player2Id && !vsBot)) {
     return res
       .status(400)
-      .json({ error: "player1Id et (player2Id ou vsBot) sont requis" });
+      .json({ error: "player1Id and (player2Id or vsBot) are required" });
   }
   const session = await createSession(
     player1Id,
@@ -22,10 +22,15 @@ gameRouter.post("/session", async (req, res) => {
   res.json({ ...session, roundTimeLimitMs: ROUND_TIME_LIMIT_MS });
 });
 
+gameRouter.delete("/session/:id", async (req, res) => {
+  await endSession(req.params.id);
+  res.json({ status: "ended" });
+});
+
 gameRouter.get("/session/:id", (req, res) => {
   const session = getSession(req.params.id);
   if (!session) {
-    return res.status(404).json({ error: "Session introuvable" });
+    return res.status(404).json({ error: "Session not found" });
   }
   res.json(session);
 });
@@ -37,7 +42,7 @@ gameRouter.post("/session/:id/move", async (req, res) => {
     roundNumber?: number;
   };
   if (!playerId || !move) {
-    return res.status(400).json({ error: "playerId et move sont requis" });
+    return res.status(400).json({ error: "playerId and move are required" });
   }
   try {
     let result = await submitMove(req.params.id, playerId, move, roundNumber);

@@ -40,7 +40,7 @@ export function registerRealtime(io: Server): void {
   io.on("connection", (socket) => {
     socket.on("playMove", async ({ sessionId, playerId, move, roundNumber }: PlayMovePayload) => {
       if (!sessionId || !playerId || !move) {
-        socket.emit("moveError", "sessionId, playerId et move sont requis");
+        socket.emit("moveError","sessionId, playerId and move are required");
         return;
       }
       try {
