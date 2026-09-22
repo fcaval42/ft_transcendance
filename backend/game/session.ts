@@ -207,7 +207,9 @@ export async function endSession(sessionId: string): Promise<void> {
 
   if (session && !session.isVsBot) {
     if (session.match.winner) {
-      await applyMatchResult(session, session.match.winner).catch(() => {});
+      await applyMatchResult(session, session.match.winner).catch((error) => {
+        console.error("[Elo] Erreur lors de la mise à jour de l'Elo:", error);
+      });
     }
 
     try {
