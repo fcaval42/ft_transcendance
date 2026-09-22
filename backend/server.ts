@@ -59,7 +59,7 @@ app.post('/api/login', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.status(200).json({ success: true, user, message: "Login successful! Welcome 👋" });
+    res.status(200).json({ success: true, user, message: "Login successful! Welcome" });
   } catch (error) {
     res.status(200).json({ success: false, error: "Invalid credentials" });
   }

@@ -17,6 +17,10 @@ function App() {
     <Router>
       <Routes>
         { /* Route par défaut (page d'accueil) */}
+        <Route path="/instructions" element={<Instructions />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/ai-info" element={<AiInfo />} />
         { /* Route pour la page de connexion */}
         <Route element={<UnlogRoute />}>
           <Route path="/" element={<Home />} />
@@ -29,10 +33,6 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/game" element={<Game />} />
           <Route path="/pvp" element={<Pvp />} />
-          <Route path="/instructions" element={<Instructions />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/ai-info" element={<AiInfo />} />
         </Route>
       </Routes>
     </Router>
