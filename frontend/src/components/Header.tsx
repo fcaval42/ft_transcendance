@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 import { UserAvatar } from "../utils/userAvatar";
 import { LogoutButton } from "./LougoutButton";
 import { useTranslation } from "react-i18next";
@@ -109,9 +108,7 @@ export const HeaderLogout = () => {
   }, [isOpen]);
 
   return (
-    /* 1. Positionnement global en haut à droite */
     <div className="absolute top-4 right-4 z-50">
-      {/* 2. Ajout de ref={menuRef} ET de la classe relative */}
       <div ref={menuRef} className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}

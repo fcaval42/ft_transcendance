@@ -1,4 +1,3 @@
-// src/hooks/useUser.ts
 import { useState, useEffect } from 'react';
 
 interface User {

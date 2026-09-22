@@ -2,8 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-// Prisma est une interface qui permet de communiquer avec le client
-// On ne l'initialise qu'une fois, en general au demarrage
 export const prisma = new PrismaClient()
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
@@ -29,7 +27,7 @@ interface CreateUserInput {
   email: string;
   password: string;
   username: string;
-  avatarUrl?: string; // "?:" = Optionnel
+  avatarUrl?: string;
 }
 
 interface OAuthUserInput {
@@ -117,11 +115,7 @@ export async function setUserOffline(userId: string): Promise<void> {
   });
 }
 
-/**
- * Trouve ou crée un utilisateur connecté via OAuth
- */
 export async function findOrCreateOAuthUser(input: OAuthUserInput): Promise<AuthResponse> {
-  // 1. Chercher si l'utilisateur existe déjà via son ID OAuth
   let user = await prisma.user.findFirst({
     where: {
       oauthProvider: input.provider,
@@ -129,9 +123,7 @@ export async function findOrCreateOAuthUser(input: OAuthUserInput): Promise<Auth
     },
   });
 
-  // 2. S'il n'existe pas, créer le compte
   if (!user) {
-    // Gestion du conflit de pseudo si le username 42 existe déjà localement
     let uniqueUsername = input.username;
     const existingUsername = await prisma.user.findUnique({ where: { username: uniqueUsername } });
     if (existingUsername) {
@@ -150,7 +142,6 @@ export async function findOrCreateOAuthUser(input: OAuthUserInput): Promise<Auth
       },
     });
   } else {
-    // Mettre à jour le statut en ligne
     user = await prisma.user.update({
       where: { id: user.id },
       data: { isOnline: true,
@@ -173,24 +164,3 @@ export async function findOrCreateOAuthUser(input: OAuthUserInput): Promise<Auth
     token,
   };
 }
-
-// async function main() {
-//   try {
-//     const newUser = await createUser({
-//       email: 'francoislatortue@caramail.fr',
-//       password: 'CleaMaBFF',
-//       username: 'Francois',
-//       avatarUrl: 'https://i.etsystatic.com/20152144/r/il/5c9299/7106223899/il_fullxfull.7106223899_95no.jpg',
-//     });
-//     console.log('✅ Utilisateur créé:', newUser);
-//   } catch (error) {
-//     console.error('❌ Erreur:', error);
-//   } finally {
-//     await prisma.$disconnect();
-//   }
-// }
-
-// // Exécute si le fichier est lancé directement
-// if (import.meta.url === `file://${process.argv[1]}`) {
-//   main();
-// }

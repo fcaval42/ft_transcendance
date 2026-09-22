@@ -72,14 +72,12 @@ export const Register = () => {
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">{t("register.connection")}</h1>
 
-        {/* ERREURS */}
         {error && (
           <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
             {error}
           </div>
         )}
 
-        {/* FORMULAIRE */}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="username" className="block text-gray-700 mb-2">

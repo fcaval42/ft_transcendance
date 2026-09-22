@@ -1,4 +1,3 @@
-// src/utils/checkRoute.tsx
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
@@ -37,7 +36,6 @@ export const ProtectedRoute = () => {
     return null;
   }
 
-  // Si pas de session valide, redirection automatique vers /login
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -52,7 +50,6 @@ export const UnlogRoute = () => {
     return null;
   }
 
-  // Si une session valide existe, rediriger vers la page principale
   if (isAuthenticated) {
     return <Navigate to="/menu" replace />;
   }

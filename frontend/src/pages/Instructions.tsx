@@ -1,4 +1,3 @@
-// src/pages/Instructions.tsx
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Link } from "react-router-dom";
@@ -16,7 +15,6 @@ export const Instructions = () => {
             {t("instructions.title")}
           </h1>
 
-          {/* Introduction */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("instructions.welcome")}
@@ -26,7 +24,6 @@ export const Instructions = () => {
             </p>
           </section>
 
-          {/* Règles de base */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("instructions.basicRules")}
@@ -56,7 +53,6 @@ export const Instructions = () => {
             </div>
           </section>
 
-          {/* Mode contre le Bot */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("instructions.vsBotTitle")}
@@ -70,7 +66,6 @@ export const Instructions = () => {
             </ol>
           </section>
 
-          {/* Mode PvP */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("instructions.vsPlayerTitle")}
@@ -85,7 +80,6 @@ export const Instructions = () => {
             </ol>
           </section>
 
-          {/* Système de score et Elo */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("instructions.scoringTitle")}
@@ -104,7 +98,6 @@ export const Instructions = () => {
             </div>
           </section>
 
-          {/* Conseils */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("instructions.tipsTitle")}
@@ -131,7 +124,6 @@ export const Instructions = () => {
             </div>
           </section>
 
-          {/* Personnalisation du jeu */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("instructions.puitTitle")}
@@ -146,7 +138,6 @@ export const Instructions = () => {
             </div>
           </section>
 
-          {/* Bouton retour menu */}
           <div className="text-center mt-8">
             <Link
               to="/menu"
