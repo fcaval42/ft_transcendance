@@ -34,7 +34,6 @@
   "register": {
     "inscription": "Inscription reussie ! Bienvenue 👋",
     "connection": "Inscription",
-    "mail": "E-mail",
     "already": "Vous avez déjà un compte ? Se connecter",
     "password": "Mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
@@ -46,7 +45,7 @@
     "title": "Pierre-Feuille-Ciseaux",
     "yourChoice": "Tu as choisi:",
     "timeLeft": "⏳ Temps restant: ",
-    "time":"Pas de coup joué à temps...",
+    "time": "Pas de coup joué à temps...",
     "botChoice": "L'IA a choisi:",
     "opsChoice": "L'adversaire a choisi: ",
     "opsName": " a choisi: ",
@@ -65,25 +64,19 @@
     "backToMenu": "Menu"
   },
   "popUpLose": {
-    "title": "Match terminé !",
-    "message": "Défaite...",
-    "score": "Score final:",
-    "playAgain": "Rejouer",
-    "backToMenu": "Menu"
+    "message": "Défaite..."
   },
   "popUpVsPlayer": {
     "ready": "🎮 Prêt à jouer ?",
     "start": "Commencer !",
-    "time": "Pas de coup joué à temps...",
     "opponent": "Adversaire...",
     "cancel": "Retour au menu"
   },
   "popUpSearchPlayer": {
     "title": "🔍 Recherche...",
-    "searching": "Recherche d'un adversaire...",
-    "cancel": "Retour au menu"
+    "searching": "Recherche d'un adversaire..."
   },
-  "profile":{
+  "profile": {
     "rate": "Taux de victoire: ",
     "victory": "Victoires: ",
     "defeat": "Défaites: ",

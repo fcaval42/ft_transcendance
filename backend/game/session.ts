@@ -243,7 +243,7 @@ export async function submitMove(
   } else if (playerId === session.player2Id) {
     session.pendingMove2 = move;
   } else {
-    throw new Error("Ce joueur ne fait pas partie de cette session");
+    throw new Error("Invalid player ID");
   }
 
   if (session.pendingMove1 !== null && session.pendingMove2 !== null) {
@@ -322,9 +322,9 @@ export async function attemptWell(sessionId: string, playerId: string): Promise<
 
 function getSessionOrThrow(sessionId: string): GameSession {
   const session = sessions.get(sessionId);
-  if (!session) throw new Error("Session introuvable");
+  if (!session) throw new Error("Session not found");
   if (session.match.status === "finished") {
-    throw new Error("Ce match est déjà terminé");
+    throw new Error("Match is already finished");
   }
   return session;
 }
