@@ -22,6 +22,13 @@ interface RoundOutcome {
   move1: Move | null;
   move2: Move | null;
   result: RoundResult;
+  viaWell?: boolean;
+}
+
+interface WellState {
+  triggered: boolean;
+  available: boolean;
+  deadline: number | null;
 }
 
 interface Match {
@@ -31,6 +38,7 @@ interface Match {
   status: 'playing' | 'finished';
   winner: Role | null;
   roundDeadline: number | null;
+  well: WellState;
 }
 
 const ROUND_TIME_LIMIT_S = 5;
@@ -55,6 +63,8 @@ export const Pvp = () => {
   const [error, setError] = useState<string>("");
   const [showEndModal, setShowEndModal] = useState<boolean>(false);
   const [endMessage, setEndMessage] = useState<string>("");
+  // Puit : bonus qui apparaît au plus une fois par match, premier à appuyer gagne le round.
+  const [wellAvailable, setWellAvailable] = useState<boolean>(false);
 
   const socketRef = useRef<Socket | null>(null);
   const sessionIdRef = useRef<string | null>(null);
@@ -96,11 +106,11 @@ export const Pvp = () => {
         fetch(`/api/user/${selfId}`),
         fetch(`/api/user/${opponentId}`),
       ]);
-      
+
       if (selfResponse.ok && opponentResponse.ok) {
         const selfData = await selfResponse.json();
         const opponentData = await opponentResponse.json();
-        
+
         // selfId = joueur actuel, opponentId = adversaire, quel que soit le role
         setPlayerElo(selfData.elo || 0);
         setOpponentElo(opponentData.elo || 0);
@@ -164,6 +174,7 @@ export const Pvp = () => {
         setShowEndModal(false);
         setEndMessage("");
         currentRoundRef.current = data.match.rounds.length + 1;
+        setWellAvailable(data.match.well.available);
         applyMatchState(data.match, data.role);
         setShowModal(false);
         setIsSearching(false);
@@ -190,6 +201,7 @@ export const Pvp = () => {
         setShowEndModal(false);
         setEndMessage("");
         currentRoundRef.current = data.match.rounds.length + 1;
+        setWellAvailable(data.match.well.available);
         applyMatchState(data.match, data.role);
         setShowModal(false);
         setIsSearching(false);
@@ -198,9 +210,25 @@ export const Pvp = () => {
       }
     );
 
+    // Le puit vient d'apparaître pour ce round : fenêtre de 2s pour appuyer dessus.
+    socket.on("wellAvailable", () => {
+      setWellAvailable(true);
+    });
+
+    // Personne n'a appuyé à temps : le puit se referme, le round continue normalement.
+    socket.on("wellExpired", () => {
+      setWellAvailable(false);
+    });
+
+    socket.on("wellError", (message: string) => {
+      setWellAvailable(false);
+      setError(message);
+    });
+
     socket.on("roundResult", (data: { match: Match }) => {
       const lastRound = data.match.rounds[data.match.rounds.length - 1];
       currentRoundRef.current = data.match.rounds.length + 1;
+      setWellAvailable(false);
       const role = roleRef.current;
       const myMove = role === "player1" ? lastRound.move1 : lastRound.move2;
       const oppMove = role === "player1" ? lastRound.move2 : lastRound.move1;
@@ -221,7 +249,7 @@ export const Pvp = () => {
             : t("gameVsBot.lose");
         setResult(finalMessage);
         setEndMessage(finalMessage);
-        
+
         // Calculer l'Elo gagné/perdu
         if (data.match.winner === role && role) {
           // Le joueur a gagné : calcul positif
@@ -234,10 +262,18 @@ export const Pvp = () => {
         } else {
           setEloChange(0);
         }
-        
+
         setShowEndModal(true);
       } else {
-        setResult(labelForResult(lastRound.result, role));
+        if (lastRound.viaWell) {
+          setResult(
+            lastRound.result === role
+              ? "🕳️ Tu as attrapé le puit !"
+              : "🕳️ L'adversaire a attrapé le puit !"
+          );
+        } else {
+          setResult(labelForResult(lastRound.result, role));
+        }
         startVisualTimer(data.match.roundDeadline);
       }
     });
@@ -316,6 +352,15 @@ export const Pvp = () => {
       playerId,
       move: choice,
       roundNumber: currentRoundRef.current,
+    });
+  };
+
+  const handleHitWell = () => {
+    if (!playerId || !sessionIdRef.current) return;
+    setWellAvailable(false);
+    socketRef.current?.emit("hitWell", {
+      sessionId: sessionIdRef.current,
+      playerId,
     });
   };
 
@@ -433,6 +478,15 @@ export const Pvp = () => {
           <div className="text-xl font-medium mb-6 p-2 bg-orange-50 rounded-lg">
             {t("gameVsBot.timeLeft")} <span className="font-bold">{timeleft}s</span>
           </div>
+
+          {wellAvailable && (
+            <button
+              onClick={handleHitWell}
+              className="w-full mb-6 bg-red-400 hover:bg-red-500 text-gray-900 text-2xl font-extrabold py-5 rounded-xl shadow-lg animate-pulse"
+            >
+              🕳️ LE PUIT EST LÀ — APPUIE VITE !
+            </button>
+          )}
 
           <div className="flex justify-center gap-4 mb-8">
             {choices.map(choice => (
