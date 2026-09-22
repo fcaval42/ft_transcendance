@@ -319,7 +319,6 @@ export const Pvp = () => {
   const handlePlay = (choice: Move) => {
     if (!playerId || !sessionIdRef.current) return;
 
-    stopVisualTimer();
     setUserChoice(choice);
     setOpponentChoice(null);
     setResult("");
