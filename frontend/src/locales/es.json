@@ -40,6 +40,10 @@
     "register": "Regístrate",
     "back": "Volver al inicio"
   },
+    "matchmaking": {
+    "errorId": "playerId inválido",
+    "alreadyWaiting": "Ya estás esperando una partida"
+  },
   "gameVsBot": {
     "leave": "Volver al menú",
     "title": "Piedra-Papel-Tijeras",
@@ -51,6 +55,7 @@
     "opsName": " eligió: ",
     "draw": "¡Es un empate!",
     "win": "¡Ganaste! 🎉",
+    "matchFinished": "El partido ha terminado.",
     "loading": "Cargando...",
     "lose": "Perdiste...😢",
     "interrupted": "Partida interrumpida."

@@ -3,15 +3,17 @@ import { createSession, submitMove, getSession } from "./session";
 import { Move } from "./rules";
 import { ROUND_TIME_LIMIT_MS } from "./match";
 import { getRandomBotName, getBotMove } from "./bot";
+import { useTranslation } from "react-i18next";
 
 export const gameRouter = Router();
+const { t } = useTranslation();
 
 gameRouter.post("/session", async (req, res) => {
   const { player1Id, player2Id, vsBot } = req.body ?? {};
   if (!player1Id || (!player2Id && !vsBot)) {
     return res
       .status(400)
-      .json({ error: "player1Id et (player2Id ou vsBot) sont requis" });
+      .json({ error: t("matchmaking.playerRequired") });
   }
   const session = await createSession(
     player1Id,
@@ -25,7 +27,7 @@ gameRouter.post("/session", async (req, res) => {
 gameRouter.get("/session/:id", (req, res) => {
   const session = getSession(req.params.id);
   if (!session) {
-    return res.status(404).json({ error: "Session introuvable" });
+    return res.status(404).json({ error: t("matchmaking.sessionMissing") });
   }
   res.json(session);
 });
@@ -36,7 +38,7 @@ gameRouter.post("/session/:id/move", async (req, res) => {
     move?: Move;
   };
   if (!playerId || !move) {
-    return res.status(400).json({ error: "playerId et move sont requis" });
+    return res.status(400).json({ error: t("matchmaking.errorMiss") });
   }
   try {
     let result = await submitMove(req.params.id, playerId, move);

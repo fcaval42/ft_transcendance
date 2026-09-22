@@ -1,4 +1,6 @@
+import { useTranslation } from "react-i18next";
 import { Move, RoundResult, playRound } from "./rules";
+const { t } = useTranslation();
 
 export const ROUND_TIME_LIMIT_MS = 5_000;
 
@@ -40,7 +42,7 @@ export function playMatchRound(
   move2: Move | null
 ): Match {
   if (match.status === "finished") {
-    throw new Error("Ce match est déjà terminé");
+    throw new Error(t("game.matchFinished"));
   }
 
   const result = resolveRound(move1, move2);

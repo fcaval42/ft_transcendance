@@ -9,6 +9,7 @@ import { AuthenticatedRequest, authenticateToken } from './middleware/authmiddle
 import { gameRouter } from './game/routes';
 import { registerMatchmaking } from './game/matchmaking';
 import { registerRealtime } from './game/realtime';
+import { useTranslation } from 'react-i18next';
 
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
@@ -41,15 +42,17 @@ app.get('/api/auth/status', (req, res) => {
 });
 
 app.post('/api/signin', async (req, res) => {
+    const { t } = useTranslation();
   try {
     const user = await createUser(req.body);
     res.status(201).json(user);
   } catch (error) {
-    res.status(500).json({ error: "Erreur serveur" });
+    res.status(500).json({ error: t("error.server") });
   }
 });
 
 app.post('/api/login', async (req, res) => {
+    const { t } = useTranslation();
   try {
     const { user, token } = await authenticateUser(req.body);
     res.cookie('token', token, {
@@ -59,14 +62,15 @@ app.post('/api/login', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.status(200).json({ success: true, user, message: 'Connexion réussie' });
+    res.status(200).json({ success: true, user, message: t("login.success") });
   } catch (error) {
-    res.status(200).json({ success: false, error: 'Invalid credentials' });
+    res.status(200).json({ success: false, error: t("login.invalidCredentials") });
   }
 });
 
 app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res) => {
-  try {
+  const { t } = useTranslation();
+    try {
     if (req.user) {
       await setUserOffline(req.user.userId);
     }
@@ -76,14 +80,16 @@ app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res
       sameSite: 'lax',
       path: '/'
     });
-    res.status(200).json({ message: 'Déconnexion réussie' });
+    const { t } = useTranslation();
+    res.status(200).json({ message: t("login.logout") });
   } catch (error) {
-    res.status(500).json({ error: 'Erreur serveur' });
+    res.status(500).json({ error: t("error.server") });
   }
 });
 
 app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => {
-  try {
+  const { t } = useTranslation();
+    try {
     const user = await prisma.user.findUnique({
       where: { id: req.user?.userId },
       select: {
@@ -99,11 +105,12 @@ app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => 
       },
     });
 
-    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    
+    if (!user) return res.status(404).json({ error: t("error.userNotFound") });
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: 'Erreur serveur' });
+    res.status(500).json({ error: t("error.server") });
   }
 });
 
@@ -117,9 +124,10 @@ app.get('/api/auth/42', (req, res) => {
 
 app.get('/api/auth/42/callback', async (req, res) => {
   const { code } = req.query;
+  const { t } = useTranslation();
 
   if (!code) {
-    return res.status(400).json({ error: 'Code d authorization manquant' });
+    return res.status(400).json({ error: t("error.oAuth") });
   }
 
   try {
@@ -164,7 +172,7 @@ app.get('/api/auth/42/callback', async (req, res) => {
     });
     res.redirect('https://localhost:8443/menu');
   } catch (error: any) {
-    res.status(500).json({ error: error.message || 'Échec de l authentification OAuth' });
+    res.status(500).json({ error: t("error.oAuth") });
   }
 });
 
@@ -182,9 +190,10 @@ app.get('/api/auth/google', (req, res) => {
 
 app.get('/api/auth/google/callback', async (req, res) => {
   const { code } = req.query;
+  const { t } = useTranslation();
 
   if (!code) {
-    return res.status(400).json({ error: 'Code d authorization manquant' });
+    return res.status(400).json({ error: t("error.oAuth") });
   }
 
   try {
@@ -228,7 +237,8 @@ app.get('/api/auth/google/callback', async (req, res) => {
     });
     res.redirect('https://localhost:8443/menu');
   } catch (error: any) {
-    res.status(500).json({ error: error.message || 'Échec de l authentification Google' });
+    const { t } = useTranslation();
+    res.status(500).json({ error: t("error.oAuth") });
   }
 });
 
@@ -252,6 +262,8 @@ setInterval(async () => {
     }
   } catch (error) {
     console.error('[Cleanup] Erreur:', error);
+    const { t } = useTranslation();
+    console.error('[Cleanup] Erreur:', t("error.server"));
   }
 }, 900000);
 
