@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { createSession, getSessionByPlayerId, GameSession } from "./session";
+import { createSession, armSessionTimers, getSessionByPlayerId, GameSession } from "./session";
 
 interface WaitingPlayer {
   socket: Socket;
@@ -46,10 +46,17 @@ export function registerMatchmaking(io: Server): void {
         const player1 = waitingPlayer;
         waitingPlayer = null;
 
-        const session = await createSession(player1.playerId, playerId);
+        const session = await createSession(
+          player1.playerId,
+          playerId,
+          undefined,
+          false,
+          true
+        );
 
         player1.socket.join(session.id);
         socket.join(session.id);
+        armSessionTimers(session.id);
 
         player1.socket.emit("matched", {
           sessionId: session.id,

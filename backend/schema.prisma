@@ -24,7 +24,7 @@ model User {
   oauthId      String?  // ID distant du provider
   @@unique([oauthProvider, oauthId]) // Évite les doublons d'un même compte externe
 
-  // Statistiques de jeu[eslint] EACCES: permission denied, open '/home/bbeaurai/Code/ft_transcendence/frontend/node_modules/.cache/.eslintcache'
+  // Statistiques de jeu[eslint] EACCES: permission denied, open '/home/bbeaurai/Code/ft_transcendance/frontend/node_modules/.cache/.eslintcache'
   wins         Int      @default(0)
   losses       Int      @default(0)
   elo          Int      @default(100)
@@ -36,9 +36,6 @@ model User {
 
   gamesAsPlayer1         Game[]                  @relation("GamePlayer1")
   gamesAsPlayer2         Game[]                  @relation("GamePlayer2")
-  organizedTournaments   Tournament[]            @relation("OrganizerTournaments")
-  tournamentParticipants TournamentParticipant[]
-  moves                  GameMove[]              @relation("GameMovePlayer")
 
   @@index([email])
   @@index([username])
@@ -62,7 +59,7 @@ model Game {
 
   // Option de customisation (Game Customization Module)
   maxScore     Int        @default(3)   // Ex: Premier à 3 points gagne
-  roundTimeout Int        @default(10)  // Temps max par manche en secondes
+  roundTimeout Int        @default(5)  // Temps max par manche en secondes
 
   createdAt    DateTime   @default(now())
   endedAt      DateTime?
@@ -70,8 +67,6 @@ model Game {
   // Relations
   player1    User        @relation(fields: [player1Id], references: [id], name: "GamePlayer1", onDelete: Cascade)
   player2    User?       @relation(fields: [player2Id], references: [id], name: "GamePlayer2", onDelete: Cascade)
-  tournament Tournament? @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  moves      GameMove[]
 }
 
 enum GameStatus {
@@ -81,67 +76,8 @@ enum GameStatus {
   CANCELLED
 }
 
-model GameMove {
-  id        String   @id @default(cuid())
-  gameId    String
-  playerId  String
-  round     Int      // Numéro du round (1, 2, 3...)
-  move      MoveType // ROCK, PAPER, SCISSORS
-  createdAt DateTime @default(now())
-
-  game   Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  player User @relation(fields: [playerId], references: [id], name: "GameMovePlayer", onDelete: Cascade)
-}
-
 enum MoveType {
   ROCK
   PAPER
   SCISSORS
-}
-
-// ==========================================
-// 4. TOURNOIS
-// ==========================================
-model Tournament {
-  id           String           @id @default(cuid())
-  name         String
-  organizerId  String
-  status       TournamentStatus @default(PENDING)
-  maxPlayers   Int              @default(4)
-  currentRound Int              @default(1)
-
-  createdAt    DateTime         @default(now())
-  startedAt    DateTime?
-  endedAt      DateTime?
-
-  organizer    User                    @relation("OrganizerTournaments", fields: [organizerId], references: [id])
-  participants TournamentParticipant[]
-  games        Game[]
-}
-
-enum TournamentStatus {
-  PENDING
-  STARTED
-  FINISHED
-  CANCELLED
-}
-
-model TournamentParticipant {
-  id              String            @id @default(cuid())
-  tournamentId    String
-  userId          String
-  bracketPosition Int?
-  status          ParticipantStatus @default(REGISTERED)
-
-  tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([tournamentId, userId])
-}
-
-enum ParticipantStatus {
-  REGISTERED
-  PLAYING
-  ELIMINATED
-  WINNER
 }

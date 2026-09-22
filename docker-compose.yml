@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:15
-    container_name: ft_transcendence_db
+    container_name: ft_transcendance_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -68,7 +68,7 @@ volumes:
 #const pool = new Pool({
 #  user: 'postgres',
 #  host: 'localhost',  // ou '127.0.0.1'
-#  database: 'ft_transcendence',
+#  database: 'ft_transcendance',
 #  password: 'postgres',
 #  port: 5432,
 #});
@@ -81,7 +81,7 @@ volumes:
 # tu devras arrêter le Post local ou changer le port dans le docker-compose. (ex: 5433:5432)
 
 # Commandes en plus:
-# docker exec -it ft_transcendence_db psql -U postgres -d ft_transcendence :
+# docker exec -it ft_transcendance_db psql -U postgres -d ft_transcendance :
 #     Accéder à la base de données en ligne de commande
 # docker-compose down -v  # Supprime le volume (ATTENTION : les données seront perdues !)
 # docker-compose up -d    # Relance un conteneur propre
