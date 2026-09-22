@@ -22,6 +22,8 @@ export interface GameSession {
   player2Id: string;
   player1Name: string;
   player2Name: string;
+  player1Elo: number;
+  player2Elo: number;
   isVsBot: boolean;
   match: Match;
   pendingMove1: Move | null;
@@ -116,9 +118,10 @@ export async function createSession(
 ): Promise<GameSession> {
   const users = await prisma.user.findMany({
     where: { id: { in: [player1Id, player2Id] } },
-    select: { id: true, username: true },
+    select: { id: true, username: true, elo: true },
   });
   const nameById = new Map(users.map((u) => [u.id, u.username]));
+  const eloById = new Map(users.map((u) => [u.id, u.elo]));
 
   const session: GameSession = {
     id: randomUUID(),
@@ -126,6 +129,8 @@ export async function createSession(
     player2Id,
     player1Name: nameById.get(player1Id) ?? player1Id,
     player2Name: nameById.get(player2Id) ?? player2Id,
+    player1Elo: eloById.get(player1Id) ?? 0,
+    player2Elo: eloById.get(player2Id) ?? 0,
     isVsBot,
     match: createMatch(winsNeeded),
     pendingMove1: null,
