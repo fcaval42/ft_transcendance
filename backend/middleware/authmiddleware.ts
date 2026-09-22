@@ -11,7 +11,6 @@ export interface AuthenticatedRequest extends Request {
 
 export async function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const token = req.cookies?.token;
-  const { t } = useTranslation();
 
   if (!token) {
     return res.status(401).json({ error: "Token is required" });

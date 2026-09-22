@@ -156,7 +156,6 @@ export async function submitMove(
   playerId: string,
   move: Move
 ): Promise<SubmitMoveResult> {
-  const { t } = useTranslation();
   const session = getSessionOrThrow(sessionId);
 
   if (playerId === session.player1Id) {
@@ -164,7 +163,7 @@ export async function submitMove(
   } else if (playerId === session.player2Id) {
     session.pendingMove2 = move;
   } else {
-    throw new Error(t("matchmaking.errorId"));
+    throw new Error("Invalid player ID");
   }
 
   if (session.pendingMove1 !== null && session.pendingMove2 !== null) {
@@ -204,10 +203,9 @@ async function resolvePendingRound(session: GameSession): Promise<{
 
 function getSessionOrThrow(sessionId: string): GameSession {
   const session = sessions.get(sessionId);
-  const { t } = useTranslation();
-  if (!session) throw new Error(t("matchmaking.sessionMissing"));
+  if (!session) throw new Error("Session not found");
   if (session.match.status === "finished") {
-    throw new Error(t("gameVsBot.alreadyFinished"));
+    throw new Error("Match is already finished");
   }
   return session;
 }

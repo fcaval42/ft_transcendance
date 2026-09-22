@@ -42,7 +42,6 @@ app.get('/api/auth/status', (req, res) => {
 });
 
 app.post('/api/signin', async (req, res) => {
-    const { t } = useTranslation();
   try {
     const user = await createUser(req.body);
     res.status(201).json(user);
@@ -52,7 +51,6 @@ app.post('/api/signin', async (req, res) => {
 });
 
 app.post('/api/login', async (req, res) => {
-    const { t } = useTranslation();
   try {
     const { user, token } = await authenticateUser(req.body);
     res.cookie('token', token, {
@@ -69,7 +67,6 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res) => {
-  const { t } = useTranslation();
     try {
     if (req.user) {
       await setUserOffline(req.user.userId);
@@ -80,7 +77,6 @@ app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res
       sameSite: 'lax',
       path: '/'
     });
-    const { t } = useTranslation();
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     res.status(500).json({ error: "Error connecting to the server." });
@@ -88,7 +84,6 @@ app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res
 });
 
 app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => {
-  const { t } = useTranslation();
     try {
     const user = await prisma.user.findUnique({
       where: { id: req.user?.userId },
@@ -124,7 +119,6 @@ app.get('/api/auth/42', (req, res) => {
 
 app.get('/api/auth/42/callback', async (req, res) => {
   const { code } = req.query;
-  const { t } = useTranslation();
 
   if (!code) {
     return res.status(400).json({ error:"Error during OAuth authentication" });
@@ -190,7 +184,6 @@ app.get('/api/auth/google', (req, res) => {
 
 app.get('/api/auth/google/callback', async (req, res) => {
   const { code } = req.query;
-  const { t } = useTranslation();
 
   if (!code) {
     return res.status(400).json({ error: "Error during OAuth authentication" });
@@ -237,7 +230,6 @@ app.get('/api/auth/google/callback', async (req, res) => {
     });
     res.redirect('https://localhost:8443/menu');
   } catch (error: any) {
-    const { t } = useTranslation();
     res.status(500).json({ error: "Error during OAuth authentication" });
   }
 });
@@ -262,7 +254,6 @@ setInterval(async () => {
     }
   } catch (error) {
     console.error('[Cleanup] Error:', error);
-    const { t } = useTranslation();
     console.error('[Cleanup] Error:', "Error connecting to the server.");
   }
 }, 900000);

@@ -11,7 +11,6 @@ interface PlayMovePayload {
 }
 
 export function registerRealtime(io: Server): void {
-  const { t } = useTranslation();
   sessionEvents.on(
     "roundResolved",
     ({ sessionId, match }: { sessionId: string; match: Match }) => {
