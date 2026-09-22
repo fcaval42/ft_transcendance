@@ -4,7 +4,6 @@ import { prisma } from "../auth";
 import { Match, createMatch, playMatchRound, ROUND_TIME_LIMIT_MS } from "./match";
 import { Move } from "./rules";
 import { computeElo } from "./elo";
-import { useTranslation } from "react-i18next";
 
 export const sessionEvents = new EventEmitter();
 

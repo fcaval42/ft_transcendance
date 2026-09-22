@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { TokenExpiredError } from 'jsonwebtoken';
 import { JwtPayload, prisma } from '../auth';
-import { useTranslation } from 'react-i18next';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
 

@@ -9,7 +9,6 @@ import { AuthenticatedRequest, authenticateToken } from './middleware/authmiddle
 import { gameRouter } from './game/routes';
 import { registerMatchmaking } from './game/matchmaking';
 import { registerRealtime } from './game/realtime';
-import { useTranslation } from 'react-i18next';
 
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
@@ -110,10 +109,15 @@ app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => 
 });
 
 app.get('/api/auth/42', (req, res) => {
-  const redirectUri = encodeURIComponent(process.env.FORTYTwo_REDIRECT_URI!);
-  const clientId = process.env.FORTYTwo_CLIENT_ID;
-  const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-f91e53fba85e441db218d0c6590325543e0c6275941e910086258c28c6b9d1cf&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2F42%2Fcallback&response_type=code`;
-  
+  const redirectUri = encodeURIComponent(process.env.FORTYTWO_REDIRECT_URI || '');
+  const clientId = process.env.FORTYTWO_CLIENT_ID;
+
+  if (!clientId || !process.env.FORTYTWO_REDIRECT_URI) {
+    return res.status(500).json({ error: 'OAuth 42 is not configured' });
+  }
+
+  const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${encodeURIComponent(clientId)}&redirect_uri=${redirectUri}&response_type=code`;
+
   res.redirect(authUrl);
 });
 
@@ -164,7 +168,8 @@ app.get('/api/auth/42/callback', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.redirect('https://localhost:8443/menu');
+    const frontendUrl = process.env.FRONTEND_URL || 'https://localhost:3000';
+    res.redirect(`${frontendUrl}/menu`);
   } catch (error: any) {
     res.status(500).json({ error: "Error during OAuth authentication" });
   }
@@ -228,7 +233,8 @@ app.get('/api/auth/google/callback', async (req, res) => {
       path: '/',
       maxAge: 3600 * 10000
     });
-    res.redirect('https://localhost:8443/menu');
+    const frontendUrl = process.env.FRONTEND_URL || 'https://localhost:3000';
+    res.redirect(`${frontendUrl}/menu`);
   } catch (error: any) {
     res.status(500).json({ error: "Error during OAuth authentication" });
   }

@@ -2,7 +2,6 @@ import { Server } from "socket.io";
 import { submitMove, sessionEvents } from "./session";
 import { Match } from "./match";
 import { Move } from "./rules";
-import { useTranslation } from "react-i18next";
 
 interface PlayMovePayload {
   sessionId?: string;

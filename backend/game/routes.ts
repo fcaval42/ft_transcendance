@@ -3,10 +3,8 @@ import { createSession, submitMove, getSession } from "./session";
 import { Move } from "./rules";
 import { ROUND_TIME_LIMIT_MS } from "./match";
 import { getRandomBotName, getBotMove } from "./bot";
-import { useTranslation } from "react-i18next";
 
 export const gameRouter = Router();
-const { t } = useTranslation();
 
 gameRouter.post("/session", async (req, res) => {
   const { player1Id, player2Id, vsBot } = req.body ?? {};
