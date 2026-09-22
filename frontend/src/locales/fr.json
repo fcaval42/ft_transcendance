@@ -7,10 +7,8 @@
     "connection": "Connexion",
     "mail": "E-mail",
     "or": "ou",
-    "invalidCredentials": "Identifiants invalides",
     "password": "Mot de passe",
     "connect": "Se connecter",
-    "logout": "Déconnexion réussie",
     "noAccount": "Pas encore inscrit ?",
     "register": "S'inscrire",
     "success": "Connexion réussie ! Bienvenue 👋",
@@ -36,31 +34,22 @@
   "register": {
     "inscription": "Inscription reussie ! Bienvenue 👋",
     "connection": "Inscription",
-    "mail": "E-mail",
-    "errorMiss": "sessionId, playerId et move sont requis",
     "already": "Vous avez déjà un compte ? Se connecter",
     "password": "Mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
     "register": "S'inscrire",
     "back": "Retour à l'accueil"
   },
-  "matchmaking": {
-    "errorId": "playerId invalide",
-    "sessionMissing": "Session introuvable",
-    "playerRequired": "player1Id et (player2Id ou vsBot) sont requis",
-    "alreadyWaiting": "Tu es déjà en attente d'une partie"
-  },
   "gameVsBot": {
     "leave": "Retour au menu",
     "title": "Pierre-Feuille-Ciseaux",
     "yourChoice": "Tu as choisi:",
     "timeLeft": "⏳ Temps restant: ",
-    "time":"Pas de coup joué à temps...",
+    "time": "Pas de coup joué à temps...",
     "botChoice": "L'IA a choisi:",
     "opsChoice": "L'adversaire a choisi: ",
     "opsName": " a choisi: ",
     "draw": "Égalité !",
-    "matchFinished": "Le match est terminé.",
     "loading": "Chargement...",
     "win": "Tu as gagné ! 🎉",
     "lose": "Tu as perdu...😢",
@@ -75,25 +64,19 @@
     "backToMenu": "Menu"
   },
   "popUpLose": {
-    "title": "Match terminé !",
-    "message": "Défaite...",
-    "score": "Score final:",
-    "playAgain": "Rejouer",
-    "backToMenu": "Menu"
+    "message": "Défaite..."
   },
   "popUpVsPlayer": {
     "ready": "🎮 Prêt à jouer ?",
     "start": "Commencer !",
-    "time": "Pas de coup joué à temps...",
     "opponent": "Adversaire...",
     "cancel": "Retour au menu"
   },
   "popUpSearchPlayer": {
     "title": "🔍 Recherche...",
-    "searching": "Recherche d'un adversaire...",
-    "cancel": "Retour au menu"
+    "searching": "Recherche d'un adversaire..."
   },
-  "profile":{
+  "profile": {
     "rate": "Taux de victoire: ",
     "victory": "Victoires: ",
     "defeat": "Défaites: ",
@@ -109,11 +92,6 @@
     "game": "Erreur lors de la partie.",
     "server": "Erreur lors de la connexion au serveur.",
     "player": "Joueur 1",
-    "oAuth": "Erreur lors de l'authentification OAuth",
-    "userNotFound": "Utilisateur non trouvé",
-    "db": "Erreur lors de la mise à jour de isOnline :",
-    "tokenExpired": "Token expiré, veuillez vous reconnecter",
-    "token": "Accès non autorisé : Token manquant",
     "empty": "Veuillez remplir tous les champs.",
     "invalid": "E-mail ou mot de passe invalide.",
     "password": "Les mots de passe ne correspondent pas.",

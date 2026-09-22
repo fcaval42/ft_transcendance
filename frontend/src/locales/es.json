@@ -33,29 +33,23 @@
   "register": {
     "inscription": "¡Registro exitoso! Bienvenido 👋",
     "connection": "Registrarse",
-    "mail": "Correo electrónico",
     "already": "¿Ya tienes una cuenta? Iniciar sesión",
     "password": "Contraseña",
     "confirmPassword": "Confirmar contraseña",
     "register": "Regístrate",
     "back": "Volver al inicio"
   },
-    "matchmaking": {
-    "errorId": "playerId inválido",
-    "alreadyWaiting": "Ya estás esperando una partida"
-  },
   "gameVsBot": {
     "leave": "Volver al menú",
     "title": "Piedra-Papel-Tijeras",
     "yourChoice": "Elegiste:",
     "timeLeft": "⏳ Tiempo restante: ",
-    "time":"No se jugó ningún movimiento a tiempo...",
+    "time": "No se jugó ningún movimiento a tiempo...",
     "botChoice": "La IA eligió:",
     "opsChoice": "El oponente eligió: ",
     "opsName": " eligió: ",
     "draw": "¡Es un empate!",
     "win": "¡Ganaste! 🎉",
-    "matchFinished": "El partido ha terminado.",
     "loading": "Cargando...",
     "lose": "Perdiste...😢",
     "interrupted": "Partida interrumpida."
@@ -69,24 +63,17 @@
     "backToMenu": "Menú"
   },
   "popUpLose": {
-    "title": "¡Juego terminado!",
-    "message": "Derrota...",
-    "score": "Puntuación final:",
-    "playAgain": "Jugar de nuevo",
-    "backToMenu": "Menú"
+    "message": "Derrota..."
   },
   "popUpVsPlayer": {
     "ready": "🎮 ¿Listo para jugar?",
     "start": "¡Comenzar!",
-    "or": "o",
-    "time": "No se jugó ningún movimiento a tiempo...",
     "opponent": "Oponente...",
     "cancel": "Volver al menú"
   },
   "popUpSearchPlayer": {
     "title": "🔍 Buscando...",
-    "searching": "Buscando un oponente...",
-    "cancel": "Volver al menú"
+    "searching": "Buscando un oponente..."
   },
   "profile": {
     "rate": "Tasa de victorias: ",

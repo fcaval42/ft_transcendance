@@ -34,28 +34,21 @@
   "register": {
     "inscription": "Registration successful! Welcome 👋",
     "connection": "Sign up",
-    "mail": "Email",
-    "errorMiss": "sessionId, playerId and move are required",
     "already": "Already have an account? Sign in",
     "password": "Password",
     "confirmPassword": "Confirm password",
     "register": "Sign up",
     "back": "Back to home"
   },
-  "matchmaking": {
-    "errorId": "Invalid playerId",
-    "alreadyWaiting": "You are already waiting for a match"
-  },
   "gameVsBot": {
     "leave": "Back to menu",
     "title": "Rock-Paper-Scissors",
     "yourChoice": "You chose:",
     "timeLeft": "⏳ Time left: ",
-    "time":"No move played in time...",
+    "time": "No move played in time...",
     "botChoice": "The AI chose:",
     "opsChoice": "Opponent chose: ",
     "opsName": " chose: ",
-    "matchFinished": "Match finished.",
     "draw": "It's a draw!",
     "loading": "Loading...",
     "win": "You won! 🎉",
@@ -71,23 +64,17 @@
     "backToMenu": "Menu"
   },
   "popUpLose": {
-    "title": "Game over!",
-    "message": "Defeat...",
-    "score": "Final score:",
-    "playAgain": "Play again",
-    "backToMenu": "Menu"
+    "message": "Defeat..."
   },
   "popUpVsPlayer": {
     "ready": "🎮 Ready to play?",
     "start": "Start!",
-    "time": "No move played in time...",
     "opponent": "Opponent...",
     "cancel": "Back to menu"
   },
   "popUpSearchPlayer": {
     "title": "🔍 Searching...",
-    "searching": "Searching for an opponent...",
-    "cancel": "Back to menu"
+    "searching": "Searching for an opponent..."
   },
   "profile": {
     "rate": "Win rate: ",
