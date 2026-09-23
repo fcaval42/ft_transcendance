@@ -52,6 +52,9 @@
     "win": "¡Ganaste! 🎉",
     "loading": "Cargando...",
     "lose": "Perdiste...😢",
+    "puit": "🕳️ ¡Has atrapado el pozo!",
+    "puitAdversaire": "🕳️ ¡El rival ha atrapado el pozo!",
+    "puitDispo": "🕳️ ¡EL POZO ESTÁ AQUÍ — PULSA RÁPIDO!",
     "interrupted": "Partida interrumpida."
   },
   "popUpWin": {
