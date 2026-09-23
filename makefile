@@ -13,12 +13,15 @@ install:
 	@$(NODE24) && npm install --loglevel=error --no-audit --no-fund --no-update-notifier > /dev/null
 	@[ -x ngrok ] || curl -fsSL https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz | tar xz ngrok
 
-tunnel: install
+server: install
+	@docker compose up -d --build && $(NODE24) && cd backend && npx prisma migrate dev
+
+tunnel: install server
 	@[ -n "$(call ENV_VAR,NGROK_URL)" ] || { echo "NGROK_URL manquant dans .env (voir .env.exemple)"; exit 1; }
 	@NGROK_AUTHTOKEN=$(call ENV_VAR,NGROK_AUTHTOKEN) ./ngrok http https://localhost:8443 --url=$(call ENV_VAR,NGROK_URL)
 
-server: install
-	@docker compose up -d --build && $(NODE24) && cd backend && npx prisma migrate dev
+open:
+	open https://revolt-breeches-quarry.ngrok-free.dev/
 
 npx: install
 	@$(NODE24) && cd backend && npx prisma studio
