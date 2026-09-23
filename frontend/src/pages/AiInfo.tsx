@@ -1,4 +1,3 @@
-// src/pages/AiInfo.tsx
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Link } from "react-router-dom";
@@ -16,7 +15,6 @@ export const AiInfo = () => {
             {t("aiInfo.title")}
           </h1>
 
-          {/* Introduction */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("aiInfo.introTitle")}
@@ -26,7 +24,6 @@ export const AiInfo = () => {
             </p>
           </section>
 
-          {/* Fonctionnement */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("aiInfo.howTitle")}
@@ -50,7 +47,6 @@ export const AiInfo = () => {
             </div>
           </section>
 
-          {/* Pourquoi cette approche */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("aiInfo.whyTitle")}
@@ -60,7 +56,6 @@ export const AiInfo = () => {
             </p>
           </section>
 
-          {/* Fair-play */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("aiInfo.fairTitle")}
@@ -72,7 +67,6 @@ export const AiInfo = () => {
             </div>
           </section>
 
-          {/* Game customization */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("aiInfo.GameCustomizationTitle")}
@@ -84,7 +78,6 @@ export const AiInfo = () => {
             </div>
           </section>
 
-          {/* Bouton retour menu */}
           <div className="text-center mt-8">
             <Link
               to="/menu"

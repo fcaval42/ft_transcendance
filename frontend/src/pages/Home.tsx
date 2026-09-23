@@ -1,4 +1,3 @@
-// src/pages/Home.tsx
 import { useAuthStatus } from "../utils/checkRoute";
 import { Link, Navigate } from "react-router-dom";
 import { HeaderLogout } from "../components/Header";

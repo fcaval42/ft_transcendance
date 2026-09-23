@@ -1,4 +1,3 @@
-// src/components/UserAvatar.tsx
 import { Link } from "react-router-dom";
 import { useUser } from "./useUser";
 
@@ -7,11 +6,11 @@ export const UserAvatar = () => {
   let username
 
   if (isLoading) {
-    return <div className="w-10 h-10 bg-gray-300 rounded-full animate-pulse"></div>; // Loader
+    return <div className="w-10 h-10 bg-gray-300 rounded-full animate-pulse"></div>;
   }
 
   if (!user) {
-    return null; // ou un avatar par défaut
+    return null;
   } else {
     if (user.username.length > 7) {
         username = user.username.substring(0, 7) + "...";

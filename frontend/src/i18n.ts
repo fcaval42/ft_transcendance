@@ -12,8 +12,6 @@ export const resources = {
   es: { translation: es },
 } as const;
 
-// Récupère la langue sauvegardée dans localStorage, sinon utilise 'fr'
-// Vérifie si on est dans un navigateur (localStorage n'existe pas en SSR)
 const isBrowser = typeof window !== 'undefined';
 const savedLanguage = isBrowser ? localStorage.getItem('language') || 'fr' : 'fr';
 
@@ -29,7 +27,6 @@ i18n
     },
   });
 
-// Sauvegarde la langue dans localStorage quand elle change (uniquement dans le navigateur)
 if (isBrowser) {
   i18n.on('languageChanged', (lng) => {
     localStorage.setItem('language', lng);

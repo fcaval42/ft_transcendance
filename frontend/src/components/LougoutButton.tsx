@@ -17,7 +17,6 @@ export const LogoutButton = () => {
         navigate("/");
       }
     } catch {
-      // Erreur lors de la déconnexion
     }
   };
 

@@ -3,17 +3,16 @@ import { useEffect } from "react";
 interface ToastType {
     message: string;
     type: "success" | "error";
-    onClose: () => void; // fonction pour supprimer le toas (en fermant quoi)
+    onClose: () => void;
 }
 
 export const Toast = ({ message, type, onClose }: ToastType) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             onClose();
-        }, 5000); // ferme après 5 secs
-        return () => clearTimeout(timer); // annule timer si le composant est
-        // supp avant (évite fuite)
-    }, [onClose]); // useEffect se relance si onClose change
+        }, 5000);
+        return () => clearTimeout(timer);
+    }, [onClose]);
 
     const bgColor = type === "success" ? "bg-green-500" : "bg-red-500"
 

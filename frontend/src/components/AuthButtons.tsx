@@ -1,11 +1,8 @@
-// useEffect = exécuter du code au chargement du composant
 import React, { useState } from "react";
 import "./AuthButtons.css";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-// Icône Google.
-// Ceci est un SVG = format image vectorielle. Dessin quoi.
 const GoogleIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24">
     <path
@@ -28,7 +25,6 @@ const GoogleIcon = () => (
 );
 
 
-// Icône 42
 const FortyTwoIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 24 24">
     <rect width="24" height="24" fill="#000000" rx="4" />

@@ -1,13 +1,5 @@
-//| **État** | `userChoice`, `aiChoice`, `result` | Variables qui déclenchent un re-rendu quand elles changent. |
-//| **Fonction de mise à jour** | `setUserChoice`, `setAiChoice`, `setResult` | Fonctions pour modifier l'état. |
-//| **Valeur initiale** | `null`, `""` | Valeur de départ de l'état. |
-
-//ex: state = Ce qu'il y a dans la boîte (ex: "rock").
-//setState = Une étiquette sur la boîte qui permet de changer son contenu.
-//Chaque fois qu'on changes le contenu, React reconstruit l'interface pour refléter ce changement.
-
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // pour naviguer vers d'autres pages
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
@@ -16,34 +8,22 @@ import { Modal } from "../components/Modal";
 export const Game = () => {
   const { t } = useTranslation();
 
-// stocke le choix de l'utilisateur (rock/paper/scissors ou null)
   const [userChoice, setUserChoice] = useState<string | null>(null);
-// stocke le choix aléatoire de l'IA.
   const [aiChoice, setAiChoice] = useState<string | null>(null);
-// stocke le résultat de la partie ("égalité"/"victoire"/"défaite")
   const [result, setResult] = useState<string>("");
 
-  // état pour afficher un message de chargement
   const [loading, setLoading] = useState<boolean>(false);
 
-  // id de l'utilisateur connecté, récupéré depuis le back (nécessaire pour jouer une partie)
   const [playerId, setPlayerId] = useState<string | null>(null);
-  // id de la session de jeu en cours côté back (on la réutilise tant que le match n'est pas fini)
   const [sessionId, setSessionId] = useState<string | null>(null);
-  // message d'erreur réseau éventuel
   const [error, setError] = useState<string>("");
-  // scores
   const [score1, setScore1] = useState<number>(0);
   const [score2, setScore2] = useState<number>(0);
-  // Nombre de manches déjà jouées, pour dire au back quel round on attend
-  // (roundCount + 1) et éviter qu'un coup arrivé en retard soit compté sur le mauvais round.
   const [roundCount, setRoundCount] = useState<number>(0);
 
-  // récupérer nom du joueur + bot
   const [playerName, setPlayerName] = useState<string>("Joueur 1");
   const [botName, setBotName] = useState<string>("Bot");
 
-  // Popup
   const [showModal, setShowModal] = useState<boolean>(true);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [showEndModal, setShowEndModal] = useState<boolean>(false);
@@ -71,8 +51,6 @@ export const Game = () => {
     navigate("/menu");
   };
 
-  // Au chargement de la page, on récupère l'utilisateur connecté (cookie de session)
-  // pour connaître son id, nécessaire pour créer une partie côté back.
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -92,16 +70,12 @@ export const Game = () => {
 
   const choices = ["rock", "paper", "scissors"];
 
-// Record<string, string> est un TypeScript qui signifie : "un objet dont les clés
-// et les valeurs sont des chaînes de caractères".
   const emojis: Record<string, string> = {
     rock: "🪨",
     paper: "📄",
     scissors: "✂️",
   };
 
-  // -------------------------------------------------------------------------
-  // Traduit le résultat renvoyé par le back en message affiché à l'écran.
   const resultLabels: Record<string, string> = {
     player1: t("gameVsBot.win"),
     player2: t("gameVsBot.lose"),
@@ -109,7 +83,6 @@ export const Game = () => {
     afk: t("gameVsBot.time"),
   };
 
-  // Crée une nouvelle partie contre le bot côté back et retourne son id.
   const createBotSession = async (pid: string): Promise<string> => {
     const response = await fetch("/api/game/session", {
       method: "POST",
@@ -124,7 +97,6 @@ export const Game = () => {
     return session.id;
   };
 
-  // -------------------------------------------------------------------------
   const startGame = async () => {
     if(!playerId) return;
 
@@ -137,9 +109,6 @@ export const Game = () => {
     }
   };
 
-  // -------------------------------------------------------------------------
-  // appelée quand l'utilisateur clique sur un bouton. Envoie le coup au back
-  // (le bot répond automatiquement) et affiche le résultat de la manche.
   const handlePlay = async (choice: string) => {
     if (!playerId) {
       setError(t("error.load") as string);
@@ -170,8 +139,6 @@ export const Game = () => {
       setScore2(data.match.score2);
       setRoundCount(data.match.rounds.length);
 
-      // Le match (en 3 manches gagnantes côté back) est terminé : la prochaine
-      // partie en recréera une nouvelle automatiquement.
       if (data.match.status === "finished") {
         setSessionId(null);
           if (data.match.score1 > data.match.score2) {
@@ -190,8 +157,6 @@ export const Game = () => {
     }
   };
 
-  // -------------------------------------------------------------------------
-  // Fonction pour retourner à l'accueil
   const handleGoHome = () => {
 	if (sessionId) {
 	  fetch(`/api/game/session/${sessionId}`, {
@@ -200,16 +165,14 @@ export const Game = () => {
 	  }).catch(() => {});
 	  setSessionId(null);
 	}
-	navigate("/menu"); // redirige vers la page d'accueil
+	navigate("/menu");
   };
 
-  // -------------------------------------------------------------------------
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <Header />
 
       <main className="flex-1 flex flex-col items-center justify-center p-4 pt-20">
-        {/* POPUP */}
       <Modal
         isOpen={showModal && playerName !== t("error.player")}
         onClose={() => {}}
@@ -236,7 +199,6 @@ export const Game = () => {
         </p>
       </Modal>
 
-      {/* MODAL DE FIN */}
       <Modal
         isOpen={showEndModal}
         onClose={() => {}}
@@ -326,12 +288,3 @@ export const Game = () => {
     </div>
   );
 };
-
-//Style avec Tailwind
-//min-h-screen : Hauteur minimale de 100% de la hauteur de l'écran.
-//bg-gray-100 : Fond gris clair.
-//flex flex-col items-center justify-center : Centre le contenu verticalement et horizontalement.
-//w-20 h-20 : Largeur et hauteur de 5rem (20 = 5rem en échelle Tailwind).
-//bg-blue-500 : Fond bleu moyen.
-//hover:bg-blue-600 : Fond bleu foncé au survol.
-//transition-colors : Animation fluide pour les changements de couleur.

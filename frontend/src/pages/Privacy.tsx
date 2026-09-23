@@ -1,4 +1,3 @@
-// src/pages/Privacy.tsx
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Link } from "react-router-dom";
@@ -16,7 +15,6 @@ export const Privacy = () => {
             {t("privacy.title")}
           </h1>
 
-          {/* C'est simple */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("privacy.simpleTitle")}
@@ -26,7 +24,6 @@ export const Privacy = () => {
             </p>
           </section>
 
-          {/* On collecte quoi ? */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("privacy.collectTitle")}
@@ -43,7 +40,6 @@ export const Privacy = () => {
             </div>
           </section>
 
-          {/* À quoi ça sert ? */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("privacy.useTitle")}
@@ -53,7 +49,6 @@ export const Privacy = () => {
             </p>
           </section>
 
-          {/* Qui voit mes infos ? */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("privacy.sharingTitle")}
@@ -66,7 +61,6 @@ export const Privacy = () => {
             </p>
           </section>
 
-          {/* Cookies */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("privacy.cookiesTitle")}
@@ -76,7 +70,6 @@ export const Privacy = () => {
             </p>
           </section>
 
-          {/* Tes droits */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("privacy.rightsTitle")}
@@ -89,14 +82,12 @@ export const Privacy = () => {
             </p>
           </section>
 
-          {/* On change pas souvent */}
           <section className="mb-8">
             <p className="text-sm text-gray-500 text-center">
               {t("privacy.lastUpdated")}
             </p>
           </section>
 
-          {/* Bouton retour menu */}
           <div className="text-center mt-8">
             <Link
               to="/menu"

@@ -6,7 +6,6 @@ import { Footer } from '../components/Footer';
 import { Modal } from "../components/Modal";
 import { useTranslation } from 'react-i18next';
 
-// Fonction de calcul Elo (copie du backend)
 const K_FACTOR = 32;
 
 function computeElo(winnerElo: number, loserElo: number): number {
@@ -63,7 +62,6 @@ export const Pvp = () => {
   const [error, setError] = useState<string>("");
   const [showEndModal, setShowEndModal] = useState<boolean>(false);
   const [endMessage, setEndMessage] = useState<string>("");
-  // Puit : bonus qui apparaît au plus une fois par match, premier à appuyer gagne le round.
   const [wellAvailable, setWellAvailable] = useState<boolean>(false);
 
   const socketRef = useRef<Socket | null>(null);
@@ -71,8 +69,6 @@ export const Pvp = () => {
   const roleRef = useRef<Role | null>(null);
   const timerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Round couramment attendu par le serveur (rounds.length + 1), envoyé avec chaque
-  // playMove pour que le back rejette un coup arrivé après la résolution du round.
   const currentRoundRef = useRef<number>(1);
 
   const navigate = useNavigate();
@@ -80,7 +76,6 @@ export const Pvp = () => {
   const choices: Move[] = ["rock", "paper", "scissors"];
   const emojis: Record<Move, string> = { rock: "🪨", paper: "📄", scissors: "✂️" };
 
-  // Message affiché après une manche, du point de vue du joueur courant (role).
   const labelForResult = (roundResult: RoundResult, role: Role | null): string => {
     if (roundResult === "draw") return t("gameVsBot.draw");
     if (roundResult === "afk") return t("gameVsBot.time");
@@ -88,7 +83,6 @@ export const Pvp = () => {
     return roundResult === role ? t("gameVsBot.win") : t("gameVsBot.lose");
   };
 
-  // Score du point de vue du joueur courant : score1 = moi, score2 = l'adversaire.
   const applyMatchState = (match: Match, role: Role) => {
     if (role === "player1") {
       setScore1(match.score1);
@@ -121,7 +115,6 @@ export const Pvp = () => {
     timerIntervalRef.current = setInterval(tick, 250);
   };
 
-  // Prépare la connexion socket (une seule fois) et ses écouteurs.
   const ensureSocket = (pid: string): Socket => {
     if (socketRef.current) return socketRef.current;
 
@@ -162,7 +155,6 @@ export const Pvp = () => {
       }
     );
 
-    // Reprise d'une partie déjà en cours (reconnexion), sans passer par les modals.
     socket.on(
       "rejoined",
       (data: { sessionId: string; role: Role; selfId: string; selfName: string; selfElo: number; opponentId: string; opponentName: string; opponentElo: number; match: Match }) => {
@@ -189,12 +181,10 @@ export const Pvp = () => {
       }
     );
 
-    // Le puit vient d'apparaître pour ce round : fenêtre de 2s pour appuyer dessus.
     socket.on("wellAvailable", () => {
       setWellAvailable(true);
     });
 
-    // Personne n'a appuyé à temps : le puit se referme, le round continue normalement.
     socket.on("wellExpired", () => {
       setWellAvailable(false);
     });
@@ -229,13 +219,10 @@ export const Pvp = () => {
         setResult(finalMessage);
         setEndMessage(finalMessage);
 
-        // Calculer l'Elo gagné/perdu
         if (data.match.winner === role && role) {
-          // Le joueur a gagné : calcul positif
           const gainedElo = computeElo(playerElo, opponentElo);
           setEloChange(gainedElo);
         } else if (data.match.winner && role) {
-          // Le joueur a perdu : calcul négatif (on inverse les rôles)
           const lostElo = -computeElo(opponentElo, playerElo);
           setEloChange(lostElo);
         } else {
@@ -270,8 +257,6 @@ export const Pvp = () => {
     return socket;
   };
 
-  // Au chargement, on récupère l'utilisateur connecté (cookie de session)
-  // pour son id et son pseudo, nécessaires pour créer/rejoindre une partie.
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -287,14 +272,10 @@ export const Pvp = () => {
     fetchUser();
   }, []);
 
-  // Se connecte dès que le profil est chargé, pas seulement au clic sur
-  // "Commencer" : ça déclenche la tentative de reprise d'une partie en cours
-  // (voir "rejoinSession" ci-dessus)
   useEffect(() => {
     if (playerId) ensureSocket(playerId);
   }, [playerId]);
 
-  // Nettoyage à la sortie de la page.
   useEffect(() => {
     return () => {
       stopVisualTimer();
@@ -303,7 +284,6 @@ export const Pvp = () => {
     };
   }, []);
 
-  // Actions
   const startGame = () => {
     if (!playerId) {
       setError(t("error.load") as string);
@@ -382,7 +362,6 @@ export const Pvp = () => {
         <div className="mb-4 p-2 bg-red-100 text-red-700 rounded max-w-md">{error}</div>
       )}
 
-      {/* MODAL DÉBUT */}
       <Modal isOpen={showModal} onClose={() => {}} title={t("popUpVsPlayer.ready")}
         footer={
           <div className="flex flex-col gap-6">
@@ -401,7 +380,6 @@ export const Pvp = () => {
         </p>
       </Modal>
 
-      {/* MODAL RECHERCHE */}
       <Modal isOpen={isSearching} onClose={() => {}} title={t("popUpSearchPlayer.title")}
         footer={
           <button onClick={handleGoHome}
@@ -412,7 +390,6 @@ export const Pvp = () => {
         <p className="text-xl text-gray-600">{t("popUpSearchPlayer.searching")}</p>
       </Modal>
 
-      {/* MODAL FIN DE PARTIE */}
       <Modal isOpen={showEndModal} onClose={() => {}} title={t("popUpWin.title")}
         footer={
           <>

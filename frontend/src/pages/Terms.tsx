@@ -1,4 +1,3 @@
-// src/pages/Terms.tsx
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Link } from "react-router-dom";
@@ -16,7 +15,6 @@ export const Terms = () => {
             {t("terms.title")}
           </h1>
 
-          {/* Introduction */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("terms.simpleTitle")}
@@ -26,7 +24,6 @@ export const Terms = () => {
             </p>
           </section>
 
-          {/* Ce que vous pouvez faire */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("terms.allowedTitle")}
@@ -41,7 +38,6 @@ export const Terms = () => {
             </div>
           </section>
 
-          {/* Ce que vous ne pouvez PAS faire */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("terms.forbiddenTitle")}
@@ -56,7 +52,6 @@ export const Terms = () => {
             </div>
           </section>
 
-          {/* Vos responsabilités */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("terms.yourResponsibilitiesTitle")}
@@ -71,7 +66,6 @@ export const Terms = () => {
             </ul>
           </section>
 
-          {/* Nos responsabilités */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("terms.ourResponsibilitiesTitle")}
@@ -86,7 +80,6 @@ export const Terms = () => {
             </ul>
           </section>
 
-          {/* Limitation de responsabilité */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("terms.limitationTitle")}
@@ -96,7 +89,6 @@ export const Terms = () => {
             </p>
           </section>
 
-          {/* Modifications */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("terms.changesTitle")}
@@ -109,7 +101,6 @@ export const Terms = () => {
             </p>
           </section>
 
-          {/* Contact */}
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-indigo-400 pb-2">
               {t("terms.contactTitle")}
@@ -119,14 +110,12 @@ export const Terms = () => {
             </p>
           </section>
 
-          {/* Date */}
           <section className="mb-8">
             <p className="text-sm text-gray-500 text-center">
               {t("terms.lastUpdated")}
             </p>
           </section>
 
-          {/* Bouton retour menu */}
           <div className="text-center mt-8">
             <Link
               to="/menu"

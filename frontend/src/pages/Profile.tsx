@@ -1,4 +1,3 @@
-// src/pages/Profile.tsx
 import { useAuthStatus } from "../utils/checkRoute";
 import { Link, Navigate } from "react-router-dom";
 import { useUser } from "../utils/useUser";
