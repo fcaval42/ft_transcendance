@@ -12,7 +12,7 @@ install:
 	@$(NODE24) && npm install --loglevel=error --no-audit --no-fund --no-update-notifier > /dev/null
 	@[ -x cloudflared ] || { curl -fsSLo cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 && chmod +x cloudflared; }
 
-tunnel: install server
+tunnel: install
 	./cloudflared tunnel --url https://localhost:8443 --no-tls-verify
 
 server: install

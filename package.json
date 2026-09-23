@@ -1,0 +1,14 @@
+{
+  "name": "ft-transcendance",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "start:backend": "npm --workspace backend start",
+    "start:frontend": "npm --workspace frontend start",
+    "build:backend": "npm --workspace backend run build"
+  }
+}
