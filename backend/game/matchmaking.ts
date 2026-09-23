@@ -1,5 +1,11 @@
 import { Server, Socket } from "socket.io";
-import { createSession, armSessionTimers, getSessionByPlayerId, GameSession } from "./session";
+import {
+  createSession,
+  armSessionTimers,
+  getSessionByPlayerId,
+  endBotSessionsOfPlayer,
+  GameSession,
+} from "./session";
 
 interface WaitingPlayer {
   socket: Socket;
@@ -34,6 +40,8 @@ export function registerMatchmaking(io: Server): void {
         socket.emit("queueError", "playerId invalide");
         return;
       }
+
+      await endBotSessionsOfPlayer(playerId);
 
       const existingSession = getSessionByPlayerId(playerId);
       if (existingSession) {
@@ -97,8 +105,10 @@ export function registerMatchmaking(io: Server): void {
       }
     });
 
-    socket.on("rejoinSession", (playerId: string) => {
+    socket.on("rejoinSession", async (playerId: string) => {
       if (typeof playerId !== "string" || playerId.trim() === "") return;
+
+      await endBotSessionsOfPlayer(playerId);
 
       const session = getSessionByPlayerId(playerId);
       if (!session) return;
