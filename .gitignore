@@ -14,3 +14,4 @@ certs/
 .nfs*
 TODO.md
 pvp_ben.tsx
+cloudflared
