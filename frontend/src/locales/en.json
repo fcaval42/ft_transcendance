@@ -53,6 +53,9 @@
     "loading": "Loading...",
     "win": "You won! 🎉",
     "lose": "You lost...😢",
+    "puit": "🕳️ You grabbed the well!",
+    "puitAdversaire": "🕳️ The opponent has grabbed the well!",
+    "puitDispo": "🕳️ THE WELL IS HERE — TAP FAST!",
     "interrupted": "Match interrupted."
   },
   "popUpWin": {

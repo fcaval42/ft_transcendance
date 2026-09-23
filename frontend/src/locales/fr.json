@@ -53,6 +53,9 @@
     "loading": "Chargement...",
     "win": "Tu as gagné ! 🎉",
     "lose": "Tu as perdu...😢",
+    "puit": "🕳️ Tu as attrapé le puit !",
+    "puitAdversaire": "🕳️ L'adversaire a attrapé le puit !",
+    "puitDispo": "🕳️ LE PUIT EST LÀ — APPUIE VITE !",
     "interrupted": "Match interrompu."
   },
   "popUpWin": {

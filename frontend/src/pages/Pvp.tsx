@@ -232,11 +232,11 @@ export const Pvp = () => {
         setShowEndModal(true);
       } else {
         if (lastRound.viaWell) {
-          setResult(
+          const wellMessage: string =
             lastRound.result === role
-              ? "🕳️ Tu as attrapé le puit !"
-              : "🕳️ L'adversaire a attrapé le puit !"
-          );
+              ? t("gameVsBot.puit")
+              : t("gameVsBot.puitAdversaire");
+          setResult(wellMessage);
         } else {
           setResult(labelForResult(lastRound.result, role));
         }
@@ -439,7 +439,7 @@ export const Pvp = () => {
               onClick={handleHitWell}
               className="w-full mb-6 bg-red-400 hover:bg-red-500 text-gray-900 text-2xl font-extrabold py-5 rounded-xl shadow-lg animate-pulse"
             >
-              🕳️ LE PUIT EST LÀ — APPUIE VITE !
+              {t("gameVsBot.puitDispo")}
             </button>
           )}
 
