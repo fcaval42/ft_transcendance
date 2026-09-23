@@ -195,7 +195,7 @@ export const Game = () => {
         }
       >
         <p className="text-xl text-gray-600">
-          {playerName} <span className="font-bold">vs</span> {botName || "Bot"}
+          {playerName} <span className="font-bold">vs</span> Bot
         </p>
       </Modal>
 

@@ -26,7 +26,7 @@ services:
   frontend:
     build: ./frontend
     environment:
-      WDS_SOCKET_PORT: 8443
+      WDS_SOCKET_PORT: 0 # 0 = même port que la page (8443 en local, 443 via ngrok)
     expose:
       - "3000"
   caddy:

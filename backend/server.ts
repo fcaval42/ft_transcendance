@@ -7,6 +7,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import { createUser, authenticateUser, setUserOffline, prisma, findOrCreateOAuthUser } from './auth';
 import { AuthenticatedRequest, authenticateToken } from './middleware/authmiddleware';
 import { gameRouter } from './game/routes';
+import { endBotSessionsOfPlayer } from './game/session';
 import { registerMatchmaking } from './game/matchmaking';
 import { registerRealtime } from './game/realtime';
 
@@ -68,6 +69,7 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/logout', authenticateToken, async (req: AuthenticatedRequest, res) => {
     try {
     if (req.user) {
+      await endBotSessionsOfPlayer(req.user.userId);
       await setUserOffline(req.user.userId);
     }
     res.clearCookie('token', {

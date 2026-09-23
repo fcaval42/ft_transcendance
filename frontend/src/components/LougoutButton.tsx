@@ -1,9 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../utils/useUser";
 
 export const LogoutButton = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user, isLoading } = useUser();
   const handleLogout = async () => {
     try {
       const response = await fetch("/api/logout", {
@@ -18,6 +20,9 @@ export const LogoutButton = () => {
     }
   };
 
+  if (isLoading || !user) {
+    return null;
+  }
 
   return (
     <button

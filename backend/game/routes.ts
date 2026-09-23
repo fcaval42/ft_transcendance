@@ -1,5 +1,12 @@
 import { Router } from "express";
-import { createSession, submitMove, attemptWell, getSession, endSession } from "./session";
+import {
+  createSession,
+  submitMove,
+  attemptWell,
+  getSession,
+  endSession,
+  endBotSessionsOfPlayer,
+} from "./session";
 import { Move } from "./rules";
 import { ROUND_TIME_LIMIT_MS } from "./match";
 import { getRandomBotName, getBotMove } from "./bot";
@@ -12,6 +19,9 @@ gameRouter.post("/session", async (req, res) => {
     return res
       .status(400)
       .json({ error: "player1Id and (player2Id or vsBot) are required" });
+  }
+  if (vsBot) {
+    await endBotSessionsOfPlayer(player1Id);
   }
   const session = await createSession(
     player1Id,

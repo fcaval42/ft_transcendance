@@ -37,7 +37,7 @@ export async function authenticateToken(req: AuthenticatedRequest, res: Response
             },
           });
         } catch (dbError) {
-          console.error("Error updating user status:", dbError);
+          void dbError;
         }
       }
 

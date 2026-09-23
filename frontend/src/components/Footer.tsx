@@ -40,7 +40,7 @@ export const Footer = () => {
           </nav>
         </div>
         <div className="mt-4 pt-4 border-t border-gray-900 text-center text-xs text-white-500">
-          <p>© 2026 Transcendance. {t("footer.rights")}</p>
+          <p>© 2026 Transcendance.</p>
         </div>
       </div>
     </footer>

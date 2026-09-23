@@ -221,6 +221,15 @@ export async function endSession(sessionId: string): Promise<void> {
   sessionEvents.emit("sessionEnded", { sessionId });
 }
 
+export async function endBotSessionsOfPlayer(playerId: string): Promise<void> {
+  const botSessions = Array.from(sessions.values()).filter(
+    (session) => session.isVsBot && session.player1Id === playerId
+  );
+  for (const session of botSessions) {
+    await endSession(session.id);
+  }
+}
+
 export type SubmitMoveResult =
   | { status: "waiting" }
   | { status: "round_played"; match: Match };

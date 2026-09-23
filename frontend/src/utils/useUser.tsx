@@ -18,9 +18,26 @@ export const useUser = (): { user: User | null; isLoading: boolean } => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        const statusResponse = await fetch("/api/auth/status", {
+          credentials: "include",
+        });
+
+        if (!statusResponse.ok) {
+          setUser(null);
+          return;
+        }
+
+        const authStatus = await statusResponse.json();
+
+        if (!authStatus.authenticated) {
+          setUser(null);
+          return;
+        }
+
         const response = await fetch("/api/me", {
           credentials: "include",
         });
+
         if (response.ok) {
           const data = await response.json();
           setUser(data);
