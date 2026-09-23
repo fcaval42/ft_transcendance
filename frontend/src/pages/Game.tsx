@@ -81,6 +81,7 @@ export const Game = () => {
         const user = await response.json();
         setPlayerId(user.id);
         setPlayerName(user.username);
+        await createBotSession(user.id);
       } catch {
         setError("Impossible de récupérer ton profil.");
       }
@@ -129,7 +130,9 @@ export const Game = () => {
     if(!playerId) return;
 
     try {
-      await createBotSession(playerId);
+      if (!sessionId) {
+        await createBotSession(playerId);
+      }
       setShowModal(false);
       setGameStarted(true);
     } catch (err) {
@@ -232,7 +235,7 @@ export const Game = () => {
         }
       >
         <p className="text-xl text-gray-600">
-          {playerName} <span className="font-bold">vs</span> {botName || "Bot"}
+          {playerName} <span className="font-bold">vs</span> Bot
         </p>
       </Modal>
 
