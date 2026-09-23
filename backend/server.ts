@@ -110,6 +110,94 @@ app.get('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => 
   }
 });
 
+const ME_SELECT = {
+  id: true,
+  email: true,
+  username: true,
+  avatarUrl: true,
+  isOnline: true,
+  wins: true,
+  losses: true,
+  elo: true,
+  createdAt: true,
+} as const;
+
+app.put('/api/me/username', authenticateToken, async (req: AuthenticatedRequest, res) => {
+  try {
+    const { username } = (req.body ?? {}) as { username?: string };
+
+    if (typeof username !== 'string' || username.trim().length < 3 || username.trim().length > 32) {
+      return res.status(400).json({ error: 'Username must be between 3 and 32 characters.' });
+    }
+    const trimmed = username.trim();
+
+    const existing = await prisma.user.findFirst({
+      where: { username: trimmed, NOT: { id: req.user?.userId } },
+    });
+    if (existing) {
+      return res.status(409).json({ error: 'This username is already taken.' });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: req.user?.userId },
+      data: { username: trimmed },
+      select: ME_SELECT,
+    });
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error connecting to the server.' });
+  }
+});
+
+app.put('/api/me/avatar', authenticateToken, async (req: AuthenticatedRequest, res) => {
+  try {
+    const { avatarUrl } = (req.body ?? {}) as { avatarUrl?: string };
+
+    if (typeof avatarUrl !== 'string' || avatarUrl.trim() === '') {
+      return res.status(400).json({ error: 'avatarUrl is required.' });
+    }
+
+    let parsed: URL;
+    try {
+      parsed = new URL(avatarUrl);
+    } catch {
+      return res.status(400).json({ error: 'avatarUrl must be a valid URL.' });
+    }
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return res.status(400).json({ error: 'avatarUrl must use http or https.' });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: req.user?.userId },
+      data: { avatarUrl },
+      select: ME_SELECT,
+    });
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error connecting to the server.' });
+  }
+});
+
+app.delete('/api/me', authenticateToken, async (req: AuthenticatedRequest, res) => {
+  try {
+    if (req.user) {
+      await endBotSessionsOfPlayer(req.user.userId);
+      await prisma.user.delete({ where: { id: req.user.userId } });
+    }
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.status(200).json({ message: 'Account deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error connecting to the server.' });
+  }
+});
+
 app.get('/api/auth/42', (req, res) => {
   const redirectUri = encodeURIComponent(process.env.FORTYTWO_REDIRECT_URI || '');
   const clientId = process.env.FORTYTWO_CLIENT_ID;

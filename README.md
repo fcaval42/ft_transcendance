@@ -15,6 +15,7 @@ Key features:
 - Full **internationalization**: French, English and Spanish, switchable at any time from the header.
 - Accessible **Privacy Policy**, **Terms of Service**, **Instructions** and **AI usage** pages, linked from the footer.
 - Fully **containerized** deployment (Docker Compose) behind a **Caddy** reverse proxy serving HTTPS, with an optional `ngrok` tunnel for playing with remote friends outside the local network.
+- Full **account self-service**: change your username or profile picture, or permanently delete your account, from `/api/me/...`.
 
 ## Instructions
 
@@ -163,6 +164,7 @@ erDiagram
 | Internationalization | French, English and Spanish, switchable from the header, all UI text translated. | fcaval, hguesne |
 | Privacy Policy / Terms / Instructions / AI info pages | Static informational pages linked from the footer. | fcaval |
 | Dockerized deployment | Single-command startup via Docker Compose, HTTPS via Caddy, optional ngrok tunnel. | bbeaurai |
+| Account self-service | Authenticated endpoints to change your username (`PUT /api/me/username`), change your avatar (`PUT /api/me/avatar`), and permanently delete your account (`DELETE /api/me`). | ylouvel |
 
 ## Modules
 
@@ -189,7 +191,6 @@ The subject requires 14 points; the modules below total **15 points**.
 - **Web framework (Major)**: the frontend is a React + TypeScript SPA (routing, hooks, component architecture); the backend is an Express + TypeScript REST/WebSocket API — matching the subject's definition of a frontend and a backend framework.
 - **Real-time features (Major)**: Socket.IO rooms handle matchmaking, live round broadcasting (`roundResult`, `wellAvailable`), and reconnection (`rejoinSession`) so a dropped connection doesn't end an in-progress match.
 - **ORM (Minor)**: all database access goes through Prisma, with versioned migrations in `backend/migrations/`.
-- **Public API (Major)**: the backend already exposes REST endpoints for auth and game session management; the remaining requirements (a secured API key, rate limiting, `PUT` support and published documentation) are being finished before the defense.
 - **OAuth 2.0 (Minor)**: users can log in with either their 42 intranet account or a Google account, auto-provisioning a local account on first login.
 - **AI Opponent (Major)**: the bot doesn't move randomly — it looks at the outcome of the previous round and plays the move that beats the player's predicted next move, so it wins more than a purely random bot while still being beatable.
 - **Complete web-based game (Major)**: Rock-Paper-Scissors with clear win conditions (first to N round wins), playable live against the bot or another player.
@@ -204,7 +205,7 @@ Language switcher in the UI.
 - **hguesne** — Built the backend's authentication core: the Express server bootstrap, email/password auth with hashed passwords and JWT cookies, the full 42 and Google OAuth exchange (authorization redirect → token exchange → profile fetch → account creation), the auth middleware (including graceful expired-token handling), and the Socket.IO event wiring on the server side. Main challenge: getting the 42/Google OAuth redirect flow to work correctly behind a local HTTPS reverse proxy (Caddy + self-signed certificates), which the team solved by aligning the configured redirect URIs with the proxied domain.
 - **fcaval** — Built the React frontend: the app's routing and protected-route guards, the vs-AI game page, the vs-player (PvP) page with its live match UI, the registration/login pages, and the French/English/Spanish translations for all user-facing text. Main challenge: keeping the UI in sync with server-authoritative match state delivered over WebSocket events without introducing UI glitches on reconnection.
 - **bbeaurai** — Built the game engine and infrastructure: the round/match rules, in-memory session and matchmaking management, the AI bot's move-prediction logic, ELO computation, the Prisma schema and migrations, the Docker Compose stack, and the `makefile`/ngrok tunnel workflow for remote play. Main challenge: coordinating round timers, the random "well" bonus event, and match cleanup so a match ends cleanly whether it finishes normally, times out, or a player disconnects.
-- **ylouvel** — Joined the team for a final pass focused on robustness: removing dead code and leftover comments across the frontend, and fixing silent authentication error handling (expired/invalid JWT cookies previously failed silently instead of clearing the session and prompting a fresh login) on `/api/me` and other protected routes.
+- **ylouvel** — Joined the team for a final pass focused on robustness: removing dead code and leftover comments across the frontend, fixing silent authentication error handling (expired/invalid JWT cookies previously failed silently instead of clearing the session and prompting a fresh login) on `/api/me` and other protected routes, and adding account self-service endpoints (`PUT /api/me/username`, `PUT /api/me/avatar`, `DELETE /api/me`) with validation and conflict handling. Main challenge: keeping these consistent with the existing `/api/me`/`/api/logout` conventions (same auth guard, same response shape) while adding proper `400`/`401`/`404`/`409` handling that wasn't there before.
 
 ## Known Limitations
 
