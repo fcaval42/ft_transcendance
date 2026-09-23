@@ -83,10 +83,10 @@ All four members contributed as **Developers**, sharing product, coordination an
 
 | Member | Role(s) | Responsibilities |
 |---|---|---|
-| **hguesne** | Developer | Backend core: Express server, authentication (email/password + JWT), the 42 and Google OAuth flows, auth middleware (session/token handling), Socket.IO realtime wiring, base French translations. |
-| **fcaval** | Developer | Frontend application: routing, the vs-AI game page, the vs-player (PvP) page, the registration page, and translated content across all three supported languages. |
-| **bbeaurai** | Developer | Game engine & infrastructure: match/round logic, session and matchmaking management, the AI bot, ELO computation, the Prisma schema, Docker Compose setup, and the project's `makefile`/tooling (including the ngrok tunnel workflow). |
-| **ylouvel** | Developer | Joined the team for a later hardening pass: removed dead code and stray comments across the frontend, fixed silent failures in token-expiry/auth-error handling (`/api/me`, auth middleware), and general cross-cutting fixes. |
+| **fcaval** | Developer/Product Owner | Frontend application: routing, the vs-AI game page, the vs-player (PvP) page, the registration page, and translated content across all three supported languages. |
+| **bbeaurai** | Developer/Project Manager | Game engine & infrastructure: match/round logic, session and matchmaking management, the AI bot, ELO computation, the Prisma schema, Docker Compose setup, and the project's `makefile`/tooling (including the ngrok tunnel workflow). |
+| **hguesne** | Developer/Technical Lead | Backend core: Express server, authentication (email/password + JWT), the 42 and Google OAuth flows, auth middleware (session/token handling), Socket.IO realtime wiring, base French translations. |
+| **ylouvel** | Developer/Architect | Joined the team for a later hardening pass: removed dead code and stray comments across the frontend, fixed silent failures in token-expiry/auth-error handling (`/api/me`, auth middleware), and general cross-cutting fixes. |
 
 ## Project Management
 
@@ -112,15 +112,15 @@ erDiagram
     USER ||--o{ GAME : "player2"
 
     USER {
-        string id PK
-        string email UK
-        string username UK
-        string password "nullable - empty for OAuth accounts"
+        string id
+        string email
+        string username
+        string password
         string avatarUrl
         boolean isOnline
         boolean isBot
-        string oauthProvider "nullable: 42 | google"
-        string oauthId "nullable, unique with oauthProvider"
+        string oauthProvider
+        string oauthId
         int wins
         int losses
         int elo
@@ -130,16 +130,16 @@ erDiagram
     }
 
     GAME {
-        string id PK
-        string tournamentId "nullable"
-        string player1Id FK
-        string player2Id FK "nullable until matched"
-        string winnerId "nullable"
-        string status "WAITING | PLAYING | FINISHED | CANCELLED"
+        string id
+        string tournamentId
+        string player1Id
+        string player2Id
+        string winnerId
+        string status
         int scorePlayer1
         int scorePlayer2
-        int maxScore "default 3"
-        int roundTimeout "default 5s"
+        int maxScore
+        int roundTimeout
         datetime createdAt
         datetime endedAt
     }
@@ -179,8 +179,10 @@ The subject requires 14 points; the modules below total **15 points**.
 | 7 | Complete web-based game (Pierre-Feuille-Ciseaux, live matches, clear win/loss rules) | Major | 2 | Gaming & UX | fcaval, bbeaurai |
 | 8 | Remote players (two separate machines, live over the network, reconnection handling) | Major | 2 | Gaming & UX | fcaval, bbeaurai, hguesne |
 | 9 | Game customization options (configurable match length / round timeout) | Minor | 1 | Gaming & UX | bbeaurai |
+| 10 | Support for additional browsers | Minor | 1 | Other | bbeaurai |
+| 11 | Support for multiple languages | Minor | 1 | Language | bbeaurai |
 
-**Total: 15 points** (2+2+1+2+1+2+2+2+1), 1 point above the 14-point minimum.
+**Total: 17 points** (2+2+1+2+1+2+2+2+1+1+1), 3 point above the 14-point minimum.
 
 ### Justification
 
@@ -194,7 +196,8 @@ The subject requires 14 points; the modules below total **15 points**.
 - **Remote players (Major)**: two players on different machines are matched and play live over WebSockets, with per-round timeouts and reconnection support so a page refresh doesn't forfeit the match.
 - **Game customization (Minor)**: matches support a configurable number of rounds to win and round timeout, defined per session with sensible defaults.
 - **Additional browsers (Minor)**: full compatibility with at least 2 additional browsers (Firefox, Safari, Edge).
-- **Support for multiple languages (Minor)**: Implement i18n (internationalization) system, at least 3 complete language translations.
+- **Support for multiple languages (Minor)**: Implement i18n (internationalization) system, at least 3 complete language translations,
+Language switcher in the UI.
 
 ## Individual Contributions
 
