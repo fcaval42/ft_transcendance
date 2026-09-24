@@ -99,7 +99,14 @@
     "invalid": "Invalid email or password.",
     "email": "The email address must end with .com or .fr.",
     "password": "Passwords do not match.",
-    "register": "Error during registration."
+    "register": "Error during registration.",
+    "invalidPlayer": "Invalid player.",
+    "alreadyInQueue": "You are already waiting for a game.",
+    "missingFields": "Incomplete request.",
+    "moveTooLate": "This move came too late, the next round has already started.",
+    "wellUnavailable": "The well is not available.",
+    "sessionNotFound": "Game not found.",
+    "matchFinished": "This match is already over."
   },
   "footer": {
     "poweredBy": "Powered by passion",

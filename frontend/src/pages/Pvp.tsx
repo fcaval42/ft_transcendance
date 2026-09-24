@@ -83,6 +83,9 @@ export const Pvp = () => {
     return roundResult === role ? t("gameVsBot.win") : t("gameVsBot.lose");
   };
 
+  const translateServerError = (code: string): string =>
+    String(t(`error.${code}`, { defaultValue: t("error.game") }));
+
   const applyMatchState = (match: Match, role: Role) => {
     if (role === "player1") {
       setScore1(match.score1);
@@ -189,9 +192,9 @@ export const Pvp = () => {
       setWellAvailable(false);
     });
 
-    socket.on("wellError", (message: string) => {
+    socket.on("wellError", (code: string) => {
       setWellAvailable(false);
-      setError(message);
+      setError(translateServerError(code));
     });
 
     socket.on("roundResult", (data: { match: Match }) => {
@@ -244,13 +247,13 @@ export const Pvp = () => {
       }
     });
 
-    socket.on("queueError", (message: string) => {
-      setError(message);
+    socket.on("queueError", (code: string) => {
+      setError(translateServerError(code));
       setIsSearching(false);
     });
 
-    socket.on("moveError", (message: string) => {
-      setError(message);
+    socket.on("moveError", (code: string) => {
+      setError(translateServerError(code));
       setLoading(false);
     });
 

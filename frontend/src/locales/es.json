@@ -98,7 +98,14 @@
     "invalid": "Correo electrónico o contraseña inválidos.",
     "email": "El correo electrónico debe terminar en .com o .fr.",
     "password": "Las contraseñas no coinciden.",
-    "register": "Error durante el registro."
+    "register": "Error durante el registro.",
+    "invalidPlayer": "Jugador no válido.",
+    "alreadyInQueue": "Ya estás esperando una partida.",
+    "missingFields": "Solicitud incompleta.",
+    "moveTooLate": "Esta jugada llegó demasiado tarde, la siguiente ronda ya ha comenzado.",
+    "wellUnavailable": "El pozo no está disponible.",
+    "sessionNotFound": "Partida no encontrada.",
+    "matchFinished": "Esta partida ya ha terminado."
   },
   "footer": {
     "poweredBy": "Impulsado por la pasión",
