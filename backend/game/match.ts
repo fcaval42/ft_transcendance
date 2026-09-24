@@ -53,7 +53,7 @@ export function playMatchRound(
   move2: Move | null
 ): Match {
   if (match.status === "finished") {
-    throw new Error("Game is already finished");
+    throw new Error("matchFinished");
   }
 
   const result = resolveRound(move1, move2);
@@ -75,7 +75,7 @@ export function playMatchRound(
 
 export function resolveWellWin(match: Match, winner: "player1" | "player2"): Match {
   if (match.status === "finished") {
-    throw new Error("Ce match est déjà terminé");
+    throw new Error("matchFinished");
   }
 
   if (winner === "player1") match.score1++;

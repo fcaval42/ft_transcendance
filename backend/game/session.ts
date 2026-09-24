@@ -245,7 +245,7 @@ export async function submitMove(
   if (expectedRoundNumber !== undefined) {
     const currentRoundNumber = session.match.rounds.length + 1;
     if (expectedRoundNumber !== currentRoundNumber) {
-      throw new Error("Ce coup arrive trop tard, le round suivant a déjà commencé");
+      throw new Error("moveTooLate");
     }
   }
 
@@ -254,7 +254,7 @@ export async function submitMove(
   } else if (playerId === session.player2Id) {
     session.pendingMove2 = move;
   } else {
-    throw new Error("Invalid player ID");
+    throw new Error("invalidPlayer");
   }
 
   if (session.pendingMove1 !== null && session.pendingMove2 !== null) {
@@ -300,7 +300,7 @@ export async function attemptWell(sessionId: string, playerId: string): Promise<
   const match = session.match;
 
   if (!match.well.available) {
-    throw new Error("Le puit n'est pas disponible");
+    throw new Error("wellUnavailable");
   }
 
   let winner: "player1" | "player2";
@@ -309,7 +309,7 @@ export async function attemptWell(sessionId: string, playerId: string): Promise<
   } else if (playerId === session.player2Id) {
     winner = "player2";
   } else {
-    throw new Error("Ce joueur ne fait pas partie de cette session");
+    throw new Error("invalidPlayer");
   }
 
   closeWellWindow(sessionId);
@@ -333,9 +333,9 @@ export async function attemptWell(sessionId: string, playerId: string): Promise<
 
 function getSessionOrThrow(sessionId: string): GameSession {
   const session = sessions.get(sessionId);
-  if (!session) throw new Error("Session not found");
+  if (!session) throw new Error("sessionNotFound");
   if (session.match.status === "finished") {
-    throw new Error("Match is already finished");
+    throw new Error("matchFinished");
   }
   return session;
 }

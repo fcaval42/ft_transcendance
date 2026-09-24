@@ -42,7 +42,7 @@ export const Login = () => {
       const data = await response.json();
 
       if (!data.success) {
-        const message = data.error || String(t("error.invalid"));
+        const message = String(t("error.invalid"));
         setToast({ show: true, message, type: "error" });
         setError(message);
         return;

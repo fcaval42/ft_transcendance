@@ -42,10 +42,8 @@ export const Register = () => {
         body: JSON.stringify({ username, email, password }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || t("error.register"));
+        throw new Error(String(t("error.register")));
       }
 
       setToast({ show: true, message: t("register.inscription"), type: "success" });

@@ -37,7 +37,7 @@ export function registerMatchmaking(io: Server): void {
   io.on("connection", (socket) => {
     socket.on("joinQueue", async (playerId: string) => {
       if (typeof playerId !== "string" || playerId.trim() === "") {
-        socket.emit("queueError", "playerId invalide");
+        socket.emit("queueError", "invalidPlayer");
         return;
       }
 
@@ -50,7 +50,7 @@ export function registerMatchmaking(io: Server): void {
       }
 
       if (waitingPlayer && waitingPlayer.playerId === playerId) {
-        socket.emit("queueError", "Tu es déjà en attente d'une partie");
+        socket.emit("queueError", "alreadyInQueue");
         return;
       }
 

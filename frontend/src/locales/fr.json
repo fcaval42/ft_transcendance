@@ -99,7 +99,14 @@
     "invalid": "E-mail ou mot de passe invalide.",
     "email": "L'adresse email doit se terminer par .com ou .fr.",
     "password": "Les mots de passe ne correspondent pas.",
-    "register": "Erreur lors de l'inscription."
+    "register": "Erreur lors de l'inscription.",
+    "invalidPlayer": "Joueur invalide.",
+    "alreadyInQueue": "Tu es déjà en attente d'une partie.",
+    "missingFields": "Requête incomplète.",
+    "moveTooLate": "Ce coup arrive trop tard, le round suivant a déjà commencé.",
+    "wellUnavailable": "Le puit n'est pas disponible.",
+    "sessionNotFound": "Partie introuvable.",
+    "matchFinished": "Ce match est déjà terminé."
   },
   "footer": {
     "poweredBy": "Propulsé par la passion",

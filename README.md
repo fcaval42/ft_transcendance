@@ -168,7 +168,7 @@ erDiagram
 
 ## Modules
 
-The subject requires 14 points; the modules below total **15 points**.
+The subject requires 14 points; the modules below total **17 points**.
 
 | # | Module | Type | Points | Category | Contributor(s) |
 |---|---|---|---|---|---|
@@ -180,11 +180,11 @@ The subject requires 14 points; the modules below total **15 points**.
 | 6 | AI Opponent for the game | Major | 2 | Artificial Intelligence | bbeaurai |
 | 7 | Complete web-based game (Pierre-Feuille-Ciseaux, live matches, clear win/loss rules) | Major | 2 | Gaming & UX | fcaval, bbeaurai |
 | 8 | Remote players (two separate machines, live over the network, reconnection handling) | Major | 2 | Gaming & UX | fcaval, bbeaurai, hguesne |
-| 9 | Game customization options (configurable match length / round timeout) | Minor | 1 | Gaming & UX | bbeaurai |
+| 9 | Game customization options ("the well" power-up, see the *Gaming and user experience* page) | Minor | 1 | Gaming & UX | bbeaurai, fcaval |
 | 10 | Support for additional browsers | Minor | 1 | Other | bbeaurai |
 | 11 | Support for multiple languages | Minor | 1 | Language | bbeaurai |
 
-**Total: 17 points** (2+2+1+2+1+2+2+2+1+1+1), 3 point above the 14-point minimum.
+**Total: 17 points** (2+2+1+2+1+2+2+2+1+1+1), 3 points above the 14-point minimum.
 
 ### Justification
 
@@ -195,8 +195,8 @@ The subject requires 14 points; the modules below total **15 points**.
 - **AI Opponent (Major)**: the bot doesn't move randomly — it looks at the outcome of the previous round and plays the move that beats the player's predicted next move, so it wins more than a purely random bot while still being beatable.
 - **Complete web-based game (Major)**: Rock-Paper-Scissors with clear win conditions (first to N round wins), playable live against the bot or another player.
 - **Remote players (Major)**: two players on different machines are matched and play live over WebSockets, with per-round timeouts and reconnection support so a page refresh doesn't forfeit the match.
-- **Game customization (Minor)**: matches support a configurable number of rounds to win and round timeout, defined per session with sensible defaults.
-- **Additional browsers (Minor)**: full compatibility with at least 2 additional browsers (Firefox, Safari, Edge).
+- **Game customization (Minor)**: on top of the default rules (first to 3 round wins, 5 seconds per round in PvP), matches include a special power-up, **"the well" (le puits)**. It has a 10% chance to appear during a round. When it appears, players get a short window to tap it: **1 second against the bot** and **2 seconds in PvP**, where both players see it at the same time and the fastest one wins. Tapping the well wins the round outright, but it's optional: a player can ignore it and play a normal move. The values are defined in `backend/game/match.ts` (`WELL_TRIGGER_CHANCE`, `WELL_TIME_LIMIT_BOT_MS`, `WELL_TIME_LIMIT_PVP_MS`, `ROUND_TIME_LIMIT_MS`). The feature is explained to players on the **Instructions** page and on the **Gaming and user experience** page, both linked from the footer.
+- **Additional browsers (Minor)**: the app was tested on Chrome, Firefox and Safari. See [Browser compatibility & limitations](#browser-compatibility--limitations) for the known differences between them.
 - **Support for multiple languages (Minor)**: Implement i18n (internationalization) system, at least 3 complete language translations,
 Language switcher in the UI.
 
@@ -212,3 +212,20 @@ Language switcher in the UI.
 - Matches are strictly **1v1**; there is no 3+-player mode.
 - There is no in-app chat, friends list, or tournament bracket yet.
 - Avatars come from the OAuth provider or a default image; there is no in-app avatar upload.
+
+### Browser compatibility & limitations
+
+The frontend only uses standard web APIs (`fetch`, cookies, `localStorage`, WebSockets through Socket.IO), and the production build targets `>0.2%, not dead` browsers. The app works the same way on all supported browsers, with the following limitations:
+
+| Browser | Status | Known limitations |
+|---|---|---|
+| **Chrome / Chromium** | Fully supported (reference browser) | The self-signed certificate triggers a "Your connection is not private" page. Click *Advanced → Proceed*, or type `thisisunsafe` on the warning page. |
+| **Firefox** | Supported | You have to add a certificate exception (*Advanced → Accept the risk*) for `https://localhost:8443`. Until you do, the page and the Socket.IO connection (`/socket.io`) are both blocked. Private windows don't keep the exception or the saved language. |
+| **Safari (macOS)** | Supported, with limitations | Safari is the strictest about self-signed certificates. You may need to trust `certs/cert.pem` in the macOS Keychain, otherwise the secure WebSocket (`wss://`) can fail even after you accept the page warning, and PvP matchmaking will never connect. On older Safari versions (< 14), private browsing blocks `localStorage`, so the chosen language isn't saved. |
+| **Safari (iOS) / mobile browsers** | Partially supported | When the tab goes to the background or the screen locks, iOS suspends timers and the WebSocket. If this happens mid-match, you can lose rounds to the 5-second timeout until the page reconnects (`rejoinSession`). The layout isn't optimized for small screens. |
+
+Limitations that apply to every browser:
+- **Timing-sensitive events**: browsers throttle timers in background tabs (≥ 1 s in Chrome, Firefox and Safari). Keep the game tab in the foreground: the "well" window (1–2 s) and the round timer are enforced by the server, so a background tab can miss them.
+- **Cookies**: the session cookie is `httpOnly` and `SameSite=Lax`, and it's only marked `Secure` when `NODE_ENV=production`. Browsers that block all cookies, or extensions that strip them, will prevent login.
+- **OAuth (42 / Google)**: the redirect URIs must match the exact origin you use (`https://localhost:8443` or the ngrok URL). Opening the app from a different host (for example `127.0.0.1`) breaks the OAuth callback in every browser.
+- **Emoji rendering**: moves and the well (🪨 📄 ✂️ 🕳️) use system emoji fonts, so they look different across operating systems and browsers.
